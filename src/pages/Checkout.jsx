@@ -9,11 +9,18 @@ import {
   Tag,
   Shield,
   Coffee,
+  User,
+  Users,
+  SplitSquareHorizontal,
+  Minus,
+  Plus,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useTable } from "../context/TableContext";
 
 export default function Checkout() {
   const { items, totalPrice, clearCart } = useCart();
+  const { tableNumber } = useTable();
   const navigate = useNavigate();
   const location = useLocation();
   const {
@@ -23,7 +30,6 @@ export default function Checkout() {
     gst = 0,
     grandTotal = totalPrice,
     orderNotes = "",
-    tableNumber = "1",
   } = location.state || {};
 
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -34,8 +40,34 @@ export default function Checkout() {
   const [confirmed, setConfirmed] = useState(false);
   const [processing, setProcessing] = useState(false);
 
+  // Bill split state
+  const [splitMode, setSplitMode] = useState("individual"); // individual | even | per-item
+  const [splitCount, setSplitCount] = useState(2);
+  const [itemAssignments, setItemAssignments] = useState(() => {
+    const assignments = {};
+    items.forEach((item) => {
+      assignments[item.id] = "You";
+    });
+    return assignments;
+  });
+  const [people] = useState(["You", "Person 2", "Person 3", "Person 4", "Person 5"]);
+
   const discount = promoApplied ? Math.round(grandTotal * 0.1) : 0;
   const finalTotal = grandTotal - discount;
+
+  // Calculate what each person pays
+  const getYourShare = () => {
+    if (splitMode === "individual") return finalTotal;
+    if (splitMode === "even") return Math.ceil(finalTotal / splitCount);
+    // per-item: sum items assigned to "You"
+    const yourItems = items.filter((item) => itemAssignments[item.id] === "You");
+    const yourSubtotal = yourItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    if (totalPrice === 0) return 0;
+    const ratio = yourSubtotal / totalPrice;
+    return Math.ceil(finalTotal * ratio);
+  };
+
+  const yourShare = getYourShare();
 
   if (items.length === 0 && !confirmed) {
     navigate("/cart");
@@ -80,9 +112,16 @@ export default function Checkout() {
           <div className="inline-flex items-center gap-2 bg-white/5 rounded-full px-4 py-2 mt-3 mb-8">
             <Coffee size={14} className="text-sip" />
             <span className="text-white/70 text-sm">
-              Table {tableNumber} · #{Math.floor(1000 + Math.random() * 9000)}
+              Table {tableNumber || "—"} · #{Math.floor(1000 + Math.random() * 9000)}
             </span>
           </div>
+          {splitMode !== "individual" && (
+            <p className="text-white/40 text-xs mb-6">
+              You paid Rs.{yourShare}
+              {splitMode === "even" && ` (split ${splitCount} ways)`}
+              {splitMode === "per-item" && " (your items only)"}
+            </p>
+          )}
           <div className="flex flex-col gap-2">
             <Link
               to="/menu"
@@ -108,28 +147,45 @@ export default function Checkout() {
       icon: CreditCard,
       label: "Card Payment",
       desc: "Visa, Mastercard, UnionPay",
-      accent: "sip",
     },
     {
       id: "cash",
       icon: Banknote,
       label: "Cash",
       desc: "Pay at the counter",
-      accent: "dark",
     },
     {
       id: "jazzcash",
       icon: Smartphone,
       label: "JazzCash",
       desc: "Mobile wallet",
-      accent: "red-500",
     },
     {
       id: "easypaisa",
       icon: Smartphone,
       label: "Easypaisa",
       desc: "Mobile wallet",
-      accent: "green-600",
+    },
+  ];
+
+  const splitOptions = [
+    {
+      id: "individual",
+      icon: User,
+      label: "I'm paying",
+      desc: "Full bill, one person",
+    },
+    {
+      id: "even",
+      icon: Users,
+      label: "Split evenly",
+      desc: "Divide equally",
+    },
+    {
+      id: "per-item",
+      icon: SplitSquareHorizontal,
+      label: "Per item",
+      desc: "Each pays their own",
     },
   ];
 
@@ -149,10 +205,120 @@ export default function Checkout() {
               Payment
             </h1>
             <p className="text-xs text-dark-muted">
-              Table {tableNumber} · Secure checkout
+              {tableNumber ? `Table ${tableNumber} · ` : ""}Secure checkout
             </p>
           </div>
         </div>
+
+        {/* Bill Split Options */}
+        <div className="mb-4">
+          <p className="text-xs font-semibold text-dark-muted uppercase tracking-wider mb-3">
+            Who's paying?
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            {splitOptions.map((opt) => (
+              <button
+                key={opt.id}
+                onClick={() => setSplitMode(opt.id)}
+                className={`relative rounded-2xl border-2 p-3.5 text-center transition-all cursor-pointer ${
+                  splitMode === opt.id
+                    ? "border-sip bg-sip-bg"
+                    : "border-black/5 bg-white hover:border-black/10"
+                }`}
+              >
+                {splitMode === opt.id && (
+                  <div className="absolute top-2 right-2 w-4 h-4 bg-sip rounded-full flex items-center justify-center">
+                    <CheckCircle2 size={10} className="text-white" />
+                  </div>
+                )}
+                <opt.icon
+                  size={18}
+                  className={`mx-auto ${
+                    splitMode === opt.id ? "text-sip-dark" : "text-dark-muted"
+                  }`}
+                />
+                <p className="font-semibold text-xs mt-2">{opt.label}</p>
+                <p className="text-[10px] text-dark-muted mt-0.5">
+                  {opt.desc}
+                </p>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Even Split: Number of people */}
+        {splitMode === "even" && (
+          <div className="bg-white rounded-2xl border border-black/5 p-4 mb-4">
+            <p className="text-xs font-semibold text-dark-muted uppercase tracking-wider mb-3">
+              How many people?
+            </p>
+            <div className="flex items-center justify-center gap-4">
+              <button
+                onClick={() => setSplitCount(Math.max(2, splitCount - 1))}
+                className="w-10 h-10 flex items-center justify-center rounded-xl bg-warm text-dark hover:bg-sip-bg transition-colors cursor-pointer"
+              >
+                <Minus size={16} />
+              </button>
+              <span className="text-2xl font-bold text-dark w-12 text-center">
+                {splitCount}
+              </span>
+              <button
+                onClick={() => setSplitCount(Math.min(10, splitCount + 1))}
+                className="w-10 h-10 flex items-center justify-center rounded-xl bg-sip text-white hover:bg-sip-dark transition-colors cursor-pointer"
+              >
+                <Plus size={16} />
+              </button>
+            </div>
+            <p className="text-center text-xs text-dark-muted mt-3">
+              Rs.{Math.ceil(finalTotal / splitCount)} per person
+            </p>
+          </div>
+        )}
+
+        {/* Per-Item: Assign items to people */}
+        {splitMode === "per-item" && (
+          <div className="bg-white rounded-2xl border border-black/5 p-4 mb-4">
+            <p className="text-xs font-semibold text-dark-muted uppercase tracking-wider mb-3">
+              Assign items to people
+            </p>
+            <div className="space-y-3">
+              {items.map((item) => (
+                <div key={item.id} className="flex items-center justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-dark truncate">
+                      {item.name}
+                      <span className="text-dark-muted font-normal"> × {item.quantity}</span>
+                    </p>
+                    <p className="text-xs text-dark-muted">
+                      Rs.{item.price * item.quantity}
+                    </p>
+                  </div>
+                  <select
+                    value={itemAssignments[item.id] || "You"}
+                    onChange={(e) =>
+                      setItemAssignments((prev) => ({
+                        ...prev,
+                        [item.id]: e.target.value,
+                      }))
+                    }
+                    className="text-xs bg-warm border border-black/5 rounded-lg px-2.5 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-sip/30 cursor-pointer"
+                  >
+                    {people.map((p) => (
+                      <option key={p} value={p}>
+                        {p}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 pt-3 border-t border-black/5">
+              <p className="text-xs font-semibold text-sip-dark">
+                Your share: Rs.{yourShare}
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Order Items Summary */}
         <div className="bg-white rounded-2xl border border-black/5 p-4 mb-4">
@@ -332,6 +498,16 @@ export default function Checkout() {
               <span>Total</span>
               <span className="text-sip-light">Rs.{finalTotal}</span>
             </div>
+            {splitMode !== "individual" && (
+              <div className="flex justify-between text-sip-light text-sm font-semibold pt-1">
+                <span>
+                  {splitMode === "even"
+                    ? `Your share (1/${splitCount})`
+                    : "Your items"}
+                </span>
+                <span>Rs.{yourShare}</span>
+              </div>
+            )}
           </div>
 
           <button
@@ -345,7 +521,7 @@ export default function Checkout() {
                 Processing...
               </span>
             ) : (
-              `Pay Rs.${finalTotal}`
+              `Pay Rs.${splitMode === "individual" ? finalTotal : yourShare}`
             )}
           </button>
 

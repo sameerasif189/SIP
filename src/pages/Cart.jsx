@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Minus, Plus, ShoppingBag, ArrowLeft, Trash2 } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useTable } from "../context/TableContext";
 
 export default function Cart() {
   const { items, updateQuantity, removeItem, totalPrice, totalItems } = useCart();
+  const { tableNumber } = useTable();
   const [tip, setTip] = useState(5);
   const [orderNotes, setOrderNotes] = useState("");
-  const [tableNumber, setTableNumber] = useState("1");
 
   const tipOptions = [
     { label: "No tip", value: 0 },
@@ -61,30 +62,9 @@ export default function Cart() {
               Your Order
             </h1>
             <p className="text-xs text-dark-muted">
-              {totalItems} item{totalItems !== 1 ? "s" : ""} · Table {tableNumber}
+              {totalItems} item{totalItems !== 1 ? "s" : ""}
+              {tableNumber ? ` · Table ${tableNumber}` : ""}
             </p>
-          </div>
-        </div>
-
-        {/* Table Number */}
-        <div className="bg-white rounded-2xl border border-black/5 p-4 mb-4">
-          <p className="text-xs font-semibold text-dark-muted uppercase tracking-wider mb-2">
-            Table Number
-          </p>
-          <div className="flex gap-2">
-            {["1", "2", "3", "4", "5", "6", "7", "8"].map((num) => (
-              <button
-                key={num}
-                onClick={() => setTableNumber(num)}
-                className={`w-9 h-9 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  tableNumber === num
-                    ? "bg-sip text-white shadow-sm"
-                    : "bg-warm text-dark hover:bg-sip-bg"
-                }`}
-              >
-                {num}
-              </button>
-            ))}
           </div>
         </div>
 
@@ -225,7 +205,7 @@ export default function Cart() {
 
           <Link
             to="/checkout"
-            state={{ tip, tipAmount, serviceFee, gst, grandTotal, orderNotes, tableNumber }}
+            state={{ tip, tipAmount, serviceFee, gst, grandTotal, orderNotes }}
             className="block w-full mt-5 bg-sip hover:bg-sip-dark text-white text-center py-3.5 rounded-xl font-semibold text-sm transition-colors"
           >
             Proceed to Payment · Rs.{grandTotal}
