@@ -9,7 +9,7 @@ export default function Navbar() {
   const location = useLocation();
 
   const links = [
-    { to: "/", label: "Home" },
+    { to: "/home", label: "Home" },
     { to: "/menu", label: "Menu" },
     { to: "/about", label: "About" },
     { to: "/contact", label: "Contact" },
@@ -22,15 +22,15 @@ export default function Navbar() {
       <nav className="bg-dark text-white sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-14 sm:h-16">
-            <Link to="/" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-sip rounded-lg flex items-center justify-center">
-                <span className="font-[var(--font-display)] text-sm font-bold text-white leading-none">
+            <Link to="/home" className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-sip rounded-xl flex items-center justify-center shadow-lg shadow-sip/20">
+                <span className="font-[var(--font-display)] text-base font-bold text-white leading-none">
                   SiP
                 </span>
               </div>
-              <div className="hidden sm:block">
-                <p className="text-sm font-semibold leading-none">SIP</p>
-                <p className="text-[10px] text-white/40 leading-none mt-0.5">
+              <div>
+                <p className="text-base font-bold leading-none tracking-wide">SIP</p>
+                <p className="text-[10px] text-white/40 leading-none mt-0.5 tracking-widest">
                   ISLAMABAD
                 </p>
               </div>
