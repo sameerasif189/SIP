@@ -1,8 +1,5 @@
 import { Link } from "react-router-dom";
 import {
-  ArrowRight,
-  MapPin,
-  Clock,
   ChevronRight,
   Sunrise,
   Leaf,
@@ -12,9 +9,12 @@ import {
   GlassWater,
   Bean,
   Plus,
+  MapPin,
+  Clock,
 } from "lucide-react";
 import { menuData } from "../data/menu";
 import MenuCard from "../components/MenuCard";
+import { useTable } from "../context/TableContext";
 
 const categoryIcons = {
   Breakfast: Sunrise,
@@ -28,6 +28,8 @@ const categoryIcons = {
 };
 
 export default function Home() {
+  const { tableNumber } = useTable();
+
   const featuredItems = [
     menuData[0].items[0],
     menuData[0].items[2],
@@ -36,102 +38,83 @@ export default function Home() {
   ];
 
   return (
-    <div>
-      {/* Hero */}
-      <section className="relative bg-dark overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=80"
-            alt="Coffee"
-            className="w-full h-full object-cover opacity-30 scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-dark/60 via-dark/40 to-dark" />
-        </div>
-
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-20 sm:pt-24 sm:pb-28">
-          <div className="inline-flex items-center gap-2 bg-sip/20 border border-sip/30 rounded-full px-4 py-1.5 mb-6">
-            <div className="w-1.5 h-1.5 bg-sip rounded-full animate-pulse" />
-            <span className="text-sip-light text-xs font-medium">
-              Now open · F-8/3, Islamabad
-            </span>
-          </div>
-
-          <h1 className="font-[var(--font-display)] text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1] text-balance max-w-2xl">
-            Where every cup is{" "}
-            <span className="text-sip italic">crafted</span> with care
-          </h1>
-
-          <p className="text-white/40 text-sm sm:text-base mt-5 max-w-md leading-relaxed">
-            Specialty coffee, artisan breakfast, and fresh bites.
-            From our hands to your table.
-          </p>
-
-          <div className="flex flex-wrap gap-3 mt-8">
+    <div className="bg-warm min-h-screen">
+      {/* Compact header with table info */}
+      <div className="bg-dark">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="font-[var(--font-display)] text-xl sm:text-2xl font-bold text-white">
+                Good to see you!
+              </h1>
+              <div className="flex items-center gap-4 mt-1.5 text-xs text-white/40">
+                {tableNumber && (
+                  <span className="flex items-center gap-1.5 bg-sip/20 text-sip-light px-2.5 py-1 rounded-full">
+                    Table {tableNumber}
+                  </span>
+                )}
+                <span className="flex items-center gap-1">
+                  <Clock size={11} className="text-sip" />
+                  8 AM – 1 AM
+                </span>
+                <span className="flex items-center gap-1 hidden sm:flex">
+                  <MapPin size={11} className="text-sip" />
+                  F-8/3, Islamabad
+                </span>
+              </div>
+            </div>
             <Link
               to="/menu"
-              className="group inline-flex items-center gap-2 bg-sip hover:bg-sip-dark text-white pl-6 pr-5 py-3 rounded-full text-sm font-semibold transition-all"
+              className="inline-flex items-center gap-1.5 bg-sip hover:bg-sip-dark text-white px-4 py-2 rounded-full text-xs font-semibold transition-all"
             >
-              Order Now
-              <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
+              Full Menu
+              <ChevronRight size={14} />
             </Link>
-            <Link
-              to="/menu"
-              className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/15 text-white px-6 py-3 rounded-full text-sm font-medium transition-all"
-            >
-              View Full Menu
-            </Link>
-          </div>
-
-          {/* Quick Stats */}
-          <div className="flex flex-wrap gap-5 mt-10 text-xs text-white/40">
-            <span className="flex items-center gap-1.5">
-              <Clock size={12} className="text-sip" />
-              8 AM – 1 AM daily
-            </span>
-            <span className="flex items-center gap-1.5">
-              <MapPin size={12} className="text-sip" />
-              F-8/3, Islamabad
-            </span>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Categories Grid */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 -mt-6 relative z-10">
-        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
-          {menuData.map((cat) => (
-            <Link
-              key={cat.category}
-              to={`/menu?category=${encodeURIComponent(cat.category)}`}
-              className="group bg-white rounded-2xl p-3 sm:p-4 text-center border border-black/5 hover:border-sip/30 hover:shadow-md transition-all"
-            >
-              {(() => {
-                const Icon = categoryIcons[cat.category];
-                return Icon ? (
-                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-sip/10 flex items-center justify-center mx-auto mb-1">
-                    <Icon size={16} className="text-sip" />
+      {/* Categories — horizontal scroll */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-5">
+        <p className="text-xs font-semibold text-dark-muted uppercase tracking-wider mb-3">
+          Browse by category
+        </p>
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          {menuData.map((cat) => {
+            const Icon = categoryIcons[cat.category];
+            return (
+              <Link
+                key={cat.category}
+                to={`/menu?category=${encodeURIComponent(cat.category)}`}
+                className="group flex items-center gap-2.5 bg-white rounded-xl px-4 py-3 border border-black/5 hover:border-sip/30 hover:shadow-md transition-all shrink-0"
+              >
+                {Icon && (
+                  <div className="w-8 h-8 rounded-lg bg-sip/10 flex items-center justify-center group-hover:bg-sip/20 transition-colors">
+                    <Icon size={15} className="text-sip" />
                   </div>
-                ) : null;
-              })()}
-              <p className="font-semibold text-[11px] sm:text-xs text-dark group-hover:text-sip transition-colors leading-tight">
-                {cat.category}
-              </p>
-              <p className="text-[10px] text-dark-muted mt-0.5">
-                {cat.items.length}
-              </p>
-            </Link>
-          ))}
+                )}
+                <div>
+                  <p className="font-semibold text-xs text-dark group-hover:text-sip transition-colors whitespace-nowrap">
+                    {cat.category}
+                  </p>
+                  <p className="text-[10px] text-dark-muted">
+                    {cat.items.length} items
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
-      {/* Popular Items */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-        <div className="flex items-end justify-between mb-6">
+      {/* Popular Picks */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-6">
+        <div className="flex items-end justify-between mb-4">
           <div>
-            <span className="text-sip text-xs font-bold uppercase tracking-[0.2em]">
+            <span className="text-sip text-xs font-bold uppercase tracking-[0.15em]">
               Popular
             </span>
-            <h2 className="font-[var(--font-display)] text-2xl sm:text-3xl font-bold mt-1">
+            <h2 className="font-[var(--font-display)] text-lg sm:text-xl font-bold mt-0.5">
               Must Try
             </h2>
           </div>
@@ -139,7 +122,7 @@ export default function Home() {
             to="/menu"
             className="text-xs text-sip hover:text-sip-dark font-semibold flex items-center gap-0.5 transition-colors"
           >
-            All items
+            See all
             <ChevronRight size={14} />
           </Link>
         </div>
@@ -150,35 +133,28 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Banner */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-12">
-        <div className="bg-dark rounded-3xl overflow-hidden relative">
-          <div className="absolute inset-0 opacity-20">
-            <img
-              src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=800&q=80"
-              alt=""
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="relative px-6 sm:px-10 py-10 sm:py-14 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-            <div>
-              <h3 className="font-[var(--font-display)] text-2xl sm:text-3xl font-bold text-white">
-                Hungry? Let's go.
-              </h3>
-              <p className="text-white/40 text-sm mt-2">
-                Browse our full menu and order in seconds.
-              </p>
-            </div>
+      {/* Quick category sections with first 3 items each */}
+      {menuData.slice(0, 4).map((cat) => (
+        <section key={cat.category} className="max-w-6xl mx-auto px-4 sm:px-6 pb-6">
+          <div className="flex items-end justify-between mb-4">
+            <h2 className="font-[var(--font-display)] text-lg sm:text-xl font-bold">
+              {cat.category}
+            </h2>
             <Link
-              to="/menu"
-              className="group inline-flex items-center gap-2 bg-sip hover:bg-sip-dark text-white px-7 py-3 rounded-full text-sm font-semibold transition-all shrink-0"
+              to={`/menu?category=${encodeURIComponent(cat.category)}`}
+              className="text-xs text-sip hover:text-sip-dark font-semibold flex items-center gap-0.5 transition-colors"
             >
-              Start Ordering
-              <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
+              View all {cat.items.length}
+              <ChevronRight size={14} />
             </Link>
           </div>
-        </div>
-      </section>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            {cat.items.slice(0, 3).map((item) => (
+              <MenuCard key={item.id} item={item} />
+            ))}
+          </div>
+        </section>
+      ))}
     </div>
   );
 }
