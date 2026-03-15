@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ShoppingBag, Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "../context/CartContext";
 
 export default function Navbar() {
@@ -70,7 +71,7 @@ export default function Navbar() {
                 )}
               </Link>
               <button
-                className="md:hidden p-2 text-white/60 hover:text-white"
+                className="md:hidden p-2 text-white/60 hover:text-white cursor-pointer"
                 onClick={() => setIsOpen(!isOpen)}
               >
                 {isOpen ? <X size={18} /> : <Menu size={18} />}
@@ -80,25 +81,40 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile menu - slide down */}
-      {isOpen && (
-        <div className="md:hidden fixed inset-0 top-14 z-40 bg-dark/95 backdrop-blur-lg">
-          <div className="flex flex-col items-center justify-center h-full gap-2 -mt-14">
-            {links.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setIsOpen(false)}
-                className={`text-2xl font-[var(--font-display)] py-3 transition-colors ${
-                  isActive(link.to) ? "text-sip" : "text-white/60 hover:text-white"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Mobile menu - animated */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden fixed inset-0 top-14 z-40 bg-dark/95 backdrop-blur-lg"
+          >
+            <div className="flex flex-col items-center justify-center h-full gap-2 -mt-14">
+              {links.map((link, i) => (
+                <motion.div
+                  key={link.to}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ delay: i * 0.06, duration: 0.25 }}
+                >
+                  <Link
+                    to={link.to}
+                    onClick={() => setIsOpen(false)}
+                    className={`text-2xl font-[var(--font-display)] py-3 transition-colors block ${
+                      isActive(link.to) ? "text-sip" : "text-white/60 hover:text-white"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

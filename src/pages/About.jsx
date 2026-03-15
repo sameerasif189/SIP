@@ -1,10 +1,11 @@
 import { Coffee, Heart, Award, MapPin, Clock } from "lucide-react";
+import { PageTransition, FadeIn, StaggerContainer, StaggerItem } from "../components/Motion";
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-warm">
+    <PageTransition className="min-h-screen bg-warm">
       {/* Hero */}
-      <div className="relative h-56 sm:h-72 overflow-hidden">
+      <div className="relative h-48 sm:h-72 overflow-hidden">
         <img
           src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=80"
           alt="Coffee shop"
@@ -25,46 +26,50 @@ export default function About() {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         {/* Info */}
-        <div className="bg-white rounded-2xl border border-black/5 p-6 -mt-12 relative z-10 mb-8">
-          <h2 className="font-[var(--font-display)] text-xl font-bold mb-3">
-            SIP Coffee & Kitchen
-          </h2>
-          <div className="flex flex-wrap gap-4 text-sm text-dark-muted mb-4">
-            <span className="flex items-center gap-1.5">
-              <MapPin size={13} className="text-sip" />
-              F-8/3, Islamabad
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Clock size={13} className="text-sip" />
-              8 AM – 1 AM daily
-            </span>
+        <FadeIn>
+          <div className="bg-white rounded-2xl border border-black/5 p-5 sm:p-6 -mt-10 sm:-mt-12 relative z-10 mb-8">
+            <h2 className="font-[var(--font-display)] text-lg sm:text-xl font-bold mb-3">
+              SIP Coffee & Kitchen
+            </h2>
+            <div className="flex flex-wrap gap-3 sm:gap-4 text-sm text-dark-muted mb-4">
+              <span className="flex items-center gap-1.5">
+                <MapPin size={13} className="text-sip" />
+                F-8/3, Islamabad
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Clock size={13} className="text-sip" />
+                8 AM – 1 AM daily
+              </span>
+            </div>
+            <p className="text-sm text-dark-muted leading-relaxed">
+              Born from a passion for exceptional coffee and a love for bringing
+              people together, SIP is more than just a café — it's a community in
+              the heart of Islamabad.
+            </p>
           </div>
-          <p className="text-sm text-dark-muted leading-relaxed">
-            Born from a passion for exceptional coffee and a love for bringing
-            people together, SIP is more than just a café — it's a community in
-            the heart of Islamabad.
-          </p>
-        </div>
+        </FadeIn>
 
         {/* Story */}
-        <div className="bg-white rounded-2xl border border-black/5 p-6 mb-6">
-          <h3 className="font-semibold mb-3">Crafted with Passion</h3>
-          <p className="text-sm text-dark-muted leading-relaxed mb-3">
-            At SIP, every cup of coffee is a labor of love. We source the finest
-            beans and roast them to perfection. Our skilled baristas craft each
-            drink with precision and care.
-          </p>
-          <p className="text-sm text-dark-muted leading-relaxed">
-            Our kitchen creates delicious food that perfectly complements our
-            beverages — from hearty breakfast bowls to fresh salads and
-            sandwiches, every dish is made fresh to order.
-          </p>
-        </div>
+        <FadeIn delay={0.1}>
+          <div className="bg-white rounded-2xl border border-black/5 p-5 sm:p-6 mb-6">
+            <h3 className="font-semibold mb-3">Crafted with Passion</h3>
+            <p className="text-sm text-dark-muted leading-relaxed mb-3">
+              At SIP, every cup of coffee is a labor of love. We source the finest
+              beans and roast them to perfection. Our skilled baristas craft each
+              drink with precision and care.
+            </p>
+            <p className="text-sm text-dark-muted leading-relaxed">
+              Our kitchen creates delicious food that perfectly complements our
+              beverages — from hearty breakfast bowls to fresh salads and
+              sandwiches, every dish is made fresh to order.
+            </p>
+          </div>
+        </FadeIn>
 
         {/* Values */}
-        <div className="grid sm:grid-cols-3 gap-3">
+        <StaggerContainer className="grid sm:grid-cols-3 gap-3">
           {[
             {
               icon: Coffee,
@@ -82,21 +87,20 @@ export default function About() {
               desc: "From service to flavors, excellence in everything we do.",
             },
           ].map((value) => (
-            <div
-              key={value.title}
-              className="bg-white rounded-2xl border border-black/5 p-5"
-            >
-              <div className="w-9 h-9 bg-sip-bg rounded-xl flex items-center justify-center mb-3">
-                <value.icon size={16} className="text-sip" />
+            <StaggerItem key={value.title}>
+              <div className="bg-white rounded-2xl border border-black/5 p-5">
+                <div className="w-9 h-9 bg-sip-bg rounded-xl flex items-center justify-center mb-3">
+                  <value.icon size={16} className="text-sip" />
+                </div>
+                <h3 className="font-semibold text-sm mb-1">{value.title}</h3>
+                <p className="text-dark-muted text-xs leading-relaxed">
+                  {value.desc}
+                </p>
               </div>
-              <h3 className="font-semibold text-sm mb-1">{value.title}</h3>
-              <p className="text-dark-muted text-xs leading-relaxed">
-                {value.desc}
-              </p>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
-    </div>
+    </PageTransition>
   );
 }
