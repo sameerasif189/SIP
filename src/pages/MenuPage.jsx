@@ -1,19 +1,32 @@
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { Search, ShoppingBag, X, ChevronRight } from "lucide-react";
+import {
+  Search,
+  ShoppingBag,
+  X,
+  ChevronRight,
+  Sunrise,
+  Leaf,
+  Sandwich,
+  Coffee,
+  Timer,
+  GlassWater,
+  Bean,
+  Plus,
+} from "lucide-react";
 import { menuData } from "../data/menu";
 import { useCart } from "../context/CartContext";
 import MenuCard from "../components/MenuCard";
 
-const categoryEmojis = {
-  Breakfast: "🍳",
-  Salads: "🥗",
-  Sandwiches: "🥪",
-  Coffee: "☕",
-  "Slow Bar": "🫖",
-  "Not Coffee": "🧃",
-  Matcha: "🍵",
-  Extras: "➕",
+const categoryIcons = {
+  Breakfast: Sunrise,
+  Salads: Leaf,
+  Sandwiches: Sandwich,
+  Coffee: Coffee,
+  "Slow Bar": Timer,
+  "Not Coffee": GlassWater,
+  Matcha: Bean,
+  Extras: Plus,
 };
 
 export default function MenuPage() {
@@ -105,9 +118,19 @@ export default function MenuPage() {
                           : "text-dark-muted hover:bg-sip-bg hover:text-dark"
                       }`}
                     >
-                      <span className="text-base">
-                        {categoryEmojis[cat.category]}
-                      </span>
+                      {(() => {
+                        const Icon = categoryIcons[cat.category];
+                        return Icon ? (
+                          <Icon
+                            size={16}
+                            className={
+                              activeCategory === cat.category
+                                ? "text-white/80"
+                                : "text-sip"
+                            }
+                          />
+                        ) : null;
+                      })()}
                       <span className="flex-1">{cat.category}</span>
                       <span
                         className={`text-[10px] ${
@@ -139,7 +162,19 @@ export default function MenuPage() {
                         : "text-white/50 hover:text-white/80"
                     }`}
                   >
-                    <span>{categoryEmojis[cat.category]}</span>
+                    {(() => {
+                      const Icon = categoryIcons[cat.category];
+                      return Icon ? (
+                        <Icon
+                          size={13}
+                          className={
+                            activeCategory === cat.category
+                              ? "text-white/80"
+                              : "text-white/40"
+                          }
+                        />
+                      ) : null;
+                    })()}
                     {cat.category}
                   </button>
                 ))}
@@ -179,10 +214,15 @@ export default function MenuPage() {
                     }
                     className="scroll-mt-32"
                   >
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-xl">
-                        {categoryEmojis[category.category]}
-                      </span>
+                    <div className="flex items-center gap-2.5 mb-4">
+                      {(() => {
+                        const Icon = categoryIcons[category.category];
+                        return Icon ? (
+                          <div className="w-8 h-8 rounded-lg bg-sip/10 flex items-center justify-center">
+                            <Icon size={16} className="text-sip" />
+                          </div>
+                        ) : null;
+                      })()}
                       <h2 className="font-[var(--font-display)] text-lg sm:text-xl font-bold uppercase tracking-wide">
                         {category.category}
                       </h2>
