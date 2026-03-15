@@ -18,27 +18,29 @@ export default function Navbar() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="bg-brand text-white sticky top-0 z-50 shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="font-[var(--font-display)] text-2xl font-bold tracking-wider text-accent">
+    <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="flex items-center justify-between h-14">
+          <Link to="/" className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-olive/10 rounded-lg flex items-center justify-center">
+              <span className="font-[var(--font-display)] text-lg font-bold text-olive">
+                SiP
+              </span>
+            </div>
+            <span className="font-semibold text-brand text-sm hidden sm:block">
               SIP
-            </span>
-            <span className="text-xs text-cream-dark hidden sm:block tracking-widest uppercase">
-              Coffee & Dining
             </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
             {links.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
-                className={`text-sm font-medium tracking-wide transition-colors duration-200 ${
+                className={`text-sm transition-colors duration-200 ${
                   isActive(link.to)
-                    ? "text-accent"
-                    : "text-cream-dark hover:text-accent"
+                    ? "text-brand font-medium"
+                    : "text-muted hover:text-brand"
                 }`}
               >
                 {link.label}
@@ -46,39 +48,39 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Link
               to="/cart"
-              className="relative p-2 text-cream-dark hover:text-accent transition-colors"
+              className="relative p-2 text-brand-light hover:text-brand transition-colors"
             >
-              <ShoppingCart size={22} />
+              <ShoppingCart size={20} />
               {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-accent text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-bold">
+                <span className="absolute -top-0.5 -right-0.5 bg-brand text-white text-[10px] w-4.5 h-4.5 flex items-center justify-center rounded-full font-bold">
                   {totalItems}
                 </span>
               )}
             </Link>
             <button
-              className="md:hidden p-2 text-cream-dark"
+              className="md:hidden p-2 text-brand-light"
               onClick={() => setIsOpen(!isOpen)}
             >
-              {isOpen ? <X size={22} /> : <Menu size={22} />}
+              {isOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
       </div>
 
       {isOpen && (
-        <div className="md:hidden bg-brand-light border-t border-white/10">
+        <div className="md:hidden bg-white border-t border-gray-100">
           {links.map((link) => (
             <Link
               key={link.to}
               to={link.to}
               onClick={() => setIsOpen(false)}
-              className={`block px-6 py-3 text-sm font-medium transition-colors ${
+              className={`block px-6 py-3 text-sm transition-colors ${
                 isActive(link.to)
-                  ? "text-accent bg-white/5"
-                  : "text-cream-dark hover:text-accent hover:bg-white/5"
+                  ? "text-brand font-medium bg-gray-50"
+                  : "text-muted hover:text-brand hover:bg-gray-50"
               }`}
             >
               {link.label}

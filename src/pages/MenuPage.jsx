@@ -1,133 +1,157 @@
-import { useState } from "react";
-import { Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useSearchParams, Link } from "react-router-dom";
+import { Search, ShoppingCart } from "lucide-react";
 import { menuData } from "../data/menu";
+import { useCart } from "../context/CartContext";
 import MenuCard from "../components/MenuCard";
 
 export default function MenuPage() {
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [searchParams] = useSearchParams();
+  const initialCategory = searchParams.get("category") || "Breakfast";
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [searchQuery, setSearchQuery] = useState("");
+  const { totalItems, totalPrice } = useCart();
 
-  const categories = ["All", ...menuData.map((c) => c.category)];
+  useEffect(() => {
+    const cat = searchParams.get("category");
+    if (cat) setActiveCategory(cat);
+  }, [searchParams]);
 
-  const filteredItems = menuData
-    .filter((c) => activeCategory === "All" || c.category === activeCategory)
-    .flatMap((c) =>
-      c.items
-        .filter(
+  const categories = menuData.map((c) => c.category);
+
+  const isSearching = searchQuery.length > 0;
+
+  const searchResults = isSearching
+    ? menuData.flatMap((c) =>
+        c.items.filter(
           (item) =>
             item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             item.description.toLowerCase().includes(searchQuery.toLowerCase())
         )
-        .map((item) => ({ ...item, categoryName: c.category }))
-    );
+      )
+    : [];
+
+  const activeItems = menuData.find(
+    (c) => c.category === activeCategory
+  )?.items || [];
+
+  // Determine if category uses card or list layout
+  const cardCategories = ["Breakfast", "Salads"];
+  const useCardLayout = cardCategories.includes(activeCategory);
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-[#fafafa] relative pb-16">
       {/* Header */}
-      <div className="bg-brand text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-accent font-medium tracking-[0.2em] uppercase text-sm mb-2">
-            Explore
-          </p>
-          <h1 className="font-[var(--font-display)] text-4xl sm:text-5xl font-bold mb-6">
-            Our Menu
-          </h1>
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="font-semibold text-lg">SIP</h1>
+          </div>
           {/* Search */}
-          <div className="relative max-w-md">
+          <div className="relative">
             <Search
-              size={18}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-light/40"
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
             />
             <input
               type="text"
-              placeholder="Search menu items..."
+              placeholder="Search menu"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-accent focus:bg-white/15 transition-all text-sm"
+              className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-gray-50 border border-gray-100 text-sm focus:outline-none focus:border-gray-300 transition-colors"
             />
           </div>
         </div>
       </div>
 
       {/* Category Tabs */}
-      <div className="sticky top-16 z-40 bg-cream/95 backdrop-blur-md border-b border-cream-dark">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-2 py-3 overflow-x-auto scrollbar-hide">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all cursor-pointer ${
-                  activeCategory === cat
-                    ? "bg-accent text-white shadow-md"
-                    : "bg-white text-brand-light hover:bg-cream-dark"
-                }`}
-              >
-                {cat !== "All" &&
-                  menuData.find((c) => c.category === cat)?.icon + " "}
-                {cat}
-              </button>
-            ))}
+      {!isSearching && (
+        <div className="sticky top-14 z-40 bg-white border-b border-gray-100">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="flex gap-6 overflow-x-auto scrollbar-hide">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`py-3 text-sm whitespace-nowrap border-b-2 transition-all cursor-pointer ${
+                    activeCategory === cat
+                      ? "border-brand text-brand font-medium"
+                      : "border-transparent text-muted hover:text-brand"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Items Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {filteredItems.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-brand-light/50 text-lg">
-              No items found. Try a different search.
+      {/* Items */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+        {isSearching ? (
+          <>
+            <p className="text-sm text-muted mb-4">
+              {searchResults.length} result{searchResults.length !== 1 ? "s" : ""} for "{searchQuery}"
             </p>
-          </div>
+            {searchResults.length === 0 ? (
+              <div className="text-center py-16">
+                <p className="text-muted">No items found. Try a different search.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {searchResults.map((item) => (
+                  <MenuCard key={item.id} item={item} variant="list" />
+                ))}
+              </div>
+            )}
+          </>
         ) : (
           <>
-            {activeCategory === "All" ? (
-              menuData
-                .filter((c) =>
-                  c.items.some(
-                    (item) =>
-                      item.name
-                        .toLowerCase()
-                        .includes(searchQuery.toLowerCase()) ||
-                      item.description
-                        .toLowerCase()
-                        .includes(searchQuery.toLowerCase())
-                  )
-                )
-                .map((category) => (
-                  <div key={category.category} className="mb-10">
-                    <h2 className="font-[var(--font-display)] text-2xl font-bold mb-5 flex items-center gap-3">
-                      <span className="text-3xl">{category.icon}</span>
-                      {category.category}
-                    </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                      {category.items
-                        .filter(
-                          (item) =>
-                            item.name
-                              .toLowerCase()
-                              .includes(searchQuery.toLowerCase()) ||
-                            item.description
-                              .toLowerCase()
-                              .includes(searchQuery.toLowerCase())
-                        )
-                        .map((item) => (
-                          <MenuCard key={item.id} item={item} />
-                        ))}
-                    </div>
-                  </div>
-                ))
+            <h2 className="font-[var(--font-display)] text-lg font-bold uppercase tracking-wide mb-5">
+              {activeCategory} at SIP.
+            </h2>
+            {useCardLayout ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                {activeItems.map((item) => (
+                  <MenuCard key={item.id} item={item} variant="card" />
+                ))}
+              </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                {filteredItems.map((item) => (
-                  <MenuCard key={item.id} item={item} />
+              <div className="space-y-3">
+                {activeItems.map((item) => (
+                  <MenuCard key={item.id} item={item} variant="list" />
                 ))}
               </div>
             )}
           </>
         )}
       </div>
+
+      {/* Sticky Cart Bar */}
+      {totalItems > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 z-50">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-4">
+            <Link
+              to="/cart"
+              className="flex items-center justify-between bg-brand text-white rounded-xl px-5 py-3.5 shadow-lg hover:bg-brand-light transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <ShoppingCart size={18} />
+                <div>
+                  <p className="text-sm font-semibold">
+                    View cart ({totalItems})
+                  </p>
+                  <p className="text-xs text-white/60">
+                    Tap to review your order
+                  </p>
+                </div>
+              </div>
+              <span className="font-semibold text-sm">Rs.{totalPrice}/-</span>
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
