@@ -14,9 +14,11 @@ import {
   Bean,
   Plus,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { menuData } from "../data/menu";
 import { useCart } from "../context/CartContext";
 import MenuCard from "../components/MenuCard";
+import { PageTransition, StaggerContainer, StaggerItem } from "../components/Motion";
 
 const categoryIcons = {
   Breakfast: Sunrise,
@@ -73,7 +75,7 @@ export default function MenuPage() {
   };
 
   return (
-    <div className="min-h-screen bg-warm relative">
+    <PageTransition className="min-h-screen bg-warm relative">
       {/* Search Header */}
       <div className="bg-white border-b border-black/5 sticky top-14 sm:top-16 z-40">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
@@ -99,7 +101,7 @@ export default function MenuPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="flex gap-6 pt-4 pb-20">
+        <div className="flex gap-6 pt-4 pb-24 sm:pb-20">
           {/* Sidebar Categories — desktop */}
           {!isSearching && (
             <aside className="hidden lg:block w-52 shrink-0">
@@ -150,13 +152,13 @@ export default function MenuPage() {
 
           {/* Mobile Category Pills */}
           {!isSearching && (
-            <div className="lg:hidden fixed bottom-20 left-0 right-0 z-30 px-4">
+            <div className="lg:hidden fixed bottom-20 left-0 right-0 z-30 px-3 sm:px-4">
               <div className="bg-dark/90 backdrop-blur-lg rounded-2xl p-1.5 flex gap-1 overflow-x-auto scrollbar-hide shadow-xl">
                 {menuData.map((cat) => (
                   <button
                     key={cat.category}
                     onClick={() => scrollToCategory(cat.category)}
-                    className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl text-[11px] sm:text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
                       activeCategory === cat.category
                         ? "bg-sip text-white"
                         : "text-white/50 hover:text-white/80"
@@ -197,11 +199,13 @@ export default function MenuPage() {
                     </p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {searchResults.map((item) => (
-                      <MenuCard key={item.id} item={item} />
+                      <StaggerItem key={item.id}>
+                        <MenuCard item={item} />
+                      </StaggerItem>
                     ))}
-                  </div>
+                  </StaggerContainer>
                 )}
               </div>
             ) : (
@@ -230,11 +234,13 @@ export default function MenuPage() {
                         {category.items.length}
                       </span>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                       {category.items.map((item) => (
-                        <MenuCard key={item.id} item={item} />
+                        <StaggerItem key={item.id}>
+                          <MenuCard item={item} />
+                        </StaggerItem>
                       ))}
-                    </div>
+                    </StaggerContainer>
                   </section>
                 ))}
               </div>
@@ -245,10 +251,15 @@ export default function MenuPage() {
 
       {/* Floating Cart */}
       {totalItems > 0 && (
-        <div className="fixed bottom-4 left-4 right-4 z-50 lg:bottom-6 lg:left-auto lg:right-6 lg:w-80">
+        <motion.div
+          initial={{ y: 60, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 25 }}
+          className="fixed bottom-4 left-4 right-4 z-50 lg:bottom-6 lg:left-auto lg:right-6 lg:w-80"
+        >
           <Link
             to="/cart"
-            className="flex items-center justify-between bg-sip hover:bg-sip-dark text-white rounded-2xl pl-5 pr-4 py-3.5 shadow-xl shadow-sip/20 transition-colors"
+            className="flex items-center justify-between bg-sip hover:bg-sip-dark text-white rounded-2xl pl-4 sm:pl-5 pr-3 sm:pr-4 py-3.5 shadow-xl shadow-sip/20 transition-colors"
           >
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
@@ -266,8 +277,8 @@ export default function MenuPage() {
               <ChevronRight size={14} className="text-white/60" />
             </div>
           </Link>
-        </div>
+        </motion.div>
       )}
-    </div>
+    </PageTransition>
   );
 }

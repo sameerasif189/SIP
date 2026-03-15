@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import { CartProvider } from "./context/CartContext";
 import { TableProvider, useTable } from "./context/TableContext";
 import Navbar from "./components/Navbar";
@@ -15,6 +16,23 @@ function RequireTable({ children }) {
   const { isSeated } = useTable();
   if (!isSeated) return <Navigate to="/" replace />;
   return children;
+}
+
+function AnimatedRoutes() {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/home" element={<Home />} />
+        <Route path="/menu" element={<MenuPage />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+      </Routes>
+    </AnimatePresence>
+  );
 }
 
 function AppRoutes() {
@@ -36,14 +54,7 @@ function AppRoutes() {
             <div className="flex flex-col min-h-screen">
               <Navbar />
               <main className="flex-1">
-                <Routes>
-                  <Route path="/home" element={<Home />} />
-                  <Route path="/menu" element={<MenuPage />} />
-                  <Route path="/cart" element={<Cart />} />
-                  <Route path="/checkout" element={<Checkout />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/contact" element={<Contact />} />
-                </Routes>
+                <AnimatedRoutes />
               </main>
               <Footer />
             </div>
