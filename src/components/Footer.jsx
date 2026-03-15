@@ -1,64 +1,62 @@
-import { MapPin, Phone, Mail, Instagram, Clock } from "lucide-react";
+import { MapPin, Phone, Instagram, ArrowUpRight } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-gray-100">
+    <footer className="bg-dark text-white/60">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="flex flex-col sm:flex-row justify-between gap-8">
           <div>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-9 h-9 bg-olive/10 rounded-lg flex items-center justify-center">
-                <span className="font-[var(--font-display)] text-lg font-bold text-olive">
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-8 h-8 bg-sip rounded-lg flex items-center justify-center">
+                <span className="font-[var(--font-display)] text-sm font-bold text-white">
                   SiP
                 </span>
               </div>
-              <span className="font-semibold text-brand">SIP</span>
+              <span className="font-semibold text-white text-sm">
+                SIP Coffee & Kitchen
+              </span>
             </div>
-            <p className="text-sm text-muted leading-relaxed">
-              Premium coffee and dining experience in the heart of Islamabad.
+            <p className="text-xs max-w-xs leading-relaxed">
+              Premium coffee and artisan food in the heart of Islamabad.
+              Every sip, a story.
             </p>
           </div>
 
-          <div>
-            <h4 className="font-semibold text-sm mb-3">Contact</h4>
-            <div className="space-y-2.5 text-sm text-muted">
-              <div className="flex items-start gap-2.5">
-                <MapPin size={14} className="text-olive mt-0.5 shrink-0" />
-                <span>F-8/3, Islamabad</span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <Phone size={14} className="text-olive shrink-0" />
-                <span>+92 XXX XXXXXXX</span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <Mail size={14} className="text-olive shrink-0" />
-                <span>hello@sipcoffee.pk</span>
-              </div>
+          <div className="flex gap-12 text-sm">
+            <div className="space-y-2">
+              <p className="text-white text-xs font-semibold uppercase tracking-wider mb-3">
+                Visit
+              </p>
+              <p className="flex items-center gap-2 text-xs">
+                <MapPin size={12} className="text-sip" />
+                F-8/3, Islamabad
+              </p>
+              <p className="flex items-center gap-2 text-xs">
+                <Phone size={12} className="text-sip" />
+                +92 XXX XXXXXXX
+              </p>
+              <p className="text-xs">Daily: 8 AM – 1 AM</p>
             </div>
-          </div>
-
-          <div>
-            <h4 className="font-semibold text-sm mb-3">Hours</h4>
-            <div className="space-y-2.5 text-sm text-muted">
-              <div className="flex items-center gap-2.5">
-                <Clock size={14} className="text-olive shrink-0" />
-                <span>Daily: 8:00 AM - 1:00 AM</span>
-              </div>
+            <div className="space-y-2">
+              <p className="text-white text-xs font-semibold uppercase tracking-wider mb-3">
+                Social
+              </p>
               <a
                 href="https://www.instagram.com/sipcoffee.pk/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2.5 text-olive hover:text-olive-dark transition-colors mt-3"
+                className="flex items-center gap-2 text-xs hover:text-sip-light transition-colors"
               >
-                <Instagram size={14} />
-                <span>@sipcoffee.pk</span>
+                <Instagram size={12} className="text-sip" />
+                @sipcoffee.pk
+                <ArrowUpRight size={10} />
               </a>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-gray-100 mt-8 pt-6 text-center text-xs text-muted">
-          <p>&copy; {new Date().getFullYear()} SIP Coffee. All rights reserved.</p>
+        <div className="border-t border-white/10 mt-8 pt-6 text-[11px] text-white/30">
+          &copy; {new Date().getFullYear()} SIP Coffee. Islamabad.
         </div>
       </div>
     </footer>

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, X } from "lucide-react";
+import { Minus, Plus, ShoppingBag, ArrowLeft, Trash2 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 
 export default function Cart() {
   const { items, updateQuantity, removeItem, totalPrice, totalItems } = useCart();
   const [tip, setTip] = useState(5);
   const [orderNotes, setOrderNotes] = useState("");
+  const [tableNumber, setTableNumber] = useState("1");
 
   const tipOptions = [
     { label: "No tip", value: 0 },
@@ -22,14 +23,20 @@ export default function Cart() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-[#fafafa] flex items-center justify-center">
-        <div className="text-center px-4">
-          <ShoppingBag size={48} className="mx-auto text-gray-300 mb-4" />
-          <h2 className="font-semibold text-xl mb-2">Your cart is empty</h2>
-          <p className="text-muted text-sm mb-6">Add some items from our menu</p>
+      <div className="min-h-screen bg-warm flex items-center justify-center px-4">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-sip-bg rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <ShoppingBag size={28} className="text-sip" />
+          </div>
+          <h2 className="font-[var(--font-display)] text-xl font-bold mb-2">
+            Nothing here yet
+          </h2>
+          <p className="text-dark-muted text-sm mb-6">
+            Add some delicious items from our menu
+          </p>
           <Link
             to="/menu"
-            className="inline-flex items-center gap-2 bg-brand text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-brand-light transition-colors"
+            className="inline-flex items-center gap-2 bg-sip hover:bg-sip-dark text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-colors"
           >
             Browse Menu
           </Link>
@@ -39,79 +46,134 @@ export default function Cart() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa]">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6">
+    <div className="min-h-screen bg-warm">
+      <div className="max-w-lg mx-auto px-4 sm:px-6 py-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <Link to="/menu" className="p-1 text-muted hover:text-brand transition-colors">
-            <X size={20} />
+        <div className="flex items-center gap-4 mb-6">
+          <Link
+            to="/menu"
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-black/5 hover:bg-gray-50 transition-colors"
+          >
+            <ArrowLeft size={16} />
           </Link>
-          <h1 className="font-semibold">SIP</h1>
-          <div className="w-5" />
+          <div>
+            <h1 className="font-[var(--font-display)] text-xl font-bold">
+              Your Order
+            </h1>
+            <p className="text-xs text-dark-muted">
+              {totalItems} item{totalItems !== 1 ? "s" : ""} · Table {tableNumber}
+            </p>
+          </div>
         </div>
 
-        <p className="text-sm text-muted mb-4">Table 1</p>
+        {/* Table Number */}
+        <div className="bg-white rounded-2xl border border-black/5 p-4 mb-4">
+          <p className="text-xs font-semibold text-dark-muted uppercase tracking-wider mb-2">
+            Table Number
+          </p>
+          <div className="flex gap-2">
+            {["1", "2", "3", "4", "5", "6", "7", "8"].map((num) => (
+              <button
+                key={num}
+                onClick={() => setTableNumber(num)}
+                className={`w-9 h-9 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  tableNumber === num
+                    ? "bg-sip text-white shadow-sm"
+                    : "bg-warm text-dark hover:bg-sip-bg"
+                }`}
+              >
+                {num}
+              </button>
+            ))}
+          </div>
+        </div>
 
-        {/* Cart Items */}
-        <div className="space-y-1">
+        {/* Items */}
+        <div className="space-y-2">
           {items.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-xl p-4 border border-gray-100 flex gap-3 items-start"
+              className="bg-white rounded-2xl border border-black/5 p-4"
             >
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-10 h-10 rounded-lg object-cover shrink-0"
-              />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <h3 className="font-semibold text-sm text-brand">
-                      {item.name}
-                    </h3>
-                    <p className="text-sm text-olive font-medium">
-                      Rs.{item.price}/-
+              <div className="flex gap-3">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-14 h-14 rounded-xl object-cover shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <h3 className="font-semibold text-sm text-dark leading-tight">
+                        {item.name}
+                      </h3>
+                      <p className="text-xs text-dark-muted mt-0.5">
+                        Rs.{item.price} each
+                      </p>
+                    </div>
+                    <p className="font-bold text-sm text-dark shrink-0">
+                      Rs.{item.price * item.quantity}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
+
+                  <div className="flex items-center justify-between mt-2.5">
+                    <div className="flex items-center gap-0.5 bg-sip-bg rounded-lg p-0.5">
+                      <button
+                        onClick={() =>
+                          updateQuantity(item.id, item.quantity - 1)
+                        }
+                        className="w-7 h-7 flex items-center justify-center rounded-md bg-white text-dark shadow-sm hover:bg-gray-50 transition-colors cursor-pointer"
+                      >
+                        <Minus size={12} />
+                      </button>
+                      <span className="text-xs font-bold w-7 text-center text-sip-dark">
+                        {item.quantity}
+                      </span>
+                      <button
+                        onClick={() =>
+                          updateQuantity(item.id, item.quantity + 1)
+                        }
+                        className="w-7 h-7 flex items-center justify-center rounded-md bg-sip text-white shadow-sm hover:bg-sip-dark transition-colors cursor-pointer"
+                      >
+                        <Plus size={12} />
+                      </button>
+                    </div>
                     <button
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      className="w-7 h-7 flex items-center justify-center rounded-full border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+                      onClick={() => removeItem(item.id)}
+                      className="text-dark-muted hover:text-red-500 p-1 transition-colors cursor-pointer"
                     >
-                      <Minus size={12} />
-                    </button>
-                    <span className="text-sm font-semibold w-4 text-center">
-                      {item.quantity}
-                    </span>
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="w-7 h-7 flex items-center justify-center rounded-full border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
-                    >
-                      <Plus size={12} />
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 </div>
-                <p className="text-xs text-muted mt-1 line-clamp-2">
-                  {item.description}
-                </p>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Tip Section */}
-        <div className="mt-6 bg-white rounded-xl border border-gray-100 p-4">
-          <h3 className="font-semibold text-sm mb-3">Add a tip</h3>
+        {/* Add More */}
+        <Link
+          to="/menu"
+          className="flex items-center gap-2 mt-3 text-xs text-sip font-semibold hover:text-sip-dark transition-colors"
+        >
+          <Plus size={13} />
+          Add more items
+        </Link>
+
+        {/* Tip */}
+        <div className="bg-white rounded-2xl border border-black/5 p-4 mt-5">
+          <p className="text-xs font-semibold text-dark-muted uppercase tracking-wider mb-3">
+            Add a Tip
+          </p>
           <div className="flex gap-2">
             {tipOptions.map((opt) => (
               <button
                 key={opt.value}
                 onClick={() => setTip(opt.value)}
-                className={`px-4 py-2 rounded-full text-xs font-medium transition-all cursor-pointer ${
+                className={`flex-1 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   tip === opt.value
-                    ? "bg-brand text-white"
-                    : "bg-gray-100 text-brand hover:bg-gray-200"
+                    ? "bg-dark text-white"
+                    : "bg-warm text-dark-muted hover:bg-sip-bg hover:text-dark"
                 }`}
               >
                 {opt.label}
@@ -120,57 +182,55 @@ export default function Cart() {
           </div>
         </div>
 
-        {/* Order Notes */}
-        <div className="mt-4 bg-white rounded-xl border border-gray-100 p-4">
-          <h3 className="font-semibold text-sm mb-2">Order notes</h3>
+        {/* Notes */}
+        <div className="bg-white rounded-2xl border border-black/5 p-4 mt-3">
+          <p className="text-xs font-semibold text-dark-muted uppercase tracking-wider mb-2">
+            Special Requests
+          </p>
           <textarea
             value={orderNotes}
             onChange={(e) => setOrderNotes(e.target.value)}
-            placeholder="Add any notes for your order"
-            rows={3}
-            className="w-full text-sm border border-gray-100 rounded-lg p-3 bg-gray-50 focus:outline-none focus:border-gray-300 resize-none"
+            placeholder="Allergies, preferences, or any notes for the kitchen..."
+            rows={2}
+            className="w-full text-sm bg-warm border border-black/5 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-sip/30 resize-none"
           />
         </div>
 
-        {/* Add More Items */}
-        <Link
-          to="/menu"
-          className="flex items-center gap-2 mt-4 text-sm text-brand font-medium hover:text-olive transition-colors"
-        >
-          <Plus size={14} />
-          Add items
-        </Link>
-
-        {/* Summary */}
-        <div className="mt-6 bg-white rounded-xl border border-gray-100 p-4 space-y-2.5 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted">Service fee (1%)</span>
-            <span className="text-olive">Rs.{serviceFee}/-</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted">GST (5%)</span>
-            <span className="text-olive">Rs.{gst}/-</span>
-          </div>
-          {tip > 0 && (
-            <div className="flex justify-between">
-              <span className="text-muted">Tips ({tip}%)</span>
-              <span className="text-olive">Rs.{tipAmount}/-</span>
+        {/* Totals */}
+        <div className="bg-dark rounded-2xl p-5 mt-5 text-white">
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between text-white/50">
+              <span>Subtotal</span>
+              <span>Rs.{totalPrice}</span>
             </div>
-          )}
-          <div className="border-t border-gray-100 pt-2.5 flex justify-between font-bold">
-            <span>Total</span>
-            <span className="text-olive">Rs.{grandTotal}/-</span>
+            <div className="flex justify-between text-white/50">
+              <span>Service fee (1%)</span>
+              <span>Rs.{serviceFee}</span>
+            </div>
+            <div className="flex justify-between text-white/50">
+              <span>GST (5%)</span>
+              <span>Rs.{gst}</span>
+            </div>
+            {tip > 0 && (
+              <div className="flex justify-between text-white/50">
+                <span>Tip ({tip}%)</span>
+                <span>Rs.{tipAmount}</span>
+              </div>
+            )}
+            <div className="border-t border-white/10 pt-3 flex justify-between text-lg font-bold">
+              <span>Total</span>
+              <span className="text-sip-light">Rs.{grandTotal}</span>
+            </div>
           </div>
-        </div>
 
-        {/* Checkout Button */}
-        <Link
-          to="/checkout"
-          state={{ tip, tipAmount, serviceFee, gst, grandTotal, orderNotes }}
-          className="block mt-6 bg-brand text-white text-center py-3.5 rounded-xl font-medium text-sm hover:bg-brand-light transition-colors"
-        >
-          Go to checkout
-        </Link>
+          <Link
+            to="/checkout"
+            state={{ tip, tipAmount, serviceFee, gst, grandTotal, orderNotes, tableNumber }}
+            className="block w-full mt-5 bg-sip hover:bg-sip-dark text-white text-center py-3.5 rounded-xl font-semibold text-sm transition-colors"
+          >
+            Proceed to Payment · Rs.{grandTotal}
+          </Link>
+        </div>
       </div>
     </div>
   );
