@@ -27,7 +27,7 @@ export default function Home() {
       <section className="relative bg-dark overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200"
+            src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=80"
             alt="Coffee"
             className="w-full h-full object-cover opacity-30 scale-105"
           />
@@ -136,7 +136,7 @@ export default function Home() {
         <div className="bg-dark rounded-3xl overflow-hidden relative">
           <div className="absolute inset-0 opacity-20">
             <img
-              src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=800"
+              src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=800&q=80"
               alt=""
               className="w-full h-full object-cover"
             />

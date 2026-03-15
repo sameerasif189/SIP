@@ -6,7 +6,7 @@ export default function About() {
       {/* Hero */}
       <div className="relative h-56 sm:h-72 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1200"
+          src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=80"
           alt="Coffee shop"
           className="w-full h-full object-cover"
         />

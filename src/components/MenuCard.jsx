@@ -1,20 +1,29 @@
-import { Plus, Minus } from "lucide-react";
+import { useState } from "react";
+import { Plus, Minus, ImageOff } from "lucide-react";
 import { useCart } from "../context/CartContext";
 
 export default function MenuCard({ item }) {
   const { items, addItem, updateQuantity } = useCart();
   const inCart = items.find((i) => i.id === item.id);
+  const [imgError, setImgError] = useState(false);
 
   return (
     <div className="group bg-white rounded-2xl border border-black/5 hover:border-sip/20 hover:shadow-lg transition-all duration-300 overflow-hidden">
       {/* Image */}
-      <div className="relative aspect-[4/3] overflow-hidden">
-        <img
-          src={item.image}
-          alt={item.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
-        />
+      <div className="relative aspect-[4/3] overflow-hidden bg-sip-bg">
+        {imgError ? (
+          <div className="w-full h-full flex items-center justify-center bg-sip-bg">
+            <ImageOff size={24} className="text-sip/30" />
+          </div>
+        ) : (
+          <img
+            src={item.image}
+            alt={item.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+            onError={() => setImgError(true)}
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
         {/* Price Badge */}
         <div className="absolute bottom-2 left-2 bg-dark/80 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-full">
