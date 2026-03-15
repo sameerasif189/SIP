@@ -25,7 +25,7 @@ function AppRoutes() {
       {/* Welcome page is the landing — no navbar/footer */}
       <Route
         path="/"
-        element={isSeated ? <Navigate to="/menu" replace /> : <Welcome />}
+        element={isSeated ? <Navigate to="/home" replace /> : <Welcome />}
       />
 
       {/* Main app layout — requires table selection */}
