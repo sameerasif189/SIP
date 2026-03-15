@@ -19,14 +19,14 @@ export default function Welcome() {
       const simulatedTable = Math.floor(Math.random() * 16) + 1;
       setScanning(false);
       selectTable(String(simulatedTable));
-      navigate("/menu");
+      navigate("/home");
     }, 2000);
   };
 
   const handleManualSelect = () => {
     if (!selectedTable) return;
     selectTable(String(selectedTable));
-    navigate("/menu");
+    navigate("/home");
   };
 
   return (
