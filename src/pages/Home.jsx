@@ -1,16 +1,30 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, MapPin, Clock, ChevronRight } from "lucide-react";
+import {
+  ArrowRight,
+  MapPin,
+  Clock,
+  ChevronRight,
+  Sunrise,
+  Leaf,
+  Sandwich,
+  Coffee,
+  Timer,
+  GlassWater,
+  Bean,
+  Plus,
+} from "lucide-react";
 import { menuData } from "../data/menu";
 import MenuCard from "../components/MenuCard";
 
-const categoryEmojis = {
-  Breakfast: "🍳",
-  Salads: "🥗",
-  Sandwiches: "🥪",
-  Coffee: "☕",
-  "Slow Bar": "🫖",
-  "Not Coffee": "🧃",
-  Matcha: "🍵",
+const categoryIcons = {
+  Breakfast: Sunrise,
+  Salads: Leaf,
+  Sandwiches: Sandwich,
+  Coffee: Coffee,
+  "Slow Bar": Timer,
+  "Not Coffee": GlassWater,
+  Matcha: Bean,
+  Extras: Plus,
 };
 
 export default function Home() {
@@ -18,7 +32,7 @@ export default function Home() {
     menuData[0].items[0],
     menuData[0].items[2],
     menuData[3].items[5],
-    menuData[4].items[4],
+    menuData[5].items[0],
   ];
 
   return (
@@ -91,9 +105,14 @@ export default function Home() {
               to={`/menu?category=${encodeURIComponent(cat.category)}`}
               className="group bg-white rounded-2xl p-3 sm:p-4 text-center border border-black/5 hover:border-sip/30 hover:shadow-md transition-all"
             >
-              <span className="text-xl sm:text-2xl block mb-1">
-                {categoryEmojis[cat.category] || "🍽️"}
-              </span>
+              {(() => {
+                const Icon = categoryIcons[cat.category];
+                return Icon ? (
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-sip/10 flex items-center justify-center mx-auto mb-1">
+                    <Icon size={16} className="text-sip" />
+                  </div>
+                ) : null;
+              })()}
               <p className="font-semibold text-[11px] sm:text-xs text-dark group-hover:text-sip transition-colors leading-tight">
                 {cat.category}
               </p>
