@@ -13,6 +13,7 @@ const categoryEmojis = {
   "Slow Bar": "🫖",
   "Not Coffee": "🧃",
   Matcha: "🍵",
+  Extras: "➕",
 };
 
 export default function MenuPage() {
