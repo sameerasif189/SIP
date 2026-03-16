@@ -135,7 +135,7 @@ export default function Checkout() {
             transition={{ delay: 0.5 }}
           >
             <Link
-              to="/"
+              to="/menu"
               className="block w-full bg-sip text-white text-center py-4 rounded-2xl font-semibold text-[15px] shadow-lg shadow-sip/30"
             >
               Back to menu

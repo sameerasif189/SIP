@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, MapPin, Clock, Bell, ShoppingBag, ChevronRight, Flame, UtensilsCrossed } from "lucide-react";
+import { Search, MapPin, Clock, Bell, ShoppingBag, ChevronRight, Flame } from "lucide-react";
 import { menuData } from "../data/menu";
 import { useCart } from "../context/CartContext";
 import { useOrder } from "../context/OrderContext";
 import MenuCard from "../components/MenuCard";
+import DrinkRow from "../components/DrinkRow";
 import SipLogo from "../components/SipLogo";
 
 const STATUS_LABELS = [
@@ -13,13 +14,6 @@ const STATUS_LABELS = [
   "Your order is being prepared",
   "Your order is ready to serve",
   "Your order has been served",
-];
-
-const STATUS_ICONS = [
-  null,
-  UtensilsCrossed,
-  null,
-  null,
 ];
 
 export default function Home() {
@@ -70,7 +64,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white pb-24">
-      {/* Hero — full bleed with gradient overlay */}
+      {/* Hero */}
       <div className="relative h-[220px] sm:h-[300px] lg:h-[360px] overflow-hidden">
         <img
           src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1600&q=80"
@@ -81,7 +75,7 @@ export default function Home() {
       </div>
 
       {/* Floating identity card */}
-      <div className="max-w-5xl mx-auto px-5 lg:px-8 -mt-24 relative z-10">
+      <div className="max-w-5xl mx-auto px-4 lg:px-8 -mt-24 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -115,7 +109,7 @@ export default function Home() {
       </div>
 
       {/* Search bar */}
-      <div className="max-w-5xl mx-auto px-5 lg:px-8 mt-6 mb-2">
+      <div className="max-w-5xl mx-auto px-4 lg:px-8 mt-6 mb-2">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -135,7 +129,7 @@ export default function Home() {
 
       {/* Category pills — sticky */}
       <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-border/60" ref={tabsRef}>
-        <div className="max-w-5xl mx-auto px-5 lg:px-8">
+        <div className="max-w-5xl mx-auto px-4 lg:px-8">
           <div className="flex gap-2 overflow-x-auto scrollbar-hide py-3">
             {menuData.map((cat) => (
               <button
@@ -155,7 +149,7 @@ export default function Home() {
       </div>
 
       {/* Menu sections */}
-      <div className="max-w-5xl mx-auto px-5 lg:px-8 pt-8">
+      <div className="max-w-5xl mx-auto px-4 lg:px-8 pt-8">
         {isSearching ? (
           <div>
             <p className="text-sm text-muted mb-4">
@@ -172,7 +166,7 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <div className="space-y-14">
+          <div className="space-y-10">
             {menuData.map((category) => (
               <section
                 key={category.category}
@@ -185,22 +179,33 @@ export default function Home() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3 }}
-                  className="font-display font-black italic text-xl lg:text-2xl uppercase tracking-wide text-dark mb-6 lg:mb-8"
+                  className="text-xl lg:text-2xl font-extrabold tracking-tight text-dark mb-4 lg:mb-6 uppercase"
                 >
-                  {category.category} at SIP.
+                  {category.category}.
                 </motion.h2>
-                <div className="flex gap-5 overflow-x-auto scrollbar-hide sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-x-5 sm:gap-y-8 pb-2 sm:pb-0">
-                  {category.items.map((item, i) => (
-                    <MenuCard key={item.id} item={item} index={i} />
-                  ))}
-                </div>
+
+                {category.type === "list" ? (
+                  /* Drink list layout — text left, image right */
+                  <div className="space-y-3">
+                    {category.items.map((item, i) => (
+                      <DrinkRow key={item.id} item={item} index={i} />
+                    ))}
+                  </div>
+                ) : (
+                  /* Food card layout — horizontal scroll on mobile, grid on desktop */
+                  <div className="flex gap-4 overflow-x-auto scrollbar-hide sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-x-5 sm:gap-y-8 pb-2 sm:pb-0">
+                    {category.items.map((item, i) => (
+                      <MenuCard key={item.id} item={item} index={i} />
+                    ))}
+                  </div>
+                )}
               </section>
             ))}
           </div>
         )}
       </div>
 
-      {/* Order status bar with preparation animation */}
+      {/* Order status bar */}
       <AnimatePresence>
         {activeOrder && (
           <motion.div
@@ -211,7 +216,6 @@ export default function Home() {
             className="fixed bottom-20 left-4 right-4 z-40 max-w-5xl mx-auto"
           >
             <div className="bg-white rounded-2xl border border-border shadow-xl shadow-dark/10 p-4">
-              {/* Progress bar */}
               <div className="flex gap-1.5 mb-3">
                 {ORDER_STEPS.map((_, i) => (
                   <div
@@ -226,10 +230,8 @@ export default function Home() {
                   />
                 ))}
               </div>
-              {/* Status text + icon */}
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  {/* Animated cooking icon during preparation */}
                   {(activeOrder.step === 1 || activeOrder.step === 2) && (
                     <motion.div
                       animate={{ rotate: [0, -10, 10, -10, 0] }}
@@ -297,7 +299,7 @@ export default function Home() {
         animate={{ scale: 1 }}
         transition={{ delay: 0.6, type: "spring", stiffness: 300, damping: 20 }}
         whileTap={{ scale: 0.9 }}
-        className="fixed bottom-5 right-4 z-40 w-12 h-12 bg-dark text-white rounded-full shadow-xl shadow-dark/20 flex items-center justify-center cursor-pointer"
+        className="fixed z-40 w-12 h-12 bg-dark text-white rounded-full shadow-xl shadow-dark/20 flex items-center justify-center cursor-pointer right-4"
         style={{ bottom: totalItems > 0 ? "5.5rem" : "1.25rem" }}
       >
         <Bell size={18} />

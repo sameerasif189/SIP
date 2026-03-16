@@ -26,7 +26,7 @@ export default function Cart() {
     return (
       <div className="min-h-screen bg-white flex flex-col">
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-          <button onClick={() => navigate("/")} className="cursor-pointer">
+          <button onClick={() => navigate("/menu")} className="cursor-pointer">
             <X size={20} className="text-dark" />
           </button>
           <p className="font-bold text-dark text-lg">Your order</p>
@@ -40,7 +40,7 @@ export default function Cart() {
           >
             <p className="text-muted text-sm mb-4">Your order is empty</p>
             <Link
-              to="/"
+              to="/menu"
               className="text-sip font-semibold text-sm hover:underline"
             >
               Browse menu
@@ -59,7 +59,7 @@ export default function Cart() {
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center justify-between px-5 py-4 border-b border-border"
       >
-        <button onClick={() => navigate("/")} className="cursor-pointer">
+        <button onClick={() => navigate("/menu")} className="cursor-pointer">
           <X size={20} className="text-dark" />
         </button>
         <p className="font-bold text-dark text-lg">Your order</p>
@@ -146,7 +146,7 @@ export default function Cart() {
           transition={{ delay: 0.3 }}
         >
           <Link
-            to="/"
+            to="/menu"
             className="inline-flex items-center gap-1 text-sip text-sm font-semibold mt-4 hover:underline"
           >
             <Plus size={14} />

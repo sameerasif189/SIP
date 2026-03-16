@@ -46,7 +46,7 @@ export default function ItemDetail() {
         name: selectedOption ? `${item.name} (${selectedOption})` : item.name,
       });
     }
-    navigate("/");
+    navigate("/menu");
   };
 
   return (
