@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Minus, Plus } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, Minus, Plus, Heart } from "lucide-react";
 import { menuData } from "../data/menu";
 import { useCart } from "../context/CartContext";
 import MenuCard from "../components/MenuCard";
@@ -17,6 +18,7 @@ export default function ItemDetail() {
   const [selectedOption, setSelectedOption] = useState(
     item?.options?.[0] || null
   );
+  const [liked, setLiked] = useState(false);
 
   if (!item) {
     return (
@@ -28,7 +30,6 @@ export default function ItemDetail() {
 
   const totalPrice = item.price * quantity;
 
-  // Get "frequently bought together" — other items from same category
   const category = menuData.find((c) =>
     c.items.some((i) => i.id === item.id)
   );
@@ -41,7 +42,6 @@ export default function ItemDetail() {
       addItem({
         ...item,
         selectedOption,
-        // Use a unique id if option selected so different options are separate cart items
         id: selectedOption ? `${item.id}-${selectedOption}` : item.id,
         name: selectedOption ? `${item.name} (${selectedOption})` : item.name,
       });
@@ -50,105 +50,164 @@ export default function ItemDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-white pb-24">
+    <div className="min-h-screen bg-white pb-28">
       {/* Image */}
-      <div className="relative">
-        <img
+      <div className="relative overflow-hidden">
+        <motion.img
           src={item.image}
           alt={item.name}
-          className="w-full h-[280px] sm:h-[380px] object-cover"
+          className="w-full h-[300px] sm:h-[400px] object-cover"
+          initial={{ scale: 1.1 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         />
-        <button
-          onClick={() => navigate(-1)}
-          className="absolute top-4 left-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md cursor-pointer hover:bg-bg transition-colors"
-        >
-          <ArrowLeft size={18} className="text-dark" />
-        </button>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+        <div className="absolute top-4 left-4 right-4 flex justify-between">
+          <motion.button
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg cursor-pointer"
+          >
+            <ArrowLeft size={18} className="text-dark" />
+          </motion.button>
+          <motion.button
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            whileTap={{ scale: 0.85 }}
+            onClick={() => setLiked(!liked)}
+            className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg cursor-pointer"
+          >
+            <Heart
+              size={18}
+              className={liked ? "text-red-500 fill-red-500" : "text-dark"}
+            />
+          </motion.button>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-3xl mx-auto px-5 pt-6">
-        <h1 className="text-2xl font-bold text-dark">{item.name}</h1>
-        <p className="text-lg font-bold text-dark/70 mt-1">
-          Rs.{item.price}/-
-        </p>
-        <p className="text-muted text-[15px] mt-3 leading-relaxed">
-          {item.description}
-        </p>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+        className="max-w-3xl mx-auto px-5 pt-6"
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-dark">{item.name}</h1>
+            <p className="text-muted text-[15px] mt-2 leading-relaxed">
+              {item.description}
+            </p>
+          </div>
+          <p className="text-xl font-black text-sip shrink-0">
+            Rs.{item.price}/-
+          </p>
+        </div>
 
         {/* Options */}
-        {item.options && item.options.length > 0 && (
-          <div className="mt-6">
-            <p className="font-semibold text-dark text-sm mb-3">
-              Type of eggs
-            </p>
-            <div className="flex gap-2 flex-wrap">
-              {item.options.map((opt) => (
-                <button
-                  key={opt}
-                  onClick={() => setSelectedOption(opt)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer ${
-                    selectedOption === opt
-                      ? "bg-dark text-white"
-                      : "bg-white text-dark border border-border hover:border-dark/30"
-                  }`}
-                >
-                  {opt}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        <AnimatePresence>
+          {item.options && item.options.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="mt-6"
+            >
+              <p className="font-semibold text-dark text-sm mb-3">
+                Choose your style
+              </p>
+              <div className="flex gap-2 flex-wrap">
+                {item.options.map((opt) => (
+                  <motion.button
+                    key={opt}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setSelectedOption(opt)}
+                    className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                      selectedOption === opt
+                        ? "bg-sip text-white shadow-md shadow-sip/20"
+                        : "bg-bg text-dark hover:bg-border"
+                    }`}
+                  >
+                    {opt}
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Quantity */}
-        <div className="mt-6">
-          <div className="inline-flex items-center bg-bg rounded-full">
-            <button
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="mt-6 flex items-center justify-between"
+        >
+          <p className="font-semibold text-dark text-sm">Quantity</p>
+          <div className="inline-flex items-center bg-bg rounded-xl overflow-hidden">
+            <motion.button
+              whileTap={{ scale: 0.85 }}
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="w-10 h-10 flex items-center justify-center text-dark cursor-pointer hover:bg-border rounded-full transition-colors"
+              className="w-11 h-11 flex items-center justify-center text-dark cursor-pointer hover:bg-border transition-colors"
             >
               <Minus size={16} />
-            </button>
-            <span className="w-10 text-center font-semibold text-dark">
+            </motion.button>
+            <span className="w-10 text-center font-bold text-dark text-lg">
               {quantity}
             </span>
-            <button
+            <motion.button
+              whileTap={{ scale: 0.85 }}
               onClick={() => setQuantity(quantity + 1)}
-              className="w-10 h-10 flex items-center justify-center text-dark cursor-pointer hover:bg-border rounded-full transition-colors"
+              className="w-11 h-11 flex items-center justify-center text-dark cursor-pointer hover:bg-border transition-colors"
             >
               <Plus size={16} />
-            </button>
+            </motion.button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Frequently bought together */}
         {related.length > 0 && (
-          <div className="mt-10 border-t border-border pt-6">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+            className="mt-10 border-t border-border pt-6"
+          >
             <h3 className="font-bold text-dark text-lg mb-4">
-              Frequently bought together
+              You might also like
             </h3>
             <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
-              {related.map((r) => (
+              {related.map((r, i) => (
                 <div key={r.id} className="w-[180px] shrink-0">
-                  <MenuCard item={r} />
+                  <MenuCard item={r} index={i} />
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
 
-      {/* Sticky add to order button */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white border-t border-border sm:px-6">
+      {/* Sticky add to order */}
+      <motion.div
+        initial={{ y: 100 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30, delay: 0.3 }}
+        className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/90 backdrop-blur-md border-t border-border/60 sm:px-6"
+      >
         <div className="max-w-3xl mx-auto">
-          <button
+          <motion.button
+            whileTap={{ scale: 0.98 }}
             onClick={handleAdd}
-            className="w-full bg-dark text-white py-4 rounded-full font-semibold text-[15px] cursor-pointer hover:bg-dark/90 transition-colors"
+            className="w-full bg-sip text-white py-4 rounded-2xl font-semibold text-[15px] cursor-pointer shadow-lg shadow-sip/30 hover:shadow-xl hover:shadow-sip/40 transition-shadow"
           >
             Add {quantity} to order · Rs.{totalPrice}/-
-          </button>
+          </motion.button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

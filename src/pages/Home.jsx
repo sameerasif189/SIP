@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Search, Star, MapPin, Clock, Bell, ShoppingBag } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, MapPin, Clock, Bell, ShoppingBag, ChevronRight } from "lucide-react";
 import { menuData } from "../data/menu";
 import { useCart } from "../context/CartContext";
 import { useOrder } from "../context/OrderContext";
@@ -17,6 +18,7 @@ const STATUS_LABELS = [
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState(menuData[0].category);
   const [searchQuery, setSearchQuery] = useState("");
+  const [serviceMode, setServiceMode] = useState("dine-in");
   const { totalItems, totalPrice } = useCart();
   const { activeOrder, dismissOrder, ORDER_STEPS } = useOrder();
   const sectionRefs = useRef({});
@@ -30,7 +32,6 @@ export default function Home() {
     });
   };
 
-  // Track scroll to update active category
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -63,93 +64,107 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white pb-24">
-      {/* Hero banner */}
-      <div className="relative h-[200px] sm:h-[260px] overflow-hidden">
+      {/* Hero — full bleed with gradient overlay */}
+      <div className="relative h-[220px] sm:h-[280px] overflow-hidden">
         <img
           src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200&q=80"
           alt="SIP Coffee"
           className="w-full h-full object-cover"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
       </div>
 
-      {/* Logo overlapping hero */}
-      <div className="max-w-3xl mx-auto px-5 relative">
-        <div className="flex justify-center -mt-10 mb-4">
-          <SipLogo size={80} className="border-4 border-white" />
-        </div>
-
-        {/* Info */}
-        <div className="text-center mb-6">
-          <p className="text-[11px] text-muted uppercase tracking-[0.2em] font-medium mb-1">
-            Table Tap
-          </p>
-          <h1 className="text-3xl font-black text-dark tracking-tight">SIP</h1>
-          <div className="flex items-center justify-center gap-1.5 flex-wrap mt-3 text-[13px] text-muted">
-            <Star size={14} className="text-amber-500 fill-amber-500" />
-            <span>4.8 · 2,729+ guests</span>
-            <span className="text-border">·</span>
-            <MapPin size={13} />
-            <span>F-8/3, Islamabad</span>
-            <span className="text-border">·</span>
-            <Clock size={13} />
-            <span>8 AM - 1 AM</span>
-          </div>
-        </div>
-
-        {/* Service toggle */}
-        <div className="flex justify-center mb-6">
-          <div className="inline-flex bg-bg rounded-full p-1">
-            <button className="px-5 py-2 rounded-full bg-white text-dark text-sm font-semibold shadow-sm cursor-pointer">
-              Table service
-            </button>
-            <button className="px-5 py-2 rounded-full text-muted text-sm font-medium cursor-pointer">
-              Take-away
-            </button>
-          </div>
-        </div>
-
-        {/* Table + service time */}
-        <div className="grid grid-cols-2 gap-3 mb-8">
-          <div className="border border-border rounded-xl py-4 text-center">
-            <p className="text-lg font-bold text-dark">#1</p>
-            <p className="text-xs text-muted mt-0.5">Current table</p>
-          </div>
-          <div className="border border-border rounded-xl py-4 text-center">
-            <div className="flex items-center justify-center gap-1.5">
-              <Clock size={14} className="text-muted" />
-              <p className="text-lg font-bold text-dark">15 - 20 min</p>
+      {/* Floating identity card — overlaps the hero */}
+      <div className="max-w-3xl mx-auto px-5 -mt-24 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="bg-white rounded-3xl shadow-xl shadow-dark/[0.06] p-6 border border-border"
+        >
+          <div className="flex items-start gap-4">
+            <SipLogo size={56} className="shadow-lg shadow-sip/30" />
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl font-black text-dark tracking-tight leading-tight">
+                SIP
+              </h1>
+              <p className="text-muted text-xs mt-0.5">Coffee & Kitchen</p>
+              <div className="flex items-center gap-2 flex-wrap mt-2 text-[11px] text-muted">
+                <span className="flex items-center gap-1">
+                  <MapPin size={11} />
+                  F-8/3, Islamabad
+                </span>
+                <span className="text-border">|</span>
+                <span className="flex items-center gap-1">
+                  <Clock size={11} />
+                  8 AM – 1 AM
+                </span>
+              </div>
             </div>
-            <p className="text-xs text-muted mt-0.5">Average service time</p>
           </div>
-        </div>
+
+          {/* Service mode + table row */}
+          <div className="flex items-center gap-3 mt-5">
+            <div className="flex bg-bg rounded-full p-0.5 flex-1">
+              <button
+                onClick={() => setServiceMode("dine-in")}
+                className={`flex-1 py-2.5 rounded-full text-xs font-semibold text-center transition-all cursor-pointer ${
+                  serviceMode === "dine-in"
+                    ? "bg-sip text-white shadow-md shadow-sip/30"
+                    : "text-muted"
+                }`}
+              >
+                Dine-in
+              </button>
+              <button
+                onClick={() => setServiceMode("takeaway")}
+                className={`flex-1 py-2.5 rounded-full text-xs font-semibold text-center transition-all cursor-pointer ${
+                  serviceMode === "takeaway"
+                    ? "bg-sip text-white shadow-md shadow-sip/30"
+                    : "text-muted"
+                }`}
+              >
+                Take-away
+              </button>
+            </div>
+            <div className="bg-sip-light text-sip rounded-full px-4 py-2.5 text-xs font-bold shrink-0">
+              Table #1
+            </div>
+          </div>
+        </motion.div>
       </div>
 
-      {/* Search */}
-      <div className="max-w-3xl mx-auto px-5 mb-2">
-        <div className="relative">
+      {/* Search bar */}
+      <div className="max-w-3xl mx-auto px-5 mt-6 mb-2">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="relative"
+        >
           <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
           <input
             type="text"
-            placeholder="Search menu"
+            placeholder="Search menu..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10"
+            className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-sip/20"
           />
-        </div>
+        </motion.div>
       </div>
 
-      {/* Category tabs — sticky */}
-      <div className="sticky top-0 z-30 bg-white border-b border-border" ref={tabsRef}>
+      {/* Category pills — sticky */}
+      <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-border/60" ref={tabsRef}>
         <div className="max-w-3xl mx-auto px-5">
-          <div className="flex gap-6 overflow-x-auto scrollbar-hide py-3">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide py-3">
             {menuData.map((cat) => (
               <button
                 key={cat.category}
                 onClick={() => scrollToCategory(cat.category)}
-                className={`text-sm whitespace-nowrap pb-1 border-b-2 transition-colors cursor-pointer font-medium ${
+                className={`text-[13px] whitespace-nowrap px-4 py-2 rounded-full transition-all cursor-pointer font-medium ${
                   activeCategory === cat.category
-                    ? "border-dark text-dark"
-                    : "border-transparent text-muted hover:text-dark"
+                    ? "bg-sip text-white shadow-sm shadow-sip/20"
+                    : "bg-bg text-muted hover:text-dark"
                 }`}
               >
                 {cat.category}
@@ -170,8 +185,8 @@ export default function Home() {
               <p className="text-muted text-sm py-16 text-center">Nothing found.</p>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-6">
-                {searchResults.map((item) => (
-                  <MenuCard key={item.id} item={item} />
+                {searchResults.map((item, i) => (
+                  <MenuCard key={item.id} item={item} index={i} />
                 ))}
               </div>
             )}
@@ -185,12 +200,24 @@ export default function Home() {
                 data-category={category.category}
                 className="scroll-mt-14"
               >
-                <h2 className="text-[15px] font-black uppercase tracking-wide text-dark mb-5">
-                  {category.category} at SIP.
-                </h2>
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3 }}
+                  className="flex items-center gap-3 mb-5"
+                >
+                  <div className="w-1 h-6 bg-sip rounded-full" />
+                  <h2 className="text-[15px] font-black uppercase tracking-wide text-dark">
+                    {category.category}
+                  </h2>
+                  <span className="text-[11px] text-muted font-medium">
+                    {category.items.length} items
+                  </span>
+                </motion.div>
                 <div className="flex gap-4 overflow-x-auto scrollbar-hide sm:grid sm:grid-cols-3 lg:grid-cols-4 sm:gap-x-4 sm:gap-y-6 pb-2 sm:pb-0">
-                  {category.items.map((item) => (
-                    <MenuCard key={item.id} item={item} />
+                  {category.items.map((item, i) => (
+                    <MenuCard key={item.id} item={item} index={i} />
                   ))}
                 </div>
               </section>
@@ -200,84 +227,92 @@ export default function Home() {
       </div>
 
       {/* Order status bar */}
-      {activeOrder && (
-        <div className="fixed bottom-20 left-4 right-4 z-40 max-w-3xl mx-auto">
-          <div className="bg-white rounded-2xl border border-border shadow-xl shadow-dark/10 p-4">
-            {/* Progress segments */}
-            <div className="flex gap-1.5 mb-3">
-              {ORDER_STEPS.map((_, i) => (
-                <div
-                  key={i}
-                  className={`h-1 flex-1 rounded-full transition-colors duration-500 ${
-                    i <= activeOrder.step ? "bg-dark" : "bg-border"
-                  }`}
-                />
-              ))}
-            </div>
-            {/* Status text + dismiss */}
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="font-bold text-dark text-sm">
-                  {STATUS_LABELS[activeOrder.step]}
-                </p>
-                <p className="text-xs text-muted mt-0.5">
-                  Order #{activeOrder.id} will be served to Table {activeOrder.table}.
-                </p>
+      <AnimatePresence>
+        {activeOrder && (
+          <motion.div
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 60 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed bottom-20 left-4 right-4 z-40 max-w-3xl mx-auto"
+          >
+            <div className="bg-white rounded-2xl border border-border shadow-xl shadow-dark/10 p-4">
+              <div className="flex gap-1.5 mb-3">
+                {ORDER_STEPS.map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="h-1.5 flex-1 rounded-full"
+                    initial={{ backgroundColor: "#EFEFEF" }}
+                    animate={{
+                      backgroundColor: i <= activeOrder.step ? "#4B7BE5" : "#EFEFEF",
+                    }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                  />
+                ))}
               </div>
-              <button
-                onClick={dismissOrder}
-                className="text-xs text-muted font-medium hover:text-dark transition-colors cursor-pointer shrink-0 pt-0.5"
-              >
-                Dismiss
-              </button>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-bold text-dark text-sm">
+                    {STATUS_LABELS[activeOrder.step]}
+                  </p>
+                  <p className="text-xs text-muted mt-0.5">
+                    Order #{activeOrder.id} · Table {activeOrder.table}
+                  </p>
+                </div>
+                <button
+                  onClick={dismissOrder}
+                  className="text-xs text-sip font-semibold hover:text-sip/80 transition-colors cursor-pointer shrink-0 pt-0.5"
+                >
+                  Dismiss
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Floating cart bar */}
-      {totalItems > 0 && !activeOrder && (
-        <div className="fixed bottom-5 left-4 right-4 z-50 max-w-3xl mx-auto">
-          <Link
-            to="/cart"
-            className="flex items-center justify-between bg-dark text-white rounded-full px-6 py-4 shadow-xl shadow-dark/20"
+      <AnimatePresence>
+        {totalItems > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+            transition={{ type: "spring", stiffness: 300, damping: 28 }}
+            className="fixed bottom-5 left-4 right-4 z-50 max-w-3xl mx-auto"
           >
-            <div className="flex items-center gap-3">
-              <ShoppingBag size={18} />
-              <span className="font-semibold text-sm">
-                View order · {totalItems} item{totalItems !== 1 ? "s" : ""}
-              </span>
-            </div>
-            <span className="font-bold text-sm">Rs.{totalPrice}/-</span>
-          </Link>
-        </div>
-      )}
-
-      {/* Cart bar when order is active (smaller) */}
-      {totalItems > 0 && activeOrder && (
-        <div className="fixed bottom-5 left-4 right-4 z-50 max-w-3xl mx-auto">
-          <Link
-            to="/cart"
-            className="flex items-center justify-between bg-dark text-white rounded-full px-6 py-4 shadow-xl shadow-dark/20"
-          >
-            <div className="flex items-center gap-3">
-              <ShoppingBag size={18} />
-              <span className="font-semibold text-sm">
-                View order · {totalItems} item{totalItems !== 1 ? "s" : ""}
-              </span>
-            </div>
-            <span className="font-bold text-sm">Rs.{totalPrice}/-</span>
-          </Link>
-        </div>
-      )}
+            <Link
+              to="/cart"
+              className="flex items-center justify-between bg-sip text-white rounded-2xl px-6 py-4 shadow-xl shadow-sip/30"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                  <ShoppingBag size={16} />
+                </div>
+                <span className="font-semibold text-sm">
+                  {totalItems} item{totalItems !== 1 ? "s" : ""}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-sm">Rs.{totalPrice}/-</span>
+                <ChevronRight size={16} />
+              </div>
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Call waiter FAB */}
-      {!activeOrder && (
-        <button className="fixed bottom-5 right-4 z-40 flex items-center gap-2 bg-dark text-white px-5 py-3 rounded-full shadow-xl shadow-dark/20 text-sm font-semibold cursor-pointer hover:bg-dark/90 transition-colors">
-          <Bell size={16} />
-          Call waiter
-        </button>
-      )}
+      <motion.button
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.6, type: "spring", stiffness: 300, damping: 20 }}
+        whileTap={{ scale: 0.9 }}
+        className="fixed bottom-5 right-4 z-40 w-12 h-12 bg-dark text-white rounded-full shadow-xl shadow-dark/20 flex items-center justify-center cursor-pointer"
+        style={{ bottom: totalItems > 0 ? "5.5rem" : "1.25rem" }}
+      >
+        <Bell size={18} />
+      </motion.button>
     </div>
   );
 }
