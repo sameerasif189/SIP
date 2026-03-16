@@ -8,7 +8,7 @@ export default function MenuCard({ item }) {
   const [imgError, setImgError] = useState(false);
 
   return (
-    <div className="group bg-white rounded-2xl border border-black/5 hover:border-sip/30 hover:shadow-lg transition-all duration-300 overflow-hidden">
+    <div className="group bg-white rounded-2xl border border-black/5 hover:border-sip/25 hover:shadow-xl hover:shadow-sip/5 transition-all duration-300 overflow-hidden">
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden bg-sip-bg">
         {imgError ? (
@@ -24,26 +24,44 @@ export default function MenuCard({ item }) {
             onError={() => setImgError(true)}
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/5 to-transparent" />
+
         {/* Price Badge */}
-        <div className="absolute bottom-2 left-2 bg-dark/80 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-full">
-          Rs.{item.price}
+        <div className="absolute bottom-2.5 left-2.5 bg-white/95 backdrop-blur-sm text-dark text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm">
+          Rs. {item.price}
         </div>
+
+        {/* Quick add on hover — desktop */}
+        {!inCart && (
+          <button
+            onClick={() => addItem(item)}
+            className="absolute top-2.5 right-2.5 w-8 h-8 bg-sip/90 hover:bg-sip text-dark rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer shadow-md scale-90 group-hover:scale-100"
+          >
+            <Plus size={15} strokeWidth={2.5} />
+          </button>
+        )}
+
+        {/* Cart quantity badge */}
+        {inCart && (
+          <div className="absolute top-2.5 right-2.5 bg-sip text-dark text-xs font-bold w-7 h-7 rounded-lg flex items-center justify-center shadow-md">
+            {inCart.quantity}
+          </div>
+        )}
       </div>
 
       {/* Content */}
-      <div className="p-3 sm:p-4">
-        <h3 className="font-semibold text-dark text-sm leading-tight">
+      <div className="p-3 sm:p-3.5">
+        <h3 className="font-semibold text-dark text-[13px] sm:text-sm leading-tight line-clamp-1">
           {item.name}
         </h3>
-        <p className="text-dark-muted text-xs mt-1 line-clamp-2 leading-relaxed">
+        <p className="text-dark-muted text-[11px] sm:text-xs mt-1 line-clamp-2 leading-relaxed">
           {item.description}
         </p>
 
         {/* Add / Quantity */}
-        <div className="mt-3">
+        <div className="mt-2.5">
           {inCart ? (
-            <div className="flex items-center justify-between bg-sip/10 rounded-xl px-1 py-1">
+            <div className="flex items-center justify-between bg-sip/8 rounded-xl px-1 py-1">
               <button
                 onClick={() => updateQuantity(item.id, inCart.quantity - 1)}
                 className="w-8 h-8 flex items-center justify-center rounded-lg bg-white text-dark shadow-sm hover:bg-gray-50 transition-colors cursor-pointer"
@@ -63,7 +81,7 @@ export default function MenuCard({ item }) {
           ) : (
             <button
               onClick={() => addItem(item)}
-              className="w-full flex items-center justify-center gap-1.5 bg-sip/15 hover:bg-sip/25 text-sip-dark py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+              className="w-full flex items-center justify-center gap-1.5 bg-dark hover:bg-dark-soft text-white py-2.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
             >
               <Plus size={13} />
               Add to order
