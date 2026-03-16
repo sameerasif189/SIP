@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, MapPin, Clock, Star } from "lucide-react";
+import { Eye, EyeOff, MapPin, Clock, Star, Coffee } from "lucide-react";
 import { motion } from "framer-motion";
 import SipLogo from "../components/SipLogo";
 
@@ -49,14 +49,24 @@ export default function Login() {
 
   return (
     <div className="min-h-screen min-h-[100dvh] bg-dark relative overflow-hidden">
+      {/* Background image */}
+      <div className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1600&q=80"
+          alt="Coffee shop"
+          className="w-full h-full object-cover opacity-20"
+        />
+        <div className="absolute inset-0 bg-dark/60" />
+      </div>
+
       {/* Floating logos */}
       <div className="absolute inset-0">
-        <FloatingLogo size={110} x="2%" y="5%" delay={0} duration={8} opacity={0.55} />
-        <FloatingLogo size={54} x="68%" y="2%" delay={0.8} duration={5.5} opacity={0.45} />
-        <FloatingLogo size={74} x="80%" y="52%" delay={0.3} duration={9} opacity={0.5} />
-        <FloatingLogo size={40} x="10%" y="68%" delay={1.5} duration={6.5} opacity={0.4} />
-        <FloatingLogo size={48} x="42%" y="80%" delay={2} duration={7} opacity={0.35} />
-        <FloatingLogo size={34} x="90%" y="12%" delay={1} duration={6} opacity={0.3} />
+        <FloatingLogo size={110} x="2%" y="5%" delay={0} duration={8} opacity={0.5} />
+        <FloatingLogo size={54} x="68%" y="2%" delay={0.8} duration={5.5} opacity={0.4} />
+        <FloatingLogo size={74} x="80%" y="52%" delay={0.3} duration={9} opacity={0.45} />
+        <FloatingLogo size={40} x="10%" y="68%" delay={1.5} duration={6.5} opacity={0.35} />
+        <FloatingLogo size={48} x="42%" y="80%" delay={2} duration={7} opacity={0.3} />
+        <FloatingLogo size={34} x="90%" y="12%" delay={1} duration={6} opacity={0.25} />
 
         {/* Glow */}
         <div className="absolute left-1/2 top-[36%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-sip/4 rounded-full blur-3xl hidden md:block" />
@@ -95,8 +105,11 @@ export default function Login() {
           <div className="flex items-center gap-3">
             <SipLogo size={44} />
             <div>
-              <p className="text-white font-bold text-sm tracking-wide">SiP</p>
-              <p className="text-white/40 text-xs">Table ordering</p>
+              <p className="font-[var(--font-heading)] text-[15px] font-black leading-none tracking-wide uppercase">
+                <span className="text-white">SIP</span>{" "}
+                <span className="text-sip font-bold">COFFEE</span>
+              </p>
+              <p className="text-white/30 text-[9px] tracking-[0.2em] uppercase mt-0.5">Table ordering</p>
             </div>
           </div>
 
@@ -105,34 +118,42 @@ export default function Login() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="font-[var(--font-display)] text-5xl lg:text-6xl font-bold text-white leading-[1.1] mb-8"
+              className="heading-xl text-5xl lg:text-7xl text-white mb-3"
             >
-              Sign in<br />and order.
+              Sign In,
+            </motion.h2>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.45 }}
+              className="heading-accent text-5xl lg:text-7xl mb-8"
+            >
+              Start Ordering.
             </motion.h2>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="flex flex-wrap gap-3"
+              transition={{ delay: 0.7 }}
+              className="flex flex-wrap gap-2.5"
             >
-              <span className="flex items-center gap-1.5 bg-white/8 backdrop-blur-sm text-white/70 text-xs px-4 py-2 rounded-full border border-white/5">
-                <MapPin size={12} />
+              <span className="glass-btn flex items-center gap-1.5 text-white/70 text-xs px-4 py-2.5 rounded-xl">
+                <MapPin size={12} className="text-sip" />
                 F-8/3, Islamabad
               </span>
-              <span className="flex items-center gap-1.5 bg-white/8 backdrop-blur-sm text-white/70 text-xs px-4 py-2 rounded-full border border-white/5">
-                <Clock size={12} />
+              <span className="glass-btn flex items-center gap-1.5 text-white/70 text-xs px-4 py-2.5 rounded-xl">
+                <Clock size={12} className="text-sip" />
                 8 AM - 1 AM
               </span>
-              <span className="flex items-center gap-1.5 bg-sip/15 text-sip-light text-xs px-4 py-2 rounded-full border border-sip/20">
-                <Star size={12} />
+              <span className="glass-btn flex items-center gap-1.5 text-sip-light text-xs px-4 py-2.5 rounded-xl">
+                <Star size={12} className="text-amber-400 fill-amber-400" />
                 4.8 · 2,729 reviews
               </span>
             </motion.div>
           </div>
         </div>
 
-        {/* Mobile: big hero + card stacked */}
-        <div className="flex-1 md:flex-none md:w-[470px] lg:w-[490px] flex flex-col md:justify-center p-5 sm:p-6 md:p-10">
+        {/* Mobile + Sign-in card */}
+        <div className="flex-1 md:flex-none md:w-[470px] lg:w-[500px] flex flex-col md:justify-center p-5 sm:p-6 md:p-10">
           {/* Mobile hero */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -140,7 +161,6 @@ export default function Login() {
             transition={{ duration: 0.5 }}
             className="md:hidden flex flex-col items-center pt-6 pb-8"
           >
-            {/* Mobile center logo with rings */}
             <div className="relative flex items-center justify-center mb-6">
               <motion.div
                 className="absolute w-[180px] h-[180px] rounded-[40px] border border-sip/10"
@@ -152,22 +172,19 @@ export default function Login() {
                 animate={{ rotate: -360 }}
                 transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
               />
-              <motion.div
-                initial={{ scale: 0.6, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-              >
-                <SipLogo size={80} glow />
-              </motion.div>
+              <SipLogo size={80} glow />
             </div>
 
-            <h2 className="font-[var(--font-display)] text-3xl font-bold text-white text-center">
-              Sign in and order.
+            <h2 className="heading-xl text-3xl text-white text-center">
+              Sign In,
             </h2>
-            <div className="flex items-center gap-3 mt-3">
+            <h2 className="heading-accent text-3xl text-center mb-3">
+              Start Ordering.
+            </h2>
+            <div className="flex items-center gap-3">
               <span className="flex items-center gap-1 text-white/40 text-xs">
                 <MapPin size={10} />
-                F-8/3, Islamabad
+                F-8/3
               </span>
               <span className="text-white/15">·</span>
               <span className="flex items-center gap-1 text-white/40 text-xs">
@@ -177,25 +194,32 @@ export default function Login() {
             </div>
           </motion.div>
 
-          {/* Sign-in card */}
+          {/* Sign-in card — heavy glassmorphism */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.25 }}
-            className="w-full max-w-md mx-auto bg-dark-soft/60 backdrop-blur-2xl border border-white/8 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/40"
+            className="w-full max-w-md mx-auto glass-white rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/40"
+            style={{
+              background: "rgba(30, 30, 30, 0.6)",
+              backdropFilter: "blur(40px) saturate(200%)",
+              WebkitBackdropFilter: "blur(40px) saturate(200%)",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              boxShadow: "0 8px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)",
+            }}
           >
             <div className="flex items-start justify-between mb-6">
               <div>
-                <p className="text-sip text-[10px] font-bold uppercase tracking-[0.2em] mb-1.5">
+                <p className="text-sip text-[10px] font-bold uppercase tracking-[0.25em] font-[var(--font-heading)] mb-1.5">
                   Guest Sign In
                 </p>
-                <h1 className="font-[var(--font-display)] text-2xl sm:text-3xl font-bold text-white">
-                  {isSignUp ? "Create account" : "Welcome back"}
+                <h1 className="font-[var(--font-heading)] text-2xl sm:text-3xl font-black text-white">
+                  {isSignUp ? "Create Account" : "Welcome Back"}
                 </h1>
                 <p className="text-white/40 text-sm mt-1.5 leading-relaxed max-w-[280px]">
                   {isSignUp
                     ? "Sign up to place orders and track them."
-                    : "Use your account to view the menu and place an order."}
+                    : "Sign in to view the menu and place orders."}
                 </p>
               </div>
               <SipLogo size={44} className="hidden sm:flex mt-1" />
@@ -204,7 +228,7 @@ export default function Login() {
             {/* Google */}
             <button
               onClick={handleGoogleSignIn}
-              className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-dark py-3.5 rounded-2xl font-semibold text-sm transition-colors cursor-pointer shadow-sm"
+              className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-dark py-3.5 rounded-2xl font-[var(--font-heading)] font-bold text-sm transition-colors cursor-pointer shadow-lg"
             >
               <svg width="18" height="18" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
@@ -218,7 +242,7 @@ export default function Login() {
             {/* Divider */}
             <div className="flex items-center gap-4 my-6">
               <div className="flex-1 h-px bg-white/8" />
-              <span className="text-white/25 text-[10px] font-semibold uppercase tracking-[0.2em]">
+              <span className="text-white/25 text-[9px] font-bold uppercase tracking-[0.3em] font-[var(--font-heading)]">
                 or continue
               </span>
               <div className="flex-1 h-px bg-white/8" />
@@ -232,7 +256,7 @@ export default function Login() {
                   placeholder="Full name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3.5 rounded-xl bg-white/5 border border-white/8 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-sip/50 focus:ring-1 focus:ring-sip/20 transition-all"
+                  className="w-full px-4 py-3.5 rounded-xl glass-input text-white text-sm placeholder:text-white/25 focus:outline-none transition-all"
                   required
                 />
               )}
@@ -241,7 +265,7 @@ export default function Login() {
                 placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3.5 rounded-xl bg-white/5 border border-white/8 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-sip/50 focus:ring-1 focus:ring-sip/20 transition-all"
+                className="w-full px-4 py-3.5 rounded-xl glass-input text-white text-sm placeholder:text-white/25 focus:outline-none transition-all"
                 required
               />
               <div className="relative">
@@ -250,7 +274,7 @@ export default function Login() {
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3.5 rounded-xl bg-white/5 border border-white/8 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-sip/50 focus:ring-1 focus:ring-sip/20 transition-all pr-12"
+                  className="w-full px-4 py-3.5 rounded-xl glass-input text-white text-sm placeholder:text-white/25 focus:outline-none transition-all pr-12"
                   required
                 />
                 <button
@@ -264,7 +288,7 @@ export default function Login() {
 
               <button
                 type="submit"
-                className="w-full bg-sip hover:bg-sip-dark text-dark font-bold py-3.5 rounded-xl text-sm transition-colors cursor-pointer mt-1 shadow-lg shadow-sip/20"
+                className="w-full bg-sip hover:bg-sip-dark text-dark font-[var(--font-heading)] font-bold uppercase tracking-wider py-3.5 rounded-xl text-sm transition-all cursor-pointer mt-1 shadow-xl shadow-sip/25"
               >
                 {isSignUp ? "Create Account" : "Sign In"}
               </button>
@@ -283,7 +307,7 @@ export default function Login() {
             <div className="border-t border-white/5 mt-6 pt-5">
               <button
                 onClick={handleGuestContinue}
-                className="w-full py-3 rounded-xl border border-white/8 text-white/50 hover:text-white/70 hover:border-white/15 text-sm font-medium transition-all cursor-pointer"
+                className="w-full glass-btn py-3 rounded-xl text-white/50 hover:text-white/80 text-sm font-[var(--font-heading)] font-semibold uppercase tracking-wider cursor-pointer"
               >
                 Continue as Guest
               </button>

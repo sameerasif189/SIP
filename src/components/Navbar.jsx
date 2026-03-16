@@ -34,66 +34,69 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-dark/80 dark:bg-dark/90 backdrop-blur-2xl text-white sticky top-0 z-50 border-b border-white/5">
+      <nav className="bg-dark/70 backdrop-blur-2xl text-white sticky top-0 z-50 border-b border-white/[0.04]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-16 sm:h-[72px]">
+          <div className="flex items-center justify-between h-[68px] sm:h-[76px]">
             {/* Logo */}
             <Link to="/home" className="flex items-center gap-3 group">
-              <SipLogo size={42} />
+              <SipLogo size={44} />
               <div>
-                <p className="text-base font-bold leading-none tracking-wide group-hover:text-sip-light transition-colors">
-                  SiP
+                <p className="font-[var(--font-heading)] text-[15px] font-black leading-none tracking-wide uppercase">
+                  <span className="text-white group-hover:text-sip-light transition-colors">SIP</span>{" "}
+                  <span className="text-sip font-bold">COFFEE</span>
                 </p>
-                <p className="text-[10px] text-white/35 leading-none mt-1 tracking-[0.15em] uppercase">
-                  Specialty Coffee
+                <p className="text-[9px] text-white/30 leading-none mt-1 tracking-[0.2em] uppercase font-medium">
+                  Specialty · Islamabad
                 </p>
               </div>
             </Link>
 
-            {/* Desktop Nav — glassmorphism pill bar */}
-            <div className="hidden md:flex items-center">
-              <div className="flex items-center gap-1 bg-white/[0.06] backdrop-blur-xl rounded-2xl p-1.5 border border-white/[0.08] shadow-lg shadow-black/10">
-                {links.map((link) => {
-                  const Icon = link.icon;
-                  const active = isActive(link.to);
-                  return (
-                    <Link
-                      key={link.to}
-                      to={link.to}
-                      className={`relative flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
-                        active
-                          ? "text-dark"
-                          : "text-white/55 hover:text-white/90"
-                      }`}
-                    >
-                      {active && (
-                        <motion.div
-                          layoutId="nav-active"
-                          className="absolute inset-0 bg-sip rounded-xl shadow-lg shadow-sip/25"
-                          transition={{
-                            type: "spring",
-                            stiffness: 380,
-                            damping: 30,
-                          }}
-                        />
-                      )}
-                      <span className="relative z-10 flex items-center gap-2">
-                        <Icon size={15} strokeWidth={active ? 2.5 : 2} />
-                        {link.label}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
+            {/* Desktop Nav — uppercase links + Order Now button */}
+            <div className="hidden md:flex items-center gap-1">
+              {links.map((link) => {
+                const active = isActive(link.to);
+                return (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className={`relative px-5 py-2 text-[13px] font-semibold uppercase tracking-[0.12em] transition-all duration-300 ${
+                      active
+                        ? "text-sip"
+                        : "text-white/60 hover:text-white"
+                    }`}
+                  >
+                    {link.label}
+                    {active && (
+                      <motion.div
+                        layoutId="nav-underline"
+                        className="absolute bottom-0 left-2 right-2 h-[2px] bg-sip rounded-full"
+                        transition={{
+                          type: "spring",
+                          stiffness: 400,
+                          damping: 30,
+                        }}
+                      />
+                    )}
+                  </Link>
+                );
+              })}
+
+              {/* Order Now button — frosted glass pill */}
+              <Link
+                to="/menu"
+                className="ml-4 glass-btn px-6 py-2.5 rounded-full text-[12px] font-bold uppercase tracking-[0.12em] text-white hover:text-dark hover:bg-sip hover:border-sip/50 transition-all duration-300 hover:shadow-lg hover:shadow-sip/20"
+              >
+                Order Now
+              </Link>
             </div>
 
             {/* Right section */}
-            <div className="flex items-center gap-2 sm:gap-2.5">
-              {/* Theme toggle — glassmorphism pill */}
+            <div className="flex items-center gap-2">
+              {/* Theme toggle */}
               <button
                 onClick={toggleTheme}
-                className="relative w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-xl bg-white/[0.06] backdrop-blur-xl border border-white/[0.08] hover:bg-white/[0.12] transition-all cursor-pointer group"
-                title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+                className="glass-btn w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-xl cursor-pointer"
+                title={isDark ? "Light mode" : "Dark mode"}
               >
                 <AnimatePresence mode="wait">
                   {isDark ? (
@@ -120,15 +123,15 @@ export default function Navbar() {
                 </AnimatePresence>
               </button>
 
-              {/* Cart — glassmorphism */}
+              {/* Cart */}
               <Link
                 to="/cart"
-                className="relative flex items-center gap-2.5 bg-white/[0.06] backdrop-blur-xl border border-white/[0.08] hover:bg-white/[0.12] px-4 py-2.5 rounded-xl transition-all"
+                className="glass-btn relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl"
               >
                 <div className="relative">
                   <ShoppingBag size={17} className="text-sip-light" />
                   {totalItems > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-sip text-dark text-[9px] font-bold flex items-center justify-center rounded-full">
+                    <span className="absolute -top-1.5 -right-2 w-[18px] h-[18px] bg-sip text-dark text-[9px] font-bold flex items-center justify-center rounded-full shadow-lg shadow-sip/30">
                       {totalItems}
                     </span>
                   )}
@@ -142,7 +145,7 @@ export default function Navbar() {
 
               {/* Mobile hamburger */}
               <button
-                className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.06] backdrop-blur-xl border border-white/[0.08] hover:bg-white/[0.12] transition-all cursor-pointer"
+                className="md:hidden glass-btn w-10 h-10 flex items-center justify-center rounded-xl cursor-pointer"
                 onClick={() => setIsOpen(!isOpen)}
               >
                 {isOpen ? <X size={18} /> : <Menu size={18} />}
@@ -152,7 +155,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile menu — full screen overlay */}
+      {/* Mobile menu — full screen */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -160,17 +163,16 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden fixed inset-0 top-16 z-40 bg-dark/95 backdrop-blur-2xl"
+            className="md:hidden fixed inset-0 top-[68px] z-40 bg-dark/95 backdrop-blur-3xl"
           >
-            <div className="flex flex-col items-center justify-center h-full gap-3 -mt-16 px-8">
-              {/* Decorative sparkle */}
+            <div className="flex flex-col items-center justify-center h-full gap-3 -mt-[68px] px-8">
               <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.1 }}
-                className="mb-4"
+                className="mb-6"
               >
-                <Sparkles size={20} className="text-sip/40" />
+                <SipLogo size={56} glow />
               </motion.div>
 
               {links.map((link, i) => {
@@ -190,8 +192,8 @@ export default function Navbar() {
                       onClick={() => setIsOpen(false)}
                       className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all ${
                         active
-                          ? "bg-sip/15 border border-sip/20"
-                          : "bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08]"
+                          ? "glass-white"
+                          : "glass hover:bg-white/[0.08]"
                       }`}
                     >
                       <div
@@ -204,9 +206,9 @@ export default function Navbar() {
                         <Icon size={18} />
                       </div>
                       <span
-                        className={`text-lg font-[var(--font-display)] ${
+                        className={`text-lg font-[var(--font-heading)] font-bold uppercase tracking-wider ${
                           active
-                            ? "text-sip-light font-semibold"
+                            ? "text-sip"
                             : "text-white/60"
                         }`}
                       >
@@ -217,23 +219,39 @@ export default function Navbar() {
                 );
               })}
 
-              {/* Mobile theme toggle */}
+              {/* Mobile Order Now */}
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.35 }}
-                className="mt-4"
+                className="w-full max-w-xs mt-3"
+              >
+                <Link
+                  to="/menu"
+                  onClick={() => setIsOpen(false)}
+                  className="block w-full bg-sip hover:bg-sip-dark text-dark text-center py-4 rounded-2xl font-[var(--font-heading)] font-bold uppercase tracking-wider text-sm transition-all shadow-xl shadow-sip/20"
+                >
+                  Order Now
+                </Link>
+              </motion.div>
+
+              {/* Mobile theme toggle */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="mt-2"
               >
                 <button
                   onClick={toggleTheme}
-                  className="flex items-center gap-3 bg-white/[0.04] border border-white/[0.06] px-6 py-3 rounded-2xl cursor-pointer hover:bg-white/[0.08] transition-all"
+                  className="glass-btn flex items-center gap-3 px-6 py-3 rounded-2xl cursor-pointer"
                 >
                   {isDark ? (
                     <Sun size={16} className="text-amber-400" />
                   ) : (
                     <Moon size={16} className="text-blue-300" />
                   )}
-                  <span className="text-white/50 text-sm">
+                  <span className="text-white/50 text-sm font-medium">
                     {isDark ? "Light Mode" : "Dark Mode"}
                   </span>
                 </button>
