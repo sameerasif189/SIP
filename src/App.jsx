@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "r
 import { AnimatePresence } from "framer-motion";
 import { CartProvider } from "./context/CartContext";
 import { TableProvider, useTable } from "./context/TableContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Login from "./pages/Login";
@@ -74,13 +75,15 @@ function AppRoutes() {
 
 function App() {
   return (
-    <TableProvider>
-      <CartProvider>
-        <Router>
-          <AppRoutes />
-        </Router>
-      </CartProvider>
-    </TableProvider>
+    <ThemeProvider>
+      <TableProvider>
+        <CartProvider>
+          <Router>
+            <AppRoutes />
+          </Router>
+        </CartProvider>
+      </TableProvider>
+    </ThemeProvider>
   );
 }
 

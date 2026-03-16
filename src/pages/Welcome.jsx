@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { QrCode, Hash, ArrowRight } from "lucide-react";
+import { QrCode, Armchair, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTable } from "../context/TableContext";
 import SipLogo from "../components/SipLogo";
@@ -74,7 +74,7 @@ export default function Welcome() {
             transition={{ duration: 0.4, ease: "easeOut" }}
             className="mx-auto mb-5 w-fit"
           >
-            <SipLogo size={72} />
+            <SipLogo size={80} glow />
           </motion.div>
           <h1 className="font-[var(--font-display)] text-3xl font-bold text-white">
             Select your table
@@ -103,7 +103,7 @@ export default function Welcome() {
                   setMode("qr");
                   handleQrScan();
                 }}
-                className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-sip/40 rounded-2xl p-5 text-left transition-all cursor-pointer group"
+                className="w-full flex items-center gap-4 glass hover:bg-white/10 rounded-2xl p-5 text-left transition-all cursor-pointer group"
               >
                 <div className="w-12 h-12 bg-sip/20 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-sip/30 transition-colors">
                   <QrCode size={22} className="text-sip" />
@@ -120,13 +120,13 @@ export default function Welcome() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.25, duration: 0.3 }}
                 onClick={() => setMode("manual")}
-                className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-sip/40 rounded-2xl p-5 text-left transition-all cursor-pointer group"
+                className="w-full flex items-center gap-4 glass hover:bg-white/10 rounded-2xl p-5 text-left transition-all cursor-pointer group"
               >
                 <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-white/15 transition-colors">
-                  <Hash size={22} className="text-white/60" />
+                  <Armchair size={22} className="text-white/60" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-semibold text-sm">Enter Table Number</p>
+                  <p className="text-white font-semibold text-sm">Choose Your Table</p>
                   <p className="text-white/40 text-xs mt-0.5">Select your table manually</p>
                 </div>
                 <ArrowRight size={16} className="text-white/30 group-hover:text-sip transition-colors shrink-0" />
@@ -168,10 +168,11 @@ export default function Welcome() {
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.3 }}
             >
-              <p className="text-xs font-semibold text-white/30 uppercase tracking-wider mb-4">
+              <p className="text-xs font-semibold text-white/30 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <Armchair size={13} className="text-sip/60" />
                 Select your table
               </p>
-              <div className="grid grid-cols-4 gap-2 mb-6">
+              <div className="grid grid-cols-4 gap-2.5 mb-6">
                 {tables.map((num, i) => (
                   <motion.button
                     key={num}
@@ -179,13 +180,14 @@ export default function Welcome() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: i * 0.02, duration: 0.2 }}
                     onClick={() => setSelectedTable(num)}
-                    className={`aspect-square rounded-xl text-sm font-bold transition-all cursor-pointer flex items-center justify-center ${
+                    className={`aspect-square rounded-xl text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 ${
                       selectedTable === num
                         ? "bg-sip text-dark shadow-lg shadow-sip/30 scale-105"
-                        : "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white border border-white/5"
+                        : "glass text-white/50 hover:bg-white/10 hover:text-white"
                     }`}
                   >
-                    {num}
+                    <Armchair size={14} className={selectedTable === num ? "text-dark/50" : "text-white/25"} />
+                    <span>{num}</span>
                   </motion.button>
                 ))}
               </div>
@@ -193,7 +195,7 @@ export default function Welcome() {
               <button
                 onClick={handleManualSelect}
                 disabled={!selectedTable}
-                className="w-full flex items-center justify-center gap-2 bg-sip hover:bg-sip-dark disabled:opacity-30 disabled:cursor-not-allowed text-dark font-semibold py-3.5 rounded-xl text-sm transition-all cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 bg-sip hover:bg-sip-dark disabled:opacity-30 disabled:cursor-not-allowed text-dark font-bold py-3.5 rounded-xl text-sm transition-all cursor-pointer shadow-lg shadow-sip/20"
               >
                 Continue to Menu
                 <ArrowRight size={16} />

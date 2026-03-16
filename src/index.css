@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Sage green palette — from SiP menu card */
   --color-sip: #9BB08D;
@@ -16,6 +18,10 @@
   /* Warm background */
   --color-warm: #F7F7F5;
 
+  /* Dark mode surfaces */
+  --color-surface: #242424;
+  --color-surface-raised: #2C2C2C;
+
   /* Fonts */
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-display: 'Playfair Display', Georgia, serif;
@@ -29,6 +35,12 @@
     margin: 0;
     -webkit-font-smoothing: antialiased;
   }
+
+  .dark body,
+  body:where(.dark *) {
+    background-color: var(--color-dark);
+    color: #E5E5E5;
+  }
 }
 
 @layer utilities {
@@ -41,5 +53,35 @@
   }
   .text-balance {
     text-wrap: balance;
+  }
+  /* Glassmorphism — iOS-style frosted glass */
+  .glass {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .glass-light {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  }
+  .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.04),
+      0 8px 24px rgba(0, 0, 0, 0.03);
+  }
+  .dark .glass-card {
+    background: rgba(44, 44, 44, 0.8);
+    border-color: rgba(255, 255, 255, 0.06);
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.2),
+      0 8px 24px rgba(0, 0, 0, 0.15);
   }
 }

@@ -1,26 +1,36 @@
-import { MapPin, Phone, Instagram, ArrowUpRight } from "lucide-react";
+import { MapPin, Phone, Instagram, ArrowUpRight, Armchair, Coffee as CoffeeIcon } from "lucide-react";
 import SipLogo from "./SipLogo";
 
 export default function Footer() {
   return (
     <footer className="bg-dark text-white/60">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-        <div className="flex flex-col sm:flex-row justify-between gap-6 sm:gap-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <div className="flex flex-col sm:flex-row justify-between gap-8">
           <div>
-            <div className="flex items-center gap-2.5 mb-3">
-              <SipLogo size={32} />
+            <div className="flex items-center gap-3 mb-4">
+              <SipLogo size={36} />
               <span className="font-semibold text-white text-sm">
                 SIP Coffee & Kitchen
               </span>
             </div>
-            <p className="text-xs max-w-xs leading-relaxed">
+            <p className="text-xs max-w-xs leading-relaxed mb-4">
               Premium coffee and artisan food in the heart of Islamabad.
               Every sip, a story.
             </p>
+            <div className="flex gap-2">
+              <span className="glass flex items-center gap-1.5 text-white/40 text-[10px] px-3 py-1.5 rounded-lg">
+                <Armchair size={10} />
+                Dine-in ordering
+              </span>
+              <span className="glass flex items-center gap-1.5 text-white/40 text-[10px] px-3 py-1.5 rounded-lg">
+                <CoffeeIcon size={10} />
+                Specialty brews
+              </span>
+            </div>
           </div>
 
           <div className="flex gap-8 sm:gap-12 text-sm">
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <p className="text-white text-xs font-semibold uppercase tracking-wider mb-3">
                 Visit
               </p>
@@ -34,7 +44,7 @@ export default function Footer() {
               </p>
               <p className="text-xs">Daily: 8 AM – 1 AM</p>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <p className="text-white text-xs font-semibold uppercase tracking-wider mb-3">
                 Social
               </p>
@@ -52,7 +62,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/10 mt-6 sm:mt-8 pt-5 sm:pt-6 text-[11px] text-white/30">
+        <div className="border-t border-white/10 mt-8 pt-6 text-[11px] text-white/25">
           &copy; {new Date().getFullYear()} SIP Coffee. Islamabad.
         </div>
       </div>
