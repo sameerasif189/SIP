@@ -111,7 +111,7 @@ export default function Checkout() {
             transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 15 }}
             className="w-20 h-20 bg-sip/20 rounded-3xl flex items-center justify-center mx-auto mb-6"
           >
-            <CheckCircle2 size={40} className="text-sip" />
+            <CheckCircle2 size={40} className="text-sip-dark" />
           </motion.div>
           <h2 className="font-[var(--font-display)] text-3xl font-bold text-white mb-2">
             Order Confirmed!
@@ -120,7 +120,7 @@ export default function Checkout() {
             Your order is being prepared.
           </p>
           <div className="inline-flex items-center gap-2 bg-white/5 rounded-full px-4 py-2 mt-3 mb-8">
-            <Coffee size={14} className="text-sip" />
+            <Coffee size={14} className="text-sip-dark" />
             <span className="text-white/70 text-sm">
               Table {tableNumber || "—"} · #{Math.floor(1000 + Math.random() * 9000)}
             </span>
@@ -135,7 +135,7 @@ export default function Checkout() {
           <div className="flex flex-col gap-2">
             <Link
               to="/menu"
-              className="bg-sip hover:bg-sip-dark text-white px-8 py-3 rounded-xl font-semibold text-sm transition-colors"
+              className="bg-sip hover:bg-sip-dark text-dark px-8 py-3 rounded-xl font-semibold text-sm transition-colors"
             >
               Order More
             </Link>
@@ -541,7 +541,7 @@ export default function Checkout() {
             <button
               onClick={handlePay}
               disabled={!paymentMethod || processing}
-              className="w-full mt-5 bg-sip hover:bg-sip-dark disabled:opacity-40 disabled:cursor-not-allowed text-white py-3.5 rounded-xl font-semibold text-sm transition-all cursor-pointer"
+              className="w-full mt-5 bg-sip hover:bg-sip-dark disabled:opacity-40 disabled:cursor-not-allowed text-dark py-3.5 rounded-xl font-semibold text-sm transition-all cursor-pointer"
             >
               {processing ? (
                 <span className="flex items-center justify-center gap-2">

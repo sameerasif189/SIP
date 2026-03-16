@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { menuData } from "../data/menu";
 import MenuCard from "../components/MenuCard";
+import SipLogo from "../components/SipLogo";
 import { useTable } from "../context/TableContext";
 import { PageTransition, FadeIn, StaggerContainer, StaggerItem } from "../components/Motion";
 
@@ -40,42 +41,41 @@ export default function Home() {
 
   return (
     <PageTransition className="bg-warm min-h-screen">
-      {/* Compact header with table info */}
+      {/* Hero header */}
       <div className="bg-dark">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
-          <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <h1 className="font-[var(--font-display)] text-xl sm:text-2xl font-bold text-white">
-                Good to see you!
-              </h1>
-              <div className="flex items-center gap-3 sm:gap-4 mt-1.5 text-xs text-white/40 flex-wrap">
-                {tableNumber && (
-                  <span className="flex items-center gap-1.5 bg-sip/20 text-sip-light px-2.5 py-1 rounded-full">
-                    Table {tableNumber}
-                  </span>
-                )}
-                <span className="flex items-center gap-1">
-                  <Clock size={11} className="text-sip" />
-                  8 AM – 1 AM
-                </span>
-                <span className="items-center gap-1 hidden sm:flex">
-                  <MapPin size={11} className="text-sip" />
-                  F-8/3, Islamabad
-                </span>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+          <FadeIn>
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div>
+                <p className="text-sip text-[10px] font-bold uppercase tracking-[0.15em] mb-1">
+                  SIP Islamabad
+                </p>
+                <h1 className="font-[var(--font-display)] text-xl sm:text-2xl font-bold text-white">
+                  Good to see you!
+                </h1>
               </div>
+              <SipLogo size={44} className="mt-0.5" />
             </div>
-            <Link
-              to="/menu"
-              className="inline-flex items-center gap-1.5 bg-sip hover:bg-sip-dark text-white px-4 py-2 rounded-full text-xs font-semibold transition-all shrink-0"
-            >
-              Full Menu
-              <ChevronRight size={14} />
-            </Link>
-          </div>
+            <div className="flex items-center gap-3 text-xs text-white/40 flex-wrap">
+              {tableNumber && (
+                <span className="flex items-center gap-1.5 bg-sip/15 text-sip-light px-2.5 py-1 rounded-full">
+                  Table {tableNumber}
+                </span>
+              )}
+              <span className="flex items-center gap-1">
+                <Clock size={11} className="text-sip" />
+                8 AM – 1 AM
+              </span>
+              <span className="items-center gap-1 hidden sm:flex">
+                <MapPin size={11} className="text-sip" />
+                F-8/3, Islamabad
+              </span>
+            </div>
+          </FadeIn>
         </div>
       </div>
 
-      {/* Categories — horizontal scroll */}
+      {/* Categories */}
       <FadeIn>
         <section className="max-w-6xl mx-auto px-4 sm:px-6 py-5">
           <p className="text-xs font-semibold text-dark-muted uppercase tracking-wider mb-3">
@@ -92,12 +92,12 @@ export default function Home() {
                 >
                   {Icon && (
                     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-sip/10 flex items-center justify-center group-hover:bg-sip/20 transition-colors">
-                      <Icon size={14} className="text-sip sm:hidden" />
-                      <Icon size={15} className="text-sip hidden sm:block" />
+                      <Icon size={14} className="text-sip-dark sm:hidden" />
+                      <Icon size={15} className="text-sip-dark hidden sm:block" />
                     </div>
                   )}
                   <div>
-                    <p className="font-semibold text-xs text-dark group-hover:text-sip transition-colors whitespace-nowrap">
+                    <p className="font-semibold text-xs text-dark group-hover:text-sip-dark transition-colors whitespace-nowrap">
                       {cat.category}
                     </p>
                     <p className="text-[10px] text-dark-muted">
@@ -116,7 +116,7 @@ export default function Home() {
         <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-6">
           <div className="flex items-end justify-between mb-4">
             <div>
-              <span className="text-sip text-xs font-bold uppercase tracking-[0.15em]">
+              <span className="text-sip-dark text-xs font-bold uppercase tracking-[0.15em]">
                 Popular
               </span>
               <h2 className="font-[var(--font-display)] text-lg sm:text-xl font-bold mt-0.5">
@@ -125,7 +125,7 @@ export default function Home() {
             </div>
             <Link
               to="/menu"
-              className="text-xs text-sip hover:text-sip-dark font-semibold flex items-center gap-0.5 transition-colors"
+              className="text-xs text-sip-dark hover:text-sip font-semibold flex items-center gap-0.5 transition-colors"
             >
               See all
               <ChevronRight size={14} />
@@ -141,7 +141,7 @@ export default function Home() {
         </section>
       </FadeIn>
 
-      {/* Quick category sections with first 3 items each */}
+      {/* Category sections */}
       {menuData.slice(0, 4).map((cat, catIdx) => (
         <FadeIn key={cat.category} delay={catIdx * 0.05}>
           <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-6">
@@ -151,7 +151,7 @@ export default function Home() {
               </h2>
               <Link
                 to={`/menu?category=${encodeURIComponent(cat.category)}`}
-                className="text-xs text-sip hover:text-sip-dark font-semibold flex items-center gap-0.5 transition-colors"
+                className="text-xs text-sip-dark hover:text-sip font-semibold flex items-center gap-0.5 transition-colors"
               >
                 View all {cat.items.length}
                 <ChevronRight size={14} />

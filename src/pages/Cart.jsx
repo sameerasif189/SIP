@@ -44,7 +44,7 @@ export default function Cart() {
             </p>
             <Link
               to="/menu"
-              className="inline-flex items-center gap-2 bg-sip hover:bg-sip-dark text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-colors"
+              className="inline-flex items-center gap-2 bg-sip hover:bg-sip-dark text-dark px-6 py-2.5 rounded-full text-sm font-semibold transition-colors"
             >
               Browse Menu
             </Link>
@@ -127,7 +127,7 @@ export default function Cart() {
                           onClick={() =>
                             updateQuantity(item.id, item.quantity + 1)
                           }
-                          className="w-7 h-7 flex items-center justify-center rounded-md bg-sip text-white shadow-sm hover:bg-sip-dark transition-colors cursor-pointer"
+                          className="w-7 h-7 flex items-center justify-center rounded-md bg-sip text-dark shadow-sm hover:bg-sip-dark transition-colors cursor-pointer"
                         >
                           <Plus size={12} />
                         </button>
@@ -149,7 +149,7 @@ export default function Cart() {
         {/* Add More */}
         <Link
           to="/menu"
-          className="flex items-center gap-2 mt-3 text-xs text-sip font-semibold hover:text-sip-dark transition-colors"
+          className="flex items-center gap-2 mt-3 text-xs text-sip-dark font-semibold hover:text-sip transition-colors"
         >
           <Plus size={13} />
           Add more items
@@ -226,7 +226,7 @@ export default function Cart() {
             <Link
               to="/checkout"
               state={{ tip, tipAmount, serviceFee, gst, grandTotal, orderNotes }}
-              className="block w-full mt-5 bg-sip hover:bg-sip-dark text-white text-center py-3.5 rounded-xl font-semibold text-sm transition-colors"
+              className="block w-full mt-5 bg-sip hover:bg-sip-dark text-dark text-center py-3.5 rounded-xl font-semibold text-sm transition-colors"
             >
               Proceed to Payment · Rs.{grandTotal}
             </Link>

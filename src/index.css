@@ -1,15 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  --color-sip: #6B7A2F;
-  --color-sip-light: #8A9D3E;
-  --color-sip-dark: #4E5A22;
-  --color-sip-muted: #D4DDB8;
-  --color-sip-bg: #F0F2E6;
-  --color-dark: #1A1A1A;
-  --color-dark-soft: #2A2A2A;
-  --color-dark-muted: #6B6B6B;
-  --color-warm: #F8F7F4;
+  /* Sage green palette — from SiP menu card */
+  --color-sip: #9BB08D;
+  --color-sip-light: #B4C5A8;
+  --color-sip-dark: #7A9A6A;
+  --color-sip-muted: #D1DCCA;
+  --color-sip-bg: #EDF1EA;
+
+  /* Dark tones */
+  --color-dark: #1E1E1E;
+  --color-dark-soft: #2D2D2D;
+  --color-dark-muted: #8A8A8A;
+
+  /* Warm background */
+  --color-warm: #F7F7F5;
+
+  /* Fonts */
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-display: 'Playfair Display', Georgia, serif;
 }
