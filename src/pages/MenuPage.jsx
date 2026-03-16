@@ -13,8 +13,10 @@ import {
   GlassWater,
   Bean,
   Plus,
+  ArrowRight,
+  Check,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { menuData } from "../data/menu";
 import { useCart } from "../context/CartContext";
 import MenuCard from "../components/MenuCard";
@@ -36,8 +38,11 @@ export default function MenuPage() {
   const initialCategory = searchParams.get("category") || null;
   const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [searchQuery, setSearchQuery] = useState("");
-  const { totalItems, totalPrice } = useCart();
+  const { totalItems, totalPrice, lastAdded, clearLastAdded } = useCart();
   const sectionRefs = useRef({});
+  const [showAddedToast, setShowAddedToast] = useState(false);
+  const [addedItem, setAddedItem] = useState(null);
+  const toastTimer = useRef(null);
 
   useEffect(() => {
     const cat = searchParams.get("category");
@@ -51,6 +56,26 @@ export default function MenuPage() {
       }, 100);
     }
   }, [searchParams]);
+
+  // Show "Go to Cart" toast on mobile when item is added
+  useEffect(() => {
+    if (lastAdded) {
+      setAddedItem(lastAdded);
+      setShowAddedToast(true);
+      clearTimeout(toastTimer.current);
+      toastTimer.current = setTimeout(() => {
+        setShowAddedToast(false);
+        clearLastAdded();
+      }, 3000);
+    }
+    return () => clearTimeout(toastTimer.current);
+  }, [lastAdded, clearLastAdded]);
+
+  const dismissToast = () => {
+    setShowAddedToast(false);
+    clearLastAdded();
+    clearTimeout(toastTimer.current);
+  };
 
   const isSearching = searchQuery.length > 0;
 
@@ -73,6 +98,9 @@ export default function MenuPage() {
       block: "start",
     });
   };
+
+  // Calculate if both cart bar and toast are visible on mobile
+  const hasCartItems = totalItems > 0;
 
   return (
     <PageTransition className="min-h-screen bg-warm dark:bg-dark relative">
@@ -119,7 +147,7 @@ export default function MenuPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="flex gap-6 pt-5 pb-28 sm:pb-24">
+        <div className="flex gap-6 pt-5 pb-44 sm:pb-24 lg:pb-24">
           {/* Sidebar — desktop */}
           {!isSearching && (
             <aside className="hidden lg:block w-56 shrink-0">
@@ -168,9 +196,11 @@ export default function MenuPage() {
             </aside>
           )}
 
-          {/* Mobile Category Pills */}
+          {/* Mobile Category Pills — pushed up above cart + toast */}
           {!isSearching && (
-            <div className="lg:hidden fixed bottom-20 left-0 right-0 z-30 px-3 sm:px-4">
+            <div className={`lg:hidden fixed left-0 right-0 z-30 px-3 sm:px-4 transition-all duration-300 ${
+              hasCartItems ? "bottom-[136px]" : "bottom-6"
+            }`}>
               <div className="bg-dark/90 backdrop-blur-2xl rounded-2xl p-1.5 flex gap-1 overflow-x-auto scrollbar-hide shadow-2xl shadow-black/30 border border-white/[0.06]">
                 {menuData.map((cat) => {
                   const Icon = categoryIcons[cat.category];
@@ -272,36 +302,77 @@ export default function MenuPage() {
         </div>
       </div>
 
-      {/* Floating Cart */}
-      {totalItems > 0 && (
-        <motion.div
-          initial={{ y: 60, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 300, damping: 25 }}
-          className="fixed bottom-4 left-4 right-4 z-50 lg:bottom-6 lg:left-auto lg:right-6 lg:w-80"
-        >
-          <Link
-            to="/cart"
-            className="flex items-center justify-between bg-dark dark:bg-dark-soft hover:bg-dark-soft text-white rounded-2xl pl-5 pr-4 py-4 shadow-2xl shadow-black/30 transition-colors border border-white/[0.06]"
+      {/* ===== MOBILE "Go to Cart" Toast — only on mobile ===== */}
+      <AnimatePresence>
+        {showAddedToast && addedItem && (
+          <motion.div
+            initial={{ y: 80, opacity: 0, scale: 0.95 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 80, opacity: 0, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            className="lg:hidden fixed bottom-[76px] left-3 right-3 z-50"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-sip/20 rounded-xl flex items-center justify-center">
-                <ShoppingBag size={17} className="text-sip-light" />
+            <div className="bg-sip rounded-2xl px-4 py-3 shadow-xl shadow-sip/30 flex items-center gap-3">
+              {/* Check icon */}
+              <div className="w-8 h-8 bg-dark/15 rounded-lg flex items-center justify-center shrink-0">
+                <Check size={15} className="text-dark" strokeWidth={3} />
               </div>
-              <div>
-                <p className="text-sm font-[var(--font-heading)] font-bold">
-                  {totalItems} item{totalItems !== 1 ? "s" : ""}
+              {/* Item info */}
+              <div className="flex-1 min-w-0">
+                <p className="text-dark text-xs font-[var(--font-heading)] font-bold truncate">
+                  {addedItem.name} added
                 </p>
-                <p className="text-[10px] text-white/40">View your order</p>
+                <p className="text-dark/50 text-[10px] font-medium">
+                  {totalItems} item{totalItems !== 1 ? "s" : ""} · Rs.{totalPrice}
+                </p>
               </div>
+              {/* Go to Cart button */}
+              <Link
+                to="/cart"
+                onClick={dismissToast}
+                className="flex items-center gap-1.5 bg-dark text-white px-4 py-2 rounded-xl text-[11px] font-[var(--font-heading)] font-bold uppercase tracking-wider shrink-0 hover:bg-dark-soft transition-colors"
+              >
+                Go to Cart
+                <ArrowRight size={12} />
+              </Link>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="font-[var(--font-heading)] font-bold text-sm text-sip-light">Rs.{totalPrice}</span>
-              <ChevronRight size={14} className="text-white/35" />
-            </div>
-          </Link>
-        </motion.div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ===== Floating Cart Bar ===== */}
+      <AnimatePresence>
+        {hasCartItems && (
+          <motion.div
+            initial={{ y: 60, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 60, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="fixed bottom-4 left-4 right-4 z-40 lg:bottom-6 lg:left-auto lg:right-6 lg:w-80"
+          >
+            <Link
+              to="/cart"
+              className="flex items-center justify-between bg-dark dark:bg-dark-soft hover:bg-dark-soft text-white rounded-2xl pl-5 pr-4 py-4 shadow-2xl shadow-black/30 transition-colors border border-white/[0.06]"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-sip/20 rounded-xl flex items-center justify-center">
+                  <ShoppingBag size={17} className="text-sip-light" />
+                </div>
+                <div>
+                  <p className="text-sm font-[var(--font-heading)] font-bold">
+                    {totalItems} item{totalItems !== 1 ? "s" : ""}
+                  </p>
+                  <p className="text-[10px] text-white/40">View your order</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-[var(--font-heading)] font-bold text-sm text-sip-light">Rs.{totalPrice}</span>
+                <ChevronRight size={14} className="text-white/35" />
+              </div>
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </PageTransition>
   );
 }

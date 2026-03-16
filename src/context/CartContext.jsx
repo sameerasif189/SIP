@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useReducer, useState, useCallback } from "react";
 
 const CartContext = createContext();
 
@@ -50,11 +50,17 @@ const cartReducer = (state, action) => {
 export function CartProvider({ children }) {
   const [state, dispatch] = useReducer(cartReducer, { items: [] });
 
-  const addItem = (item) => dispatch({ type: "ADD_ITEM", payload: item });
+  const [lastAdded, setLastAdded] = useState(null);
+
+  const addItem = useCallback((item) => {
+    dispatch({ type: "ADD_ITEM", payload: item });
+    setLastAdded({ ...item, _ts: Date.now() });
+  }, []);
   const removeItem = (id) => dispatch({ type: "REMOVE_ITEM", payload: id });
   const updateQuantity = (id, quantity) =>
     dispatch({ type: "UPDATE_QUANTITY", payload: { id, quantity } });
   const clearCart = () => dispatch({ type: "CLEAR_CART" });
+  const clearLastAdded = useCallback(() => setLastAdded(null), []);
 
   const totalItems = state.items.reduce((sum, i) => sum + i.quantity, 0);
   const totalPrice = state.items.reduce(
@@ -72,6 +78,8 @@ export function CartProvider({ children }) {
         clearCart,
         totalItems,
         totalPrice,
+        lastAdded,
+        clearLastAdded,
       }}
     >
       {children}

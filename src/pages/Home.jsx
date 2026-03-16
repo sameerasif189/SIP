@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ChevronRight,
@@ -18,12 +19,14 @@ import {
   Music,
   ArrowRight,
   Flame,
+  Check,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { menuData } from "../data/menu";
 import MenuCard from "../components/MenuCard";
 import SipLogo from "../components/SipLogo";
 import { useTable } from "../context/TableContext";
+import { useCart } from "../context/CartContext";
 import { PageTransition, FadeIn, StaggerContainer, StaggerItem } from "../components/Motion";
 
 const categoryIcons = {
@@ -39,6 +42,23 @@ const categoryIcons = {
 
 export default function Home() {
   const { tableNumber } = useTable();
+  const { totalItems, totalPrice, lastAdded, clearLastAdded } = useCart();
+  const [showAddedToast, setShowAddedToast] = useState(false);
+  const [addedItem, setAddedItem] = useState(null);
+  const toastTimer = useRef(null);
+
+  useEffect(() => {
+    if (lastAdded) {
+      setAddedItem(lastAdded);
+      setShowAddedToast(true);
+      clearTimeout(toastTimer.current);
+      toastTimer.current = setTimeout(() => {
+        setShowAddedToast(false);
+        clearLastAdded();
+      }, 3000);
+    }
+    return () => clearTimeout(toastTimer.current);
+  }, [lastAdded, clearLastAdded]);
 
   const featuredItems = [
     menuData[0].items[0],
@@ -296,6 +316,40 @@ export default function Home() {
           </div>
         </section>
       </FadeIn>
+
+      {/* ===== MOBILE "Go to Cart" Toast ===== */}
+      <AnimatePresence>
+        {showAddedToast && addedItem && (
+          <motion.div
+            initial={{ y: 80, opacity: 0, scale: 0.95 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 80, opacity: 0, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            className="lg:hidden fixed bottom-5 left-3 right-3 z-50"
+          >
+            <div className="bg-sip rounded-2xl px-4 py-3 shadow-xl shadow-sip/30 flex items-center gap-3">
+              <div className="w-8 h-8 bg-dark/15 rounded-lg flex items-center justify-center shrink-0">
+                <Check size={15} className="text-dark" strokeWidth={3} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-dark text-xs font-[var(--font-heading)] font-bold truncate">
+                  {addedItem.name} added
+                </p>
+                <p className="text-dark/50 text-[10px] font-medium">
+                  {totalItems} item{totalItems !== 1 ? "s" : ""} · Rs.{totalPrice}
+                </p>
+              </div>
+              <Link
+                to="/cart"
+                className="flex items-center gap-1.5 bg-dark text-white px-4 py-2 rounded-xl text-[11px] font-[var(--font-heading)] font-bold uppercase tracking-wider shrink-0 hover:bg-dark-soft transition-colors"
+              >
+                Go to Cart
+                <ArrowRight size={12} />
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </PageTransition>
   );
 }
