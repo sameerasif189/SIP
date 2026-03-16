@@ -1,355 +1,218 @@
-import { useEffect, useRef, useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  ChevronRight,
-  Sunrise,
-  Leaf,
-  Sandwich,
-  Coffee,
-  Timer,
-  GlassWater,
-  Bean,
-  Plus,
-  MapPin,
-  Clock,
-  Star,
-  UtensilsCrossed,
-  Armchair,
-  Wifi,
-  Music,
-  ArrowRight,
-  Flame,
-  Check,
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Search, Star, MapPin, Clock, Bell, ShoppingBag } from "lucide-react";
 import { menuData } from "../data/menu";
+import { useCart } from "../context/CartContext";
 import MenuCard from "../components/MenuCard";
 import SipLogo from "../components/SipLogo";
-import { useTable } from "../context/TableContext";
-import { useCart } from "../context/CartContext";
-import { PageTransition, FadeIn, StaggerContainer, StaggerItem } from "../components/Motion";
-
-const categoryIcons = {
-  Breakfast: Sunrise,
-  Salads: Leaf,
-  Sandwiches: Sandwich,
-  Coffee: Coffee,
-  "Slow Bar": Timer,
-  "Not Coffee": GlassWater,
-  Matcha: Bean,
-  Extras: Plus,
-};
 
 export default function Home() {
-  const { tableNumber } = useTable();
-  const { totalItems, totalPrice, lastAdded, clearLastAdded } = useCart();
-  const [showAddedToast, setShowAddedToast] = useState(false);
-  const [addedItem, setAddedItem] = useState(null);
-  const toastTimer = useRef(null);
+  const [activeCategory, setActiveCategory] = useState(menuData[0].category);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { totalItems, totalPrice } = useCart();
+  const sectionRefs = useRef({});
+  const tabsRef = useRef(null);
 
+  const scrollToCategory = (cat) => {
+    setActiveCategory(cat);
+    sectionRefs.current[cat]?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  // Track scroll to update active category
   useEffect(() => {
-    if (lastAdded) {
-      setAddedItem(lastAdded);
-      setShowAddedToast(true);
-      clearTimeout(toastTimer.current);
-      toastTimer.current = setTimeout(() => {
-        setShowAddedToast(false);
-        clearLastAdded();
-      }, 3000);
-    }
-    return () => clearTimeout(toastTimer.current);
-  }, [lastAdded, clearLastAdded]);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveCategory(entry.target.dataset.category);
+          }
+        });
+      },
+      { rootMargin: "-120px 0px -60% 0px", threshold: 0 }
+    );
+    Object.values(sectionRefs.current).forEach((el) => {
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
 
-  const featuredItems = [
-    menuData[0].items[0],
-    menuData[0].items[2],
-    menuData[3].items[5],
-    menuData[5].items[0],
-  ];
+  const isSearching = searchQuery.length > 0;
+  const searchResults = isSearching
+    ? menuData.flatMap((c) =>
+        c.items
+          .filter(
+            (item) =>
+              item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              item.description.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+          .map((item) => ({ ...item, category: c.category }))
+      )
+    : [];
 
   return (
-    <PageTransition className="bg-warm dark:bg-dark min-h-screen">
-      {/* ===== MASSIVE HERO ===== */}
-      <div className="relative overflow-hidden bg-dark min-h-[420px] sm:min-h-[500px] lg:min-h-[560px]">
-        {/* Background image */}
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1600&q=80"
-            alt="SIP Coffee interior"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-dark/90 via-dark/75 to-dark/50" />
-          <div className="absolute inset-0 bg-gradient-to-t from-dark via-dark/30 to-transparent" />
+    <div className="min-h-screen bg-white pb-24">
+      {/* Hero banner */}
+      <div className="relative h-[200px] sm:h-[260px] overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200&q=80"
+          alt="SIP Coffee"
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      {/* Logo overlapping hero */}
+      <div className="max-w-3xl mx-auto px-5 relative">
+        <div className="flex justify-center -mt-10 mb-4">
+          <SipLogo size={80} className="border-4 border-white" />
         </div>
 
-        {/* Floating glass elements */}
-        <div className="absolute top-20 right-[15%] hidden lg:block">
-          <motion.div
-            animate={{ y: [0, -12, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-            className="glass-white rounded-2xl px-5 py-3"
-          >
-            <div className="flex items-center gap-2">
-              <Star size={14} className="text-amber-400 fill-amber-400" />
-              <span className="text-white/90 text-sm font-semibold">4.8 Rating</span>
-            </div>
-            <p className="text-white/40 text-[10px] mt-0.5">2,729 reviews</p>
-          </motion.div>
-        </div>
-        <div className="absolute bottom-32 right-[10%] hidden lg:block">
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            className="glass-white rounded-2xl px-4 py-2.5"
-          >
-            <div className="flex items-center gap-2">
-              <Flame size={13} className="text-orange-400" />
-              <span className="text-white/80 text-xs font-medium">Popular right now</span>
-            </div>
-          </motion.div>
+        {/* Info */}
+        <div className="text-center mb-6">
+          <p className="text-[11px] text-muted uppercase tracking-[0.2em] font-medium mb-1">
+            Table Tap
+          </p>
+          <h1 className="text-3xl font-black text-dark tracking-tight">SIP</h1>
+          <div className="flex items-center justify-center gap-1.5 flex-wrap mt-3 text-[13px] text-muted">
+            <Star size={14} className="text-amber-500 fill-amber-500" />
+            <span>4.8 · 2,729+ guests</span>
+            <span className="text-border">·</span>
+            <MapPin size={13} />
+            <span>F-8/3, Islamabad</span>
+            <span className="text-border">·</span>
+            <Clock size={13} />
+            <span>8 AM - 1 AM</span>
+          </div>
         </div>
 
-        {/* Hero Content */}
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 lg:pt-20 pb-14 sm:pb-20">
-          <FadeIn>
-            <div className="flex items-center gap-2 mb-5">
-              <div className="w-2 h-2 rounded-full bg-sip animate-pulse" />
-              <p className="text-sip text-[11px] sm:text-xs font-bold uppercase tracking-[0.3em] font-[var(--font-heading)]">
-                Now Open · F-8/3, Islamabad
-              </p>
+        {/* Service toggle */}
+        <div className="flex justify-center mb-6">
+          <div className="inline-flex bg-bg rounded-full p-1">
+            <button className="px-5 py-2 rounded-full bg-white text-dark text-sm font-semibold shadow-sm cursor-pointer">
+              Table service
+            </button>
+            <button className="px-5 py-2 rounded-full text-muted text-sm font-medium cursor-pointer">
+              Take-away
+            </button>
+          </div>
+        </div>
+
+        {/* Table + service time */}
+        <div className="grid grid-cols-2 gap-3 mb-8">
+          <div className="border border-border rounded-xl py-4 text-center">
+            <p className="text-lg font-bold text-dark">#1</p>
+            <p className="text-xs text-muted mt-0.5">Current table</p>
+          </div>
+          <div className="border border-border rounded-xl py-4 text-center">
+            <div className="flex items-center justify-center gap-1.5">
+              <Clock size={14} className="text-muted" />
+              <p className="text-lg font-bold text-dark">15 - 20 min</p>
             </div>
-
-            <h1 className="heading-xl text-5xl sm:text-6xl lg:text-8xl text-white mb-6">
-              Dine In,<br />
-              <span className="heading-accent text-5xl sm:text-6xl lg:text-8xl">Sip Away.</span>
-            </h1>
-
-            <p className="text-white/45 text-base sm:text-lg max-w-lg mb-8 leading-relaxed font-light">
-              Premium specialty coffee and artisan food, crafted with care. Order directly from your table.
-            </p>
-
-            {/* Info pills — glassmorphism */}
-            <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap mb-8">
-              {tableNumber && (
-                <span className="glass-white flex items-center gap-2 text-white text-xs sm:text-sm px-4 py-2.5 rounded-full font-semibold">
-                  <Armchair size={14} className="text-sip" />
-                  Table {tableNumber}
-                </span>
-              )}
-              <span className="glass-btn flex items-center gap-2 text-white/70 text-xs px-4 py-2.5 rounded-full">
-                <Clock size={12} className="text-sip" />
-                8 AM – 1 AM
-              </span>
-              <span className="glass-btn flex items-center gap-2 text-white/70 text-xs px-4 py-2.5 rounded-full">
-                <MapPin size={12} className="text-sip" />
-                F-8/3, Islamabad
-              </span>
-              <span className="glass-btn flex items-center gap-2 text-white/70 text-xs px-4 py-2.5 rounded-full hidden sm:flex">
-                <Wifi size={12} className="text-sip" />
-                Free WiFi
-              </span>
-              <span className="glass-btn flex items-center gap-2 text-white/70 text-xs px-4 py-2.5 rounded-full hidden md:flex">
-                <Music size={12} className="text-sip" />
-                Live Ambiance
-              </span>
-            </div>
-
-            {/* CTAs */}
-            <div className="flex gap-3 flex-wrap">
-              <Link
-                to="/menu"
-                className="inline-flex items-center gap-2.5 bg-sip hover:bg-sip-dark text-dark px-7 sm:px-8 py-3.5 sm:py-4 rounded-2xl text-sm sm:text-base font-bold transition-all shadow-xl shadow-sip/25 hover:shadow-sip/40 font-[var(--font-heading)] uppercase tracking-wider"
-              >
-                <UtensilsCrossed size={17} />
-                Full Menu
-              </Link>
-              <Link
-                to="/about"
-                className="glass-btn inline-flex items-center gap-2 text-white/80 hover:text-white px-6 sm:px-7 py-3.5 sm:py-4 rounded-2xl text-sm font-semibold tracking-wider uppercase font-[var(--font-heading)]"
-              >
-                Our Story
-                <ArrowRight size={15} />
-              </Link>
-            </div>
-          </FadeIn>
+            <p className="text-xs text-muted mt-0.5">Average service time</p>
+          </div>
         </div>
       </div>
 
-      {/* ===== CATEGORIES ===== */}
-      <FadeIn>
-        <section className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-          <div className="flex items-end justify-between mb-5">
-            <div>
-              <p className="text-sip-dark dark:text-sip text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] font-[var(--font-heading)] mb-1">
-                Explore
-              </p>
-              <h2 className="heading-xl text-2xl sm:text-3xl dark:text-white">
-                Browse <span className="heading-accent text-2xl sm:text-3xl">Categories</span>
-              </h2>
-            </div>
-          </div>
-          <div className="flex gap-3 overflow-x-auto pb-3 scrollbar-hide">
-            {menuData.map((cat) => {
-              const Icon = categoryIcons[cat.category];
-              return (
-                <Link
-                  key={cat.category}
-                  to={`/menu?category=${encodeURIComponent(cat.category)}`}
-                  className="group glass-card rounded-2xl px-5 sm:px-6 py-4 sm:py-5 hover:shadow-xl hover:shadow-sip/8 dark:hover:shadow-sip/5 transition-all shrink-0 hover:scale-[1.02]"
-                >
-                  <div className="flex items-center gap-3.5">
-                    {Icon && (
-                      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-sip/10 dark:bg-sip/15 flex items-center justify-center group-hover:bg-sip group-hover:shadow-lg group-hover:shadow-sip/20 transition-all">
-                        <Icon size={18} className="text-sip-dark dark:text-sip-light group-hover:text-dark transition-colors" />
-                      </div>
-                    )}
-                    <div>
-                      <p className="font-[var(--font-heading)] font-bold text-sm sm:text-base text-dark dark:text-white group-hover:text-sip-dark dark:group-hover:text-sip-light transition-colors whitespace-nowrap">
-                        {cat.category}
-                      </p>
-                      <p className="text-[10px] sm:text-xs text-dark-muted dark:text-white/35 font-medium">
-                        {cat.items.length} items
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-      </FadeIn>
+      {/* Search */}
+      <div className="max-w-3xl mx-auto px-5 mb-2">
+        <div className="relative">
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
+          <input
+            type="text"
+            placeholder="Search menu"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-11 pr-4 py-3 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10"
+          />
+        </div>
+      </div>
 
-      {/* ===== POPULAR PICKS ===== */}
-      <FadeIn>
-        <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-10">
-          <div className="flex items-end justify-between mb-6">
-            <div>
-              <p className="text-sip-dark dark:text-sip text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] font-[var(--font-heading)] mb-1">
-                Chef's Pick
-              </p>
-              <h2 className="heading-xl text-2xl sm:text-3xl dark:text-white">
-                Must <span className="heading-accent text-2xl sm:text-3xl">Try</span>
-              </h2>
-            </div>
-            <Link
-              to="/menu"
-              className="glass-btn px-4 py-2 rounded-xl text-xs text-dark dark:text-white font-[var(--font-heading)] font-bold uppercase tracking-wider flex items-center gap-1 hover:bg-sip hover:text-dark hover:border-sip/50 transition-all"
-            >
-              See all
-              <ChevronRight size={14} />
-            </Link>
-          </div>
-          <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            {featuredItems.map((item) => (
-              <StaggerItem key={item.id}>
-                <MenuCard item={item} />
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </section>
-      </FadeIn>
-
-      {/* ===== CATEGORY SECTIONS ===== */}
-      {menuData.slice(0, 4).map((cat, catIdx) => {
-        const Icon = categoryIcons[cat.category];
-        return (
-          <FadeIn key={cat.category} delay={catIdx * 0.05}>
-            <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-10">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  {Icon && (
-                    <div className="w-10 h-10 rounded-xl bg-sip/10 dark:bg-sip/15 flex items-center justify-center">
-                      <Icon size={18} className="text-sip-dark dark:text-sip" />
-                    </div>
-                  )}
-                  <h2 className="heading-xl text-xl sm:text-2xl dark:text-white">
-                    {cat.category}
-                  </h2>
-                </div>
-                <Link
-                  to={`/menu?category=${encodeURIComponent(cat.category)}`}
-                  className="text-xs text-sip-dark dark:text-sip hover:text-sip font-[var(--font-heading)] font-bold uppercase tracking-wider flex items-center gap-1 transition-colors"
-                >
-                  View all {cat.items.length}
-                  <ChevronRight size={14} />
-                </Link>
-              </div>
-              <StaggerContainer className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                {cat.items.slice(0, 3).map((item) => (
-                  <StaggerItem key={item.id}>
-                    <MenuCard item={item} />
-                  </StaggerItem>
-                ))}
-              </StaggerContainer>
-            </section>
-          </FadeIn>
-        );
-      })}
-
-      {/* ===== BOTTOM CTA BANNER ===== */}
-      <FadeIn>
-        <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-10">
-          <div className="relative overflow-hidden rounded-3xl">
-            <img
-              src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=80"
-              alt="Coffee brewing"
-              className="w-full h-56 sm:h-64 object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-dark/90 via-dark/70 to-dark/40" />
-            <div className="absolute inset-0 flex items-center px-8 sm:px-12">
-              <div>
-                <h3 className="heading-xl text-2xl sm:text-4xl text-white mb-2">
-                  Explore the <span className="heading-accent text-2xl sm:text-4xl">Full Menu</span>
-                </h3>
-                <p className="text-white/50 text-sm mb-5 max-w-sm">
-                  From specialty coffee to artisan food — discover everything we have to offer.
-                </p>
-                <Link
-                  to="/menu"
-                  className="inline-flex items-center gap-2 bg-sip hover:bg-sip-dark text-dark px-6 py-3 rounded-xl text-sm font-bold font-[var(--font-heading)] uppercase tracking-wider transition-all shadow-lg shadow-sip/25"
-                >
-                  <UtensilsCrossed size={15} />
-                  View Menu
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-      </FadeIn>
-
-      {/* ===== MOBILE "Go to Cart" Toast ===== */}
-      <AnimatePresence>
-        {showAddedToast && addedItem && (
-          <motion.div
-            initial={{ y: 80, opacity: 0, scale: 0.95 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: 80, opacity: 0, scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="lg:hidden fixed bottom-5 left-3 right-3 z-50"
-          >
-            <div className="bg-sip rounded-2xl px-4 py-3 shadow-xl shadow-sip/30 flex items-center gap-3">
-              <div className="w-8 h-8 bg-dark/15 rounded-lg flex items-center justify-center shrink-0">
-                <Check size={15} className="text-dark" strokeWidth={3} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-dark text-xs font-[var(--font-heading)] font-bold truncate">
-                  {addedItem.name} added
-                </p>
-                <p className="text-dark/50 text-[10px] font-medium">
-                  {totalItems} item{totalItems !== 1 ? "s" : ""} · Rs.{totalPrice}
-                </p>
-              </div>
-              <Link
-                to="/cart"
-                className="flex items-center gap-1.5 bg-dark text-white px-4 py-2 rounded-xl text-[11px] font-[var(--font-heading)] font-bold uppercase tracking-wider shrink-0 hover:bg-dark-soft transition-colors"
+      {/* Category tabs — sticky */}
+      <div className="sticky top-0 z-30 bg-white border-b border-border" ref={tabsRef}>
+        <div className="max-w-3xl mx-auto px-5">
+          <div className="flex gap-6 overflow-x-auto scrollbar-hide py-3">
+            {menuData.map((cat) => (
+              <button
+                key={cat.category}
+                onClick={() => scrollToCategory(cat.category)}
+                className={`text-sm whitespace-nowrap pb-1 border-b-2 transition-colors cursor-pointer font-medium ${
+                  activeCategory === cat.category
+                    ? "border-dark text-dark"
+                    : "border-transparent text-muted hover:text-dark"
+                }`}
               >
-                Go to Cart
-                <ArrowRight size={12} />
-              </Link>
-            </div>
-          </motion.div>
+                {cat.category}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Menu sections */}
+      <div className="max-w-3xl mx-auto px-5 pt-6">
+        {isSearching ? (
+          <div>
+            <p className="text-sm text-muted mb-4">
+              {searchResults.length} result{searchResults.length !== 1 ? "s" : ""} for "{searchQuery}"
+            </p>
+            {searchResults.length === 0 ? (
+              <p className="text-muted text-sm py-16 text-center">Nothing found.</p>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-6">
+                {searchResults.map((item) => (
+                  <MenuCard key={item.id} item={item} />
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-10">
+            {menuData.map((category) => (
+              <section
+                key={category.category}
+                ref={(el) => (sectionRefs.current[category.category] = el)}
+                data-category={category.category}
+                className="scroll-mt-14"
+              >
+                <h2 className="text-[15px] font-black uppercase tracking-wide text-dark mb-5">
+                  {category.category} at SIP.
+                </h2>
+                <div className="flex gap-4 overflow-x-auto scrollbar-hide sm:grid sm:grid-cols-3 lg:grid-cols-4 sm:gap-x-4 sm:gap-y-6 pb-2 sm:pb-0">
+                  {category.items.map((item) => (
+                    <MenuCard key={item.id} item={item} />
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
         )}
-      </AnimatePresence>
-    </PageTransition>
+      </div>
+
+      {/* Floating cart bar */}
+      {totalItems > 0 && (
+        <div className="fixed bottom-5 left-4 right-4 z-50 max-w-3xl mx-auto">
+          <Link
+            to="/cart"
+            className="flex items-center justify-between bg-dark text-white rounded-full px-6 py-4 shadow-xl shadow-dark/20"
+          >
+            <div className="flex items-center gap-3">
+              <ShoppingBag size={18} />
+              <span className="font-semibold text-sm">
+                View order · {totalItems} item{totalItems !== 1 ? "s" : ""}
+              </span>
+            </div>
+            <span className="font-bold text-sm">Rs.{totalPrice}/-</span>
+          </Link>
+        </div>
+      )}
+
+      {/* Call waiter FAB */}
+      <button className="fixed bottom-5 right-4 z-40 flex items-center gap-2 bg-dark text-white px-5 py-3 rounded-full shadow-xl shadow-dark/20 text-sm font-semibold cursor-pointer hover:bg-dark/90 transition-colors">
+        <Bell size={16} />
+        Call waiter
+      </button>
+    </div>
   );
 }
