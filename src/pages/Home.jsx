@@ -3,13 +3,22 @@ import { Link } from "react-router-dom";
 import { Search, Star, MapPin, Clock, Bell, ShoppingBag } from "lucide-react";
 import { menuData } from "../data/menu";
 import { useCart } from "../context/CartContext";
+import { useOrder } from "../context/OrderContext";
 import MenuCard from "../components/MenuCard";
 import SipLogo from "../components/SipLogo";
+
+const STATUS_LABELS = [
+  "Your order has been placed",
+  "Your order is being prepared",
+  "Your order is ready to serve",
+  "Your order has been served",
+];
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState(menuData[0].category);
   const [searchQuery, setSearchQuery] = useState("");
   const { totalItems, totalPrice } = useCart();
+  const { activeOrder, dismissOrder, ORDER_STEPS } = useOrder();
   const sectionRefs = useRef({});
   const tabsRef = useRef(null);
 
@@ -190,8 +199,62 @@ export default function Home() {
         )}
       </div>
 
+      {/* Order status bar */}
+      {activeOrder && (
+        <div className="fixed bottom-20 left-4 right-4 z-40 max-w-3xl mx-auto">
+          <div className="bg-white rounded-2xl border border-border shadow-xl shadow-dark/10 p-4">
+            {/* Progress segments */}
+            <div className="flex gap-1.5 mb-3">
+              {ORDER_STEPS.map((_, i) => (
+                <div
+                  key={i}
+                  className={`h-1 flex-1 rounded-full transition-colors duration-500 ${
+                    i <= activeOrder.step ? "bg-dark" : "bg-border"
+                  }`}
+                />
+              ))}
+            </div>
+            {/* Status text + dismiss */}
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="font-bold text-dark text-sm">
+                  {STATUS_LABELS[activeOrder.step]}
+                </p>
+                <p className="text-xs text-muted mt-0.5">
+                  Order #{activeOrder.id} will be served to Table {activeOrder.table}.
+                </p>
+              </div>
+              <button
+                onClick={dismissOrder}
+                className="text-xs text-muted font-medium hover:text-dark transition-colors cursor-pointer shrink-0 pt-0.5"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Floating cart bar */}
-      {totalItems > 0 && (
+      {totalItems > 0 && !activeOrder && (
+        <div className="fixed bottom-5 left-4 right-4 z-50 max-w-3xl mx-auto">
+          <Link
+            to="/cart"
+            className="flex items-center justify-between bg-dark text-white rounded-full px-6 py-4 shadow-xl shadow-dark/20"
+          >
+            <div className="flex items-center gap-3">
+              <ShoppingBag size={18} />
+              <span className="font-semibold text-sm">
+                View order · {totalItems} item{totalItems !== 1 ? "s" : ""}
+              </span>
+            </div>
+            <span className="font-bold text-sm">Rs.{totalPrice}/-</span>
+          </Link>
+        </div>
+      )}
+
+      {/* Cart bar when order is active (smaller) */}
+      {totalItems > 0 && activeOrder && (
         <div className="fixed bottom-5 left-4 right-4 z-50 max-w-3xl mx-auto">
           <Link
             to="/cart"
@@ -209,10 +272,12 @@ export default function Home() {
       )}
 
       {/* Call waiter FAB */}
-      <button className="fixed bottom-5 right-4 z-40 flex items-center gap-2 bg-dark text-white px-5 py-3 rounded-full shadow-xl shadow-dark/20 text-sm font-semibold cursor-pointer hover:bg-dark/90 transition-colors">
-        <Bell size={16} />
-        Call waiter
-      </button>
+      {!activeOrder && (
+        <button className="fixed bottom-5 right-4 z-40 flex items-center gap-2 bg-dark text-white px-5 py-3 rounded-full shadow-xl shadow-dark/20 text-sm font-semibold cursor-pointer hover:bg-dark/90 transition-colors">
+          <Bell size={16} />
+          Call waiter
+        </button>
+      )}
     </div>
   );
 }
