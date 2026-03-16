@@ -14,9 +14,9 @@ function App() {
       <OrderProvider>
         <Router>
           <Routes>
-            <Route path="/scan" element={<Scan />} />
+            <Route path="/" element={<Scan />} />
             <Route path="/welcome" element={<Welcome />} />
-            <Route path="/" element={<Home />} />
+            <Route path="/menu" element={<Home />} />
             <Route path="/item/:id" element={<ItemDetail />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />

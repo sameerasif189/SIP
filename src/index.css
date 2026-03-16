@@ -6,8 +6,8 @@
   --color-border: #EFEFEF;
   --color-bg: #F4F4F4;
   --color-white: #FFFFFF;
-  --color-sip: #7BAF6E;
-  --color-sip-light: #EEF4EC;
+  --color-sip: #5C8A4D;
+  --color-sip-light: #E8F0E5;
   --font-sans: 'DM Sans', system-ui, sans-serif;
   --font-display: 'Playfair Display', Georgia, serif;
 }
@@ -41,7 +41,7 @@
   100% { background-position: 200% 0; }
 }
 .animate-shimmer {
-  background: linear-gradient(90deg, #7BAF6E 25%, #A3D395 50%, #7BAF6E 75%);
+  background: linear-gradient(90deg, #5C8A4D 25%, #8AB87C 50%, #5C8A4D 75%);
   background-size: 200% 100%;
   animation: shimmer 2s ease-in-out infinite;
 }

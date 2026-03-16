@@ -14,12 +14,12 @@ export default function Welcome() {
   const [name, setName] = useState("");
 
   const handleGuest = () => {
-    navigate("/");
+    navigate("/menu");
   };
 
   const handleLogin = (e) => {
     e.preventDefault();
-    navigate("/");
+    navigate("/menu");
   };
 
   return (
