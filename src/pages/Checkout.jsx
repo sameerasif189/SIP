@@ -14,11 +14,13 @@ import {
   SplitSquareHorizontal,
   Minus,
   Plus,
+  Sparkles,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useCart } from "../context/CartContext";
 import { useTable } from "../context/TableContext";
 import { PageTransition, FadeIn } from "../components/Motion";
+import SipLogo from "../components/SipLogo";
 
 export default function Checkout() {
   const { items, totalPrice, clearCart } = useCart();
@@ -42,7 +44,6 @@ export default function Checkout() {
   const [confirmed, setConfirmed] = useState(false);
   const [processing, setProcessing] = useState(false);
 
-  // Bill split state
   const [splitMode, setSplitMode] = useState("individual");
   const [splitCount, setSplitCount] = useState(2);
   const [itemAssignments, setItemAssignments] = useState(() => {
@@ -109,9 +110,9 @@ export default function Checkout() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 15 }}
-            className="w-20 h-20 bg-sip/20 rounded-3xl flex items-center justify-center mx-auto mb-6"
+            className="w-24 h-24 bg-sip/20 rounded-3xl flex items-center justify-center mx-auto mb-6"
           >
-            <CheckCircle2 size={40} className="text-sip-dark" />
+            <CheckCircle2 size={44} className="text-sip" />
           </motion.div>
           <h2 className="font-[var(--font-display)] text-3xl font-bold text-white mb-2">
             Order Confirmed!
@@ -119,8 +120,8 @@ export default function Checkout() {
           <p className="text-white/50 text-sm mb-1">
             Your order is being prepared.
           </p>
-          <div className="inline-flex items-center gap-2 bg-white/5 rounded-full px-4 py-2 mt-3 mb-8">
-            <Coffee size={14} className="text-sip-dark" />
+          <div className="glass inline-flex items-center gap-2 rounded-full px-5 py-2.5 mt-3 mb-8">
+            <Coffee size={14} className="text-sip" />
             <span className="text-white/70 text-sm">
               Table {tableNumber || "—"} · #{Math.floor(1000 + Math.random() * 9000)}
             </span>
@@ -132,10 +133,10 @@ export default function Checkout() {
               {splitMode === "per-item" && " (your items only)"}
             </p>
           )}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             <Link
               to="/menu"
-              className="bg-sip hover:bg-sip-dark text-dark px-8 py-3 rounded-xl font-semibold text-sm transition-colors"
+              className="bg-sip hover:bg-sip-dark text-dark px-8 py-3.5 rounded-2xl font-bold text-sm transition-colors shadow-lg shadow-sip/20"
             >
               Order More
             </Link>
@@ -152,78 +153,43 @@ export default function Checkout() {
   }
 
   const paymentOptions = [
-    {
-      id: "card",
-      icon: CreditCard,
-      label: "Card Payment",
-      desc: "Visa, Mastercard, UnionPay",
-    },
-    {
-      id: "cash",
-      icon: Banknote,
-      label: "Cash",
-      desc: "Pay at the counter",
-    },
-    {
-      id: "jazzcash",
-      icon: Smartphone,
-      label: "JazzCash",
-      desc: "Mobile wallet",
-    },
-    {
-      id: "easypaisa",
-      icon: Smartphone,
-      label: "Easypaisa",
-      desc: "Mobile wallet",
-    },
+    { id: "card", icon: CreditCard, label: "Card Payment", desc: "Visa, Mastercard, UnionPay" },
+    { id: "cash", icon: Banknote, label: "Cash", desc: "Pay at the counter" },
+    { id: "jazzcash", icon: Smartphone, label: "JazzCash", desc: "Mobile wallet" },
+    { id: "easypaisa", icon: Smartphone, label: "Easypaisa", desc: "Mobile wallet" },
   ];
 
   const splitOptions = [
-    {
-      id: "individual",
-      icon: User,
-      label: "I'm paying",
-      desc: "Full bill, one person",
-    },
-    {
-      id: "even",
-      icon: Users,
-      label: "Split evenly",
-      desc: "Divide equally",
-    },
-    {
-      id: "per-item",
-      icon: SplitSquareHorizontal,
-      label: "Per item",
-      desc: "Each pays their own",
-    },
+    { id: "individual", icon: User, label: "I'm paying", desc: "Full bill, one person" },
+    { id: "even", icon: Users, label: "Split evenly", desc: "Divide equally" },
+    { id: "per-item", icon: SplitSquareHorizontal, label: "Per item", desc: "Each pays their own" },
   ];
 
   return (
-    <PageTransition className="min-h-screen bg-warm">
+    <PageTransition className="min-h-screen bg-warm dark:bg-dark">
       <div className="max-w-lg mx-auto px-4 sm:px-6 py-6">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-6 sm:mb-8">
+        <div className="flex items-center gap-4 mb-7">
           <Link
             to="/cart"
-            className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-black/5 hover:bg-gray-50 transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-xl glass-card hover:bg-gray-50 dark:hover:bg-white/10 transition-colors"
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={16} className="dark:text-white" />
           </Link>
           <div>
-            <h1 className="font-[var(--font-display)] text-xl font-bold">
+            <h1 className="font-[var(--font-display)] text-xl font-bold dark:text-white">
               Payment
             </h1>
-            <p className="text-xs text-dark-muted">
+            <p className="text-xs text-dark-muted dark:text-white/40">
               {tableNumber ? `Table ${tableNumber} · ` : ""}Secure checkout
             </p>
           </div>
         </div>
 
-        {/* Bill Split Options */}
+        {/* Bill Split */}
         <FadeIn>
           <div className="mb-4">
-            <p className="text-xs font-semibold text-dark-muted uppercase tracking-wider mb-3">
+            <p className="text-xs font-semibold text-dark-muted dark:text-white/35 uppercase tracking-wider mb-3">
               Who's paying?
             </p>
             <div className="grid grid-cols-3 gap-2">
@@ -231,25 +197,25 @@ export default function Checkout() {
                 <button
                   key={opt.id}
                   onClick={() => setSplitMode(opt.id)}
-                  className={`relative rounded-2xl border-2 p-3 sm:p-3.5 text-center transition-all cursor-pointer ${
+                  className={`relative glass-card rounded-2xl border-2 p-3 sm:p-4 text-center transition-all cursor-pointer ${
                     splitMode === opt.id
-                      ? "border-sip bg-sip-bg"
-                      : "border-black/5 bg-white hover:border-black/10"
+                      ? "!border-sip !bg-sip-bg dark:!bg-sip/10"
+                      : "!border-transparent hover:!border-black/5 dark:hover:!border-white/10"
                   }`}
                 >
                   {splitMode === opt.id && (
-                    <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-4 h-4 bg-sip rounded-full flex items-center justify-center">
-                      <CheckCircle2 size={10} className="text-white" />
+                    <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-sip rounded-full flex items-center justify-center">
+                      <CheckCircle2 size={10} className="text-dark" />
                     </div>
                   )}
                   <opt.icon
                     size={18}
                     className={`mx-auto ${
-                      splitMode === opt.id ? "text-sip-dark" : "text-dark-muted"
+                      splitMode === opt.id ? "text-sip-dark dark:text-sip" : "text-dark-muted dark:text-white/40"
                     }`}
                   />
-                  <p className="font-semibold text-[11px] sm:text-xs mt-2">{opt.label}</p>
-                  <p className="text-[9px] sm:text-[10px] text-dark-muted mt-0.5 hidden sm:block">
+                  <p className="font-semibold text-[11px] sm:text-xs mt-2 dark:text-white">{opt.label}</p>
+                  <p className="text-[9px] sm:text-[10px] text-dark-muted dark:text-white/30 mt-0.5 hidden sm:block">
                     {opt.desc}
                   </p>
                 </button>
@@ -258,53 +224,53 @@ export default function Checkout() {
           </div>
         </FadeIn>
 
-        {/* Even Split: Number of people */}
+        {/* Even Split */}
         {splitMode === "even" && (
           <FadeIn>
-            <div className="bg-white rounded-2xl border border-black/5 p-4 mb-4">
-              <p className="text-xs font-semibold text-dark-muted uppercase tracking-wider mb-3">
+            <div className="glass-card rounded-2xl p-4 mb-4">
+              <p className="text-xs font-semibold text-dark-muted dark:text-white/35 uppercase tracking-wider mb-3">
                 How many people?
               </p>
               <div className="flex items-center justify-center gap-4">
                 <button
                   onClick={() => setSplitCount(Math.max(2, splitCount - 1))}
-                  className="w-10 h-10 flex items-center justify-center rounded-xl bg-warm text-dark hover:bg-sip-bg transition-colors cursor-pointer"
+                  className="w-10 h-10 flex items-center justify-center rounded-xl bg-warm dark:bg-white/5 text-dark dark:text-white hover:bg-sip-bg dark:hover:bg-white/10 transition-colors cursor-pointer"
                 >
                   <Minus size={16} />
                 </button>
-                <span className="text-2xl font-bold text-dark w-12 text-center">
+                <span className="text-2xl font-bold text-dark dark:text-white w-12 text-center">
                   {splitCount}
                 </span>
                 <button
                   onClick={() => setSplitCount(Math.min(10, splitCount + 1))}
-                  className="w-10 h-10 flex items-center justify-center rounded-xl bg-sip text-white hover:bg-sip-dark transition-colors cursor-pointer"
+                  className="w-10 h-10 flex items-center justify-center rounded-xl bg-sip text-dark hover:bg-sip-dark transition-colors cursor-pointer"
                 >
                   <Plus size={16} />
                 </button>
               </div>
-              <p className="text-center text-xs text-dark-muted mt-3">
+              <p className="text-center text-xs text-dark-muted dark:text-white/40 mt-3">
                 Rs.{Math.ceil(finalTotal / splitCount)} per person
               </p>
             </div>
           </FadeIn>
         )}
 
-        {/* Per-Item: Assign items to people */}
+        {/* Per-Item */}
         {splitMode === "per-item" && (
           <FadeIn>
-            <div className="bg-white rounded-2xl border border-black/5 p-4 mb-4">
-              <p className="text-xs font-semibold text-dark-muted uppercase tracking-wider mb-3">
+            <div className="glass-card rounded-2xl p-4 mb-4">
+              <p className="text-xs font-semibold text-dark-muted dark:text-white/35 uppercase tracking-wider mb-3">
                 Assign items to people
               </p>
               <div className="space-y-3">
                 {items.map((item) => (
                   <div key={item.id} className="flex items-center justify-between gap-2 sm:gap-3">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-dark truncate">
+                      <p className="text-sm font-medium text-dark dark:text-white truncate">
                         {item.name}
-                        <span className="text-dark-muted font-normal"> x {item.quantity}</span>
+                        <span className="text-dark-muted dark:text-white/30 font-normal"> x {item.quantity}</span>
                       </p>
-                      <p className="text-xs text-dark-muted">
+                      <p className="text-xs text-dark-muted dark:text-white/40">
                         Rs.{item.price * item.quantity}
                       </p>
                     </div>
@@ -316,7 +282,7 @@ export default function Checkout() {
                           [item.id]: e.target.value,
                         }))
                       }
-                      className="text-xs bg-warm border border-black/5 rounded-lg px-2 sm:px-2.5 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-sip/30 cursor-pointer shrink-0"
+                      className="text-xs bg-warm dark:bg-white/5 border border-black/5 dark:border-white/8 rounded-lg px-2.5 py-2 font-medium dark:text-white focus:outline-none focus:ring-2 focus:ring-sip/30 cursor-pointer shrink-0"
                     >
                       {people.map((p) => (
                         <option key={p} value={p}>
@@ -327,8 +293,8 @@ export default function Checkout() {
                   </div>
                 ))}
               </div>
-              <div className="mt-4 pt-3 border-t border-black/5">
-                <p className="text-xs font-semibold text-sip-dark">
+              <div className="mt-4 pt-3 border-t border-black/5 dark:border-white/8">
+                <p className="text-xs font-semibold text-sip-dark dark:text-sip">
                   Your share: Rs.{yourShare}
                 </p>
               </div>
@@ -336,20 +302,20 @@ export default function Checkout() {
           </FadeIn>
         )}
 
-        {/* Order Items Summary */}
+        {/* Order Summary */}
         <FadeIn delay={0.05}>
-          <div className="bg-white rounded-2xl border border-black/5 p-4 mb-4">
-            <p className="text-xs font-semibold text-dark-muted uppercase tracking-wider mb-3">
+          <div className="glass-card rounded-2xl p-4 mb-4">
+            <p className="text-xs font-semibold text-dark-muted dark:text-white/35 uppercase tracking-wider mb-3">
               Order Summary
             </p>
             <div className="space-y-2">
               {items.map((item) => (
                 <div key={item.id} className="flex justify-between text-sm gap-2">
-                  <span className="text-dark-muted truncate">
+                  <span className="text-dark-muted dark:text-white/50 truncate">
                     {item.name}
-                    <span className="text-dark-muted/50"> x {item.quantity}</span>
+                    <span className="text-dark-muted/50 dark:text-white/25"> x {item.quantity}</span>
                   </span>
-                  <span className="font-medium shrink-0">
+                  <span className="font-medium shrink-0 dark:text-white">
                     Rs.{item.price * item.quantity}
                   </span>
                 </div>
@@ -361,33 +327,33 @@ export default function Checkout() {
         {/* Payment Methods */}
         <FadeIn delay={0.1}>
           <div className="mb-4">
-            <p className="text-xs font-semibold text-dark-muted uppercase tracking-wider mb-3">
+            <p className="text-xs font-semibold text-dark-muted dark:text-white/35 uppercase tracking-wider mb-3">
               How would you like to pay?
             </p>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-2.5">
               {paymentOptions.map((opt) => (
                 <button
                   key={opt.id}
                   onClick={() => setPaymentMethod(opt.id)}
-                  className={`relative rounded-2xl border-2 p-3 sm:p-4 text-left transition-all cursor-pointer ${
+                  className={`relative glass-card rounded-2xl border-2 p-3.5 sm:p-4 text-left transition-all cursor-pointer ${
                     paymentMethod === opt.id
-                      ? "border-sip bg-sip-bg"
-                      : "border-black/5 bg-white hover:border-black/10"
+                      ? "!border-sip !bg-sip-bg dark:!bg-sip/10"
+                      : "!border-transparent hover:!border-black/5 dark:hover:!border-white/10"
                   }`}
                 >
                   {paymentMethod === opt.id && (
-                    <div className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 w-5 h-5 bg-sip rounded-full flex items-center justify-center">
-                      <CheckCircle2 size={12} className="text-white" />
+                    <div className="absolute top-2 right-2 w-5 h-5 bg-sip rounded-full flex items-center justify-center">
+                      <CheckCircle2 size={12} className="text-dark" />
                     </div>
                   )}
                   <opt.icon
                     size={20}
                     className={
-                      paymentMethod === opt.id ? "text-sip-dark" : "text-dark-muted"
+                      paymentMethod === opt.id ? "text-sip-dark dark:text-sip" : "text-dark-muted dark:text-white/40"
                     }
                   />
-                  <p className="font-semibold text-xs sm:text-sm mt-2">{opt.label}</p>
-                  <p className="text-[10px] text-dark-muted mt-0.5 hidden sm:block">
+                  <p className="font-semibold text-xs sm:text-sm mt-2 dark:text-white">{opt.label}</p>
+                  <p className="text-[10px] text-dark-muted dark:text-white/30 mt-0.5 hidden sm:block">
                     {opt.desc}
                   </p>
                 </button>
@@ -396,33 +362,33 @@ export default function Checkout() {
           </div>
         </FadeIn>
 
-        {/* Card Details (when card selected) */}
+        {/* Card Details */}
         {paymentMethod === "card" && (
           <FadeIn>
-            <div className="bg-white rounded-2xl border border-black/5 p-4 mb-4 space-y-3">
-              <p className="text-xs font-semibold text-dark-muted uppercase tracking-wider">
+            <div className="glass-card rounded-2xl p-4 mb-4 space-y-3">
+              <p className="text-xs font-semibold text-dark-muted dark:text-white/35 uppercase tracking-wider">
                 Card Details
               </p>
               <input
                 type="text"
                 placeholder="Cardholder name"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-warm border border-black/5 text-sm focus:outline-none focus:ring-2 focus:ring-sip/30"
+                className="w-full px-4 py-3 rounded-xl bg-warm dark:bg-white/5 border border-black/5 dark:border-white/8 text-sm dark:text-white dark:placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-sip/30"
               />
               <input
                 type="text"
                 placeholder="1234  5678  9012  3456"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-warm border border-black/5 text-sm focus:outline-none focus:ring-2 focus:ring-sip/30"
+                className="w-full px-4 py-3 rounded-xl bg-warm dark:bg-white/5 border border-black/5 dark:border-white/8 text-sm dark:text-white dark:placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-sip/30"
               />
               <div className="grid grid-cols-2 gap-3">
                 <input
                   type="text"
                   placeholder="MM / YY"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-warm border border-black/5 text-sm focus:outline-none focus:ring-2 focus:ring-sip/30"
+                  className="w-full px-4 py-3 rounded-xl bg-warm dark:bg-white/5 border border-black/5 dark:border-white/8 text-sm dark:text-white dark:placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-sip/30"
                 />
                 <input
                   type="text"
                   placeholder="CVV"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-warm border border-black/5 text-sm focus:outline-none focus:ring-2 focus:ring-sip/30"
+                  className="w-full px-4 py-3 rounded-xl bg-warm dark:bg-white/5 border border-black/5 dark:border-white/8 text-sm dark:text-white dark:placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-sip/30"
                 />
               </div>
             </div>
@@ -432,26 +398,26 @@ export default function Checkout() {
         {/* Promo Code */}
         <button
           onClick={() => setShowPromo(!showPromo)}
-          className={`w-full flex items-center gap-3 rounded-2xl border p-3 sm:p-4 mb-4 text-left transition-all cursor-pointer ${
+          className={`w-full glass-card flex items-center gap-3 rounded-2xl p-4 mb-4 text-left transition-all cursor-pointer ${
             promoApplied
-              ? "border-sip/30 bg-sip-bg"
-              : "border-black/5 bg-white hover:border-black/10"
+              ? "!border-sip/30 !bg-sip-bg dark:!bg-sip/10"
+              : ""
           }`}
         >
           <div
-            className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
-              promoApplied ? "bg-sip text-white" : "bg-warm text-dark-muted"
+            className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+              promoApplied ? "bg-sip text-dark" : "bg-warm dark:bg-white/5 text-dark-muted dark:text-white/40"
             }`}
           >
-            <Tag size={15} />
+            <Tag size={16} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold">
+            <p className="text-sm font-semibold dark:text-white">
               {promoApplied
                 ? `${promoCode.toUpperCase()} applied!`
                 : "Have a promo code?"}
             </p>
-            <p className="text-[10px] text-dark-muted">
+            <p className="text-[10px] text-dark-muted dark:text-white/35">
               {promoApplied ? "10% discount applied" : "Tap to enter code"}
             </p>
           </div>
@@ -465,7 +431,7 @@ export default function Checkout() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             transition={{ duration: 0.2 }}
-            className="bg-white rounded-2xl border border-black/5 p-4 mb-4"
+            className="glass-card rounded-2xl p-4 mb-4"
           >
             <div className="flex gap-2">
               <input
@@ -476,11 +442,11 @@ export default function Checkout() {
                   setPromoError("");
                 }}
                 placeholder="Enter code"
-                className="flex-1 min-w-0 px-3.5 py-2.5 rounded-xl bg-warm border border-black/5 text-sm focus:outline-none focus:ring-2 focus:ring-sip/30 uppercase"
+                className="flex-1 min-w-0 px-4 py-2.5 rounded-xl bg-warm dark:bg-white/5 border border-black/5 dark:border-white/8 text-sm dark:text-white dark:placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-sip/30 uppercase"
               />
               <button
                 onClick={handleApplyPromo}
-                className="px-4 sm:px-5 py-2.5 bg-dark text-white rounded-xl text-sm font-semibold hover:bg-dark-soft transition-colors cursor-pointer shrink-0"
+                className="px-5 py-2.5 bg-dark dark:bg-sip text-white dark:text-dark rounded-xl text-sm font-semibold hover:bg-dark-soft dark:hover:bg-sip-dark transition-colors cursor-pointer shrink-0"
               >
                 Apply
               </button>
@@ -491,13 +457,13 @@ export default function Checkout() {
           </motion.div>
         )}
 
-        {/* Bill Breakdown */}
+        {/* Bill */}
         <FadeIn delay={0.15}>
-          <div className="bg-dark rounded-2xl p-4 sm:p-5 text-white">
+          <div className="bg-dark dark:bg-dark-soft rounded-2xl p-5 text-white border border-white/5">
             <p className="text-xs font-semibold text-white/30 uppercase tracking-wider mb-3">
               Bill Details
             </p>
-            <div className="space-y-2 text-sm">
+            <div className="space-y-2.5 text-sm">
               <div className="flex justify-between text-white/50">
                 <span>Subtotal</span>
                 <span>Rs.{totalPrice}</span>
@@ -541,7 +507,7 @@ export default function Checkout() {
             <button
               onClick={handlePay}
               disabled={!paymentMethod || processing}
-              className="w-full mt-5 bg-sip hover:bg-sip-dark disabled:opacity-40 disabled:cursor-not-allowed text-dark py-3.5 rounded-xl font-semibold text-sm transition-all cursor-pointer"
+              className="w-full mt-5 bg-sip hover:bg-sip-dark disabled:opacity-40 disabled:cursor-not-allowed text-dark py-3.5 rounded-xl font-bold text-sm transition-all cursor-pointer shadow-lg shadow-sip/20"
             >
               {processing ? (
                 <span className="flex items-center justify-center gap-2">

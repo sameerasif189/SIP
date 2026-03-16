@@ -18,7 +18,7 @@ import { motion } from "framer-motion";
 import { menuData } from "../data/menu";
 import { useCart } from "../context/CartContext";
 import MenuCard from "../components/MenuCard";
-import { PageTransition, StaggerContainer, StaggerItem } from "../components/Motion";
+import { PageTransition, FadeIn, StaggerContainer, StaggerItem } from "../components/Motion";
 
 const categoryIcons = {
   Breakfast: Sunrise,
@@ -75,23 +75,41 @@ export default function MenuPage() {
   };
 
   return (
-    <PageTransition className="min-h-screen bg-warm relative">
-      {/* Search Header */}
-      <div className="bg-white border-b border-black/5 sticky top-14 sm:top-16 z-40">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
+    <PageTransition className="min-h-screen bg-warm dark:bg-dark relative">
+      {/* Mini hero banner */}
+      <div className="bg-dark relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-sip/5 via-transparent to-sip/3" />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10 relative">
+          <FadeIn>
+            <p className="text-sip text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] font-[var(--font-heading)] mb-2">
+              Our Menu
+            </p>
+            <h1 className="heading-xl text-3xl sm:text-4xl lg:text-5xl text-white mb-2">
+              What's <span className="heading-accent text-3xl sm:text-4xl lg:text-5xl">Cooking?</span>
+            </h1>
+            <p className="text-white/40 text-sm max-w-md">
+              Explore our full selection of specialty coffee, artisan food, and fresh bites.
+            </p>
+          </FadeIn>
+        </div>
+      </div>
+
+      {/* Search Header — sticky */}
+      <div className="bg-white/80 dark:bg-dark-soft/80 backdrop-blur-2xl border-b border-black/5 dark:border-white/5 sticky top-[68px] sm:top-[76px] z-40">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="relative">
-            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-dark-muted" />
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-muted dark:text-white/35" />
             <input
               type="text"
-              placeholder="Search menu..."
+              placeholder="Search our menu..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-warm border border-black/5 text-sm focus:outline-none focus:ring-2 focus:ring-sip/30 focus:border-sip/30 transition-all"
+              className="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-warm dark:bg-white/5 border border-black/5 dark:border-white/8 text-sm text-dark dark:text-white placeholder:text-dark-muted dark:placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-sip/30 focus:border-sip/30 transition-all font-medium"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-muted hover:text-dark cursor-pointer"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-dark-muted dark:text-white/35 hover:text-dark dark:hover:text-white cursor-pointer"
               >
                 <X size={15} />
               </button>
@@ -101,50 +119,50 @@ export default function MenuPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="flex gap-6 pt-4 pb-24 sm:pb-20">
-          {/* Sidebar Categories — desktop */}
+        <div className="flex gap-6 pt-5 pb-28 sm:pb-24">
+          {/* Sidebar — desktop */}
           {!isSearching && (
-            <aside className="hidden lg:block w-52 shrink-0">
-              <div className="sticky top-36">
-                <p className="text-[10px] font-bold text-dark-muted uppercase tracking-[0.15em] mb-3 px-2">
+            <aside className="hidden lg:block w-56 shrink-0">
+              <div className="sticky top-44">
+                <p className="text-[10px] font-bold text-dark-muted dark:text-white/30 uppercase tracking-[0.2em] font-[var(--font-heading)] mb-3 px-2">
                   Categories
                 </p>
-                <nav className="space-y-0.5">
-                  {menuData.map((cat) => (
-                    <button
-                      key={cat.category}
-                      onClick={() => scrollToCategory(cat.category)}
-                      className={`w-full text-left flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all cursor-pointer ${
-                        activeCategory === cat.category
-                          ? "bg-sip text-white font-semibold shadow-sm"
-                          : "text-dark-muted hover:bg-sip-bg hover:text-dark"
-                      }`}
-                    >
-                      {(() => {
-                        const Icon = categoryIcons[cat.category];
-                        return Icon ? (
+                <nav className="space-y-1">
+                  {menuData.map((cat) => {
+                    const Icon = categoryIcons[cat.category];
+                    return (
+                      <button
+                        key={cat.category}
+                        onClick={() => scrollToCategory(cat.category)}
+                        className={`w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all cursor-pointer font-[var(--font-heading)] font-semibold ${
+                          activeCategory === cat.category
+                            ? "bg-sip text-dark shadow-lg shadow-sip/20"
+                            : "text-dark-muted dark:text-white/50 hover:bg-sip-bg dark:hover:bg-white/5 hover:text-dark dark:hover:text-white"
+                        }`}
+                      >
+                        {Icon && (
                           <Icon
                             size={16}
                             className={
                               activeCategory === cat.category
-                                ? "text-white/80"
-                                : "text-sip"
+                                ? "text-dark/60"
+                                : "text-sip-dark dark:text-sip"
                             }
                           />
-                        ) : null;
-                      })()}
-                      <span className="flex-1">{cat.category}</span>
-                      <span
-                        className={`text-[10px] ${
-                          activeCategory === cat.category
-                            ? "text-white/60"
-                            : "text-dark-muted/50"
-                        }`}
-                      >
-                        {cat.items.length}
-                      </span>
-                    </button>
-                  ))}
+                        )}
+                        <span className="flex-1">{cat.category}</span>
+                        <span
+                          className={`text-[10px] font-bold ${
+                            activeCategory === cat.category
+                              ? "text-dark/40"
+                              : "text-dark-muted/50 dark:text-white/20"
+                          }`}
+                        >
+                          {cat.items.length}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </nav>
               </div>
             </aside>
@@ -153,33 +171,33 @@ export default function MenuPage() {
           {/* Mobile Category Pills */}
           {!isSearching && (
             <div className="lg:hidden fixed bottom-20 left-0 right-0 z-30 px-3 sm:px-4">
-              <div className="bg-dark/90 backdrop-blur-lg rounded-2xl p-1.5 flex gap-1 overflow-x-auto scrollbar-hide shadow-xl">
-                {menuData.map((cat) => (
-                  <button
-                    key={cat.category}
-                    onClick={() => scrollToCategory(cat.category)}
-                    className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl text-[11px] sm:text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
-                      activeCategory === cat.category
-                        ? "bg-sip text-white"
-                        : "text-white/50 hover:text-white/80"
-                    }`}
-                  >
-                    {(() => {
-                      const Icon = categoryIcons[cat.category];
-                      return Icon ? (
+              <div className="bg-dark/90 backdrop-blur-2xl rounded-2xl p-1.5 flex gap-1 overflow-x-auto scrollbar-hide shadow-2xl shadow-black/30 border border-white/[0.06]">
+                {menuData.map((cat) => {
+                  const Icon = categoryIcons[cat.category];
+                  return (
+                    <button
+                      key={cat.category}
+                      onClick={() => scrollToCategory(cat.category)}
+                      className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-[11px] sm:text-xs font-[var(--font-heading)] font-bold whitespace-nowrap transition-all cursor-pointer uppercase tracking-wider ${
+                        activeCategory === cat.category
+                          ? "bg-sip text-dark shadow-lg shadow-sip/20"
+                          : "text-white/50 hover:text-white/80"
+                      }`}
+                    >
+                      {Icon && (
                         <Icon
-                          size={13}
+                          size={12}
                           className={
                             activeCategory === cat.category
-                              ? "text-white/80"
+                              ? "text-dark/60"
                               : "text-white/40"
                           }
                         />
-                      ) : null;
-                    })()}
-                    {cat.category}
-                  </button>
-                ))}
+                      )}
+                      {cat.category}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -188,18 +206,18 @@ export default function MenuPage() {
           <main className="flex-1 min-w-0">
             {isSearching ? (
               <div>
-                <p className="text-xs text-dark-muted mb-4 pt-2">
+                <p className="text-xs text-dark-muted dark:text-white/40 mb-5 pt-2 font-medium">
                   {searchResults.length} result
                   {searchResults.length !== 1 ? "s" : ""} for &ldquo;{searchQuery}&rdquo;
                 </p>
                 {searchResults.length === 0 ? (
                   <div className="text-center py-20">
-                    <p className="text-dark-muted text-sm">
+                    <p className="text-dark-muted dark:text-white/40 text-sm">
                       Nothing found. Try something else.
                     </p>
                   </div>
                 ) : (
-                  <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
                     {searchResults.map((item) => (
                       <StaggerItem key={item.id}>
                         <MenuCard item={item} />
@@ -209,40 +227,45 @@ export default function MenuPage() {
                 )}
               </div>
             ) : (
-              <div className="space-y-10">
-                {menuData.map((category) => (
-                  <section
-                    key={category.category}
-                    ref={(el) =>
-                      (sectionRefs.current[category.category] = el)
-                    }
-                    className="scroll-mt-32"
-                  >
-                    <div className="flex items-center gap-2.5 mb-4">
-                      {(() => {
-                        const Icon = categoryIcons[category.category];
-                        return Icon ? (
-                          <div className="w-8 h-8 rounded-lg bg-sip/10 flex items-center justify-center">
-                            <Icon size={16} className="text-sip" />
+              <div className="space-y-10 sm:space-y-12">
+                {menuData.map((category) => {
+                  const Icon = categoryIcons[category.category];
+                  return (
+                    <section
+                      key={category.category}
+                      ref={(el) =>
+                        (sectionRefs.current[category.category] = el)
+                      }
+                      className="scroll-mt-40"
+                    >
+                      <FadeIn>
+                        <div className="flex items-center gap-3 mb-5 sm:mb-6">
+                          {Icon && (
+                            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-sip/10 dark:bg-sip/15 flex items-center justify-center">
+                              <Icon size={20} className="text-sip-dark dark:text-sip-light" />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <h2 className="heading-xl text-xl sm:text-2xl dark:text-white">
+                              {category.category}
+                            </h2>
+                            <p className="text-[11px] text-dark-muted dark:text-white/35 font-medium">
+                              {category.items.length} items available
+                            </p>
                           </div>
-                        ) : null;
-                      })()}
-                      <h2 className="font-[var(--font-display)] text-lg sm:text-xl font-bold uppercase tracking-wide">
-                        {category.category}
-                      </h2>
-                      <span className="text-[10px] text-dark-muted bg-black/5 px-2 py-0.5 rounded-full">
-                        {category.items.length}
-                      </span>
-                    </div>
-                    <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      {category.items.map((item) => (
-                        <StaggerItem key={item.id}>
-                          <MenuCard item={item} />
-                        </StaggerItem>
-                      ))}
-                    </StaggerContainer>
-                  </section>
-                ))}
+                          <div className="w-12 h-px bg-sip/20 hidden sm:block flex-shrink-0" />
+                        </div>
+                      </FadeIn>
+                      <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+                        {category.items.map((item) => (
+                          <StaggerItem key={item.id}>
+                            <MenuCard item={item} />
+                          </StaggerItem>
+                        ))}
+                      </StaggerContainer>
+                    </section>
+                  );
+                })}
               </div>
             )}
           </main>
@@ -259,22 +282,22 @@ export default function MenuPage() {
         >
           <Link
             to="/cart"
-            className="flex items-center justify-between bg-sip hover:bg-sip-dark text-white rounded-2xl pl-4 sm:pl-5 pr-3 sm:pr-4 py-3.5 shadow-xl shadow-sip/20 transition-colors"
+            className="flex items-center justify-between bg-dark dark:bg-dark-soft hover:bg-dark-soft text-white rounded-2xl pl-5 pr-4 py-4 shadow-2xl shadow-black/30 transition-colors border border-white/[0.06]"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                <ShoppingBag size={15} />
+              <div className="w-10 h-10 bg-sip/20 rounded-xl flex items-center justify-center">
+                <ShoppingBag size={17} className="text-sip-light" />
               </div>
               <div>
-                <p className="text-sm font-semibold">
+                <p className="text-sm font-[var(--font-heading)] font-bold">
                   {totalItems} item{totalItems !== 1 ? "s" : ""}
                 </p>
-                <p className="text-[10px] text-white/60">View your order</p>
+                <p className="text-[10px] text-white/40">View your order</p>
               </div>
             </div>
-            <div className="flex items-center gap-1">
-              <span className="font-bold text-sm">Rs.{totalPrice}</span>
-              <ChevronRight size={14} className="text-white/60" />
+            <div className="flex items-center gap-2">
+              <span className="font-[var(--font-heading)] font-bold text-sm text-sip-light">Rs.{totalPrice}</span>
+              <ChevronRight size={14} className="text-white/35" />
             </div>
           </Link>
         </motion.div>
