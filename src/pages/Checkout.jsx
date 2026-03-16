@@ -180,7 +180,7 @@ export default function Checkout() {
         <h1 className="text-lg font-bold text-dark">Payment</h1>
       </motion.div>
 
-      <div className="max-w-3xl mx-auto px-5 pt-6">
+      <div className="max-w-5xl mx-auto px-5 pt-6">
         {/* Bill Splitting */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
@@ -280,7 +280,7 @@ export default function Checkout() {
                             [item.id]: !prev[item.id],
                           }))
                         }
-                        className="w-5 h-5 rounded accent-[#4B7BE5]"
+                        className="w-5 h-5 rounded accent-[#7BAF6E]"
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-dark truncate">
@@ -450,7 +450,7 @@ export default function Checkout() {
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/90 backdrop-blur-md border-t border-border/60"
       >
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <motion.button
             whileTap={{ scale: 0.98 }}
             onClick={handlePay}
