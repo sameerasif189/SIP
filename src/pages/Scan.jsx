@@ -1,6 +1,7 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { motion } from "framer-motion";
 import { QRCodeSVG } from "qrcode.react";
-import { MapPin, Clock, Star } from "lucide-react";
+import { MapPin, Clock } from "lucide-react";
 import SipLogo from "../components/SipLogo";
 
 export default function Scan() {
@@ -14,48 +15,93 @@ export default function Scan() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-5">
-      <SipLogo size={72} className="mb-6" />
-
-      <h1 className="text-3xl font-black text-dark tracking-tight mb-1">SIP</h1>
-      <p className="text-muted text-sm mb-6">Coffee & Kitchen</p>
-
-      {/* QR Code display */}
-      <div className="bg-bg rounded-2xl p-6 mb-6">
-        <QRCodeSVG
-          value={`${window.location.origin}/scan?table=${table}`}
-          size={180}
-          bgColor="transparent"
-          fgColor="#1A1D1F"
-          level="M"
-        />
-      </div>
-
-      <p className="text-xs text-muted mb-1">Scan to order from</p>
-      <p className="text-lg font-bold text-dark mb-1">Table #{table}</p>
-
-      <div className="flex items-center gap-3 text-xs text-muted mt-2 mb-8">
-        <span className="flex items-center gap-1">
-          <Star size={12} className="text-amber-500 fill-amber-500" />
-          4.8
-        </span>
-        <span className="text-border">·</span>
-        <span className="flex items-center gap-1">
-          <MapPin size={12} />
-          F-8/3, Islamabad
-        </span>
-        <span className="text-border">·</span>
-        <span className="flex items-center gap-1">
-          <Clock size={12} />
-          8 AM - 1 AM
-        </span>
-      </div>
-
-      <button
-        onClick={handleStart}
-        className="w-full max-w-xs bg-dark text-white py-4 rounded-full font-semibold text-[15px] cursor-pointer hover:bg-dark/90 transition-colors"
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
       >
-        Start ordering
-      </button>
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="flex justify-center mb-5"
+        >
+          <SipLogo size={72} className="shadow-xl shadow-sip/20" />
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-3xl font-black text-dark tracking-tight mb-0.5"
+        >
+          SIP
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.25 }}
+          className="text-muted text-sm mb-8"
+        >
+          Coffee & Kitchen
+        </motion.p>
+
+        {/* QR Code */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3, type: "spring", stiffness: 200, damping: 20 }}
+          className="bg-sip-light rounded-3xl p-8 mb-6 inline-block"
+        >
+          <QRCodeSVG
+            value={`${window.location.origin}/scan?table=${table}`}
+            size={180}
+            bgColor="transparent"
+            fgColor="#1A1D1F"
+            level="M"
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <p className="text-xs text-muted mb-1">Scan to order from</p>
+          <div className="inline-flex items-center bg-sip-light text-sip rounded-full px-4 py-2 text-sm font-bold mb-4">
+            Table #{table}
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.45 }}
+          className="flex items-center justify-center gap-3 text-xs text-muted mb-8"
+        >
+          <span className="flex items-center gap-1">
+            <MapPin size={12} />
+            F-8/3, Islamabad
+          </span>
+          <span className="text-border">|</span>
+          <span className="flex items-center gap-1">
+            <Clock size={12} />
+            8 AM – 1 AM
+          </span>
+        </motion.div>
+
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={handleStart}
+          className="w-full max-w-xs bg-sip text-white py-4 rounded-2xl font-semibold text-[15px] cursor-pointer shadow-lg shadow-sip/30 hover:shadow-xl hover:shadow-sip/40 transition-shadow"
+        >
+          Start ordering
+        </motion.button>
+      </motion.div>
     </div>
   );
 }

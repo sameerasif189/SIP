@@ -4,12 +4,8 @@ export default function SipLogo({ size = 48, className = "" }) {
 
   return (
     <div
-      className={`bg-sip flex items-center justify-center shrink-0 shadow-lg ${className}`}
-      style={{
-        width: size,
-        height: size,
-        borderRadius: radius,
-      }}
+      className={`bg-sip flex items-center justify-center shrink-0 ${className}`}
+      style={{ width: size, height: size, borderRadius: radius }}
     >
       <span
         className="font-bold text-white leading-none select-none"
