@@ -66,7 +66,7 @@ export default function Cart() {
         <div className="w-5" />
       </motion.div>
 
-      <div className="max-w-3xl mx-auto px-5 pt-6">
+      <div className="max-w-5xl mx-auto px-5 pt-6">
         {/* Title bar */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -79,7 +79,7 @@ export default function Cart() {
             <p className="text-muted text-sm mt-0.5">Table 1 · {totalItems} item{totalItems !== 1 ? "s" : ""}</p>
           </div>
           <div className="bg-sip-light text-sip text-xs font-bold px-3 py-1.5 rounded-full">
-            Dine-in
+            Table #1
           </div>
         </motion.div>
 
@@ -226,7 +226,7 @@ export default function Cart() {
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/90 backdrop-blur-md border-t border-border/60"
       >
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <Link
             to="/checkout"
             state={{ tip, tipAmount, serviceFee, gst, grandTotal, orderNotes }}

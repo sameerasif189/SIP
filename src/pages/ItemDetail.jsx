@@ -56,7 +56,7 @@ export default function ItemDetail() {
         <motion.img
           src={item.image}
           alt={item.name}
-          className="w-full h-[300px] sm:h-[400px] object-cover"
+          className="w-full h-[300px] sm:h-[400px] lg:h-[480px] object-cover"
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
@@ -93,16 +93,16 @@ export default function ItemDetail() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
-        className="max-w-3xl mx-auto px-5 pt-6"
+        className="max-w-5xl mx-auto px-5 pt-6"
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-dark">{item.name}</h1>
+            <h1 className="text-2xl lg:text-3xl font-bold text-dark">{item.name}</h1>
             <p className="text-muted text-[15px] mt-2 leading-relaxed">
               {item.description}
             </p>
           </div>
-          <p className="text-xl font-black text-sip shrink-0">
+          <p className="text-xl lg:text-2xl font-black text-dark shrink-0">
             Rs.{item.price}/-
           </p>
         </div>
@@ -177,7 +177,7 @@ export default function ItemDetail() {
             transition={{ duration: 0.4 }}
             className="mt-10 border-t border-border pt-6"
           >
-            <h3 className="font-bold text-dark text-lg mb-4">
+            <h3 className="font-display font-bold italic text-dark text-lg lg:text-xl mb-4">
               You might also like
             </h3>
             <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
@@ -198,7 +198,7 @@ export default function ItemDetail() {
         transition={{ type: "spring", stiffness: 300, damping: 30, delay: 0.3 }}
         className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/90 backdrop-blur-md border-t border-border/60 sm:px-6"
       >
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <motion.button
             whileTap={{ scale: 0.98 }}
             onClick={handleAdd}

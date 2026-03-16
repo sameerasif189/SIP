@@ -11,7 +11,7 @@ export default function MenuCard({ item, index = 0 }) {
     >
       <Link
         to={`/item/${item.id}`}
-        className="block shrink-0 w-[220px] sm:w-auto group"
+        className="block shrink-0 w-[200px] sm:w-auto group"
       >
         <div className="rounded-2xl overflow-hidden bg-bg">
           <motion.img
@@ -23,14 +23,14 @@ export default function MenuCard({ item, index = 0 }) {
             transition={{ duration: 0.3 }}
           />
         </div>
-        <div className="pt-3 pb-1">
-          <h3 className="font-semibold text-[15px] text-dark leading-tight group-hover:text-sip transition-colors">
+        <div className="pt-3 pb-2">
+          <h3 className="font-semibold text-[15px] lg:text-base text-dark leading-tight group-hover:text-sip transition-colors">
             {item.name}
           </h3>
-          <p className="text-muted text-[13px] mt-1 leading-relaxed line-clamp-2">
+          <p className="text-muted text-[13px] lg:text-sm mt-1.5 leading-relaxed line-clamp-3">
             {item.description}
           </p>
-          <p className="font-bold text-sip text-[15px] mt-2">
+          <p className="font-black text-dark text-[15px] lg:text-base mt-2.5">
             Rs.{item.price}/-
           </p>
         </div>
