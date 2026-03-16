@@ -5,7 +5,7 @@ export default function Contact() {
   return (
     <PageTransition className="min-h-screen bg-warm">
       <div className="bg-dark py-8 sm:py-10">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
           <h1 className="font-[var(--font-display)] text-2xl sm:text-3xl font-bold text-white">
             Get in Touch
           </h1>
@@ -15,8 +15,8 @@ export default function Contact() {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        <div className="grid md:grid-cols-2 gap-4">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="grid md:grid-cols-2 gap-4 items-start">
           {/* Info Cards */}
           <StaggerContainer className="space-y-3">
             {[
@@ -26,9 +26,9 @@ export default function Contact() {
               { icon: Clock, label: "Hours", value: "Daily: 8 AM – 1 AM" },
             ].map((info) => (
               <StaggerItem key={info.label}>
-                <div className="bg-white rounded-2xl border border-black/5 p-4 flex gap-3">
-                  <div className="w-9 h-9 bg-sip-bg rounded-xl flex items-center justify-center shrink-0">
-                    <info.icon size={15} className="text-sip" />
+                <div className="bg-white rounded-2xl border border-black/5 p-4 flex items-center gap-3">
+                  <div className="w-9 h-9 bg-sip/10 rounded-xl flex items-center justify-center shrink-0">
+                    <info.icon size={15} className="text-sip-dark" />
                   </div>
                   <div className="min-w-0">
                     <p className="text-[10px] text-dark-muted uppercase tracking-wider">
@@ -92,7 +92,7 @@ export default function Contact() {
                 />
                 <button
                   type="submit"
-                  className="w-full bg-sip hover:bg-sip-dark text-white py-2.5 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+                  className="w-full bg-sip hover:bg-sip-dark text-dark font-semibold py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
                 >
                   Send Message
                 </button>

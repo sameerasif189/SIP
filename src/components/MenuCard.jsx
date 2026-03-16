@@ -8,7 +8,7 @@ export default function MenuCard({ item }) {
   const [imgError, setImgError] = useState(false);
 
   return (
-    <div className="group bg-white rounded-2xl border border-black/5 hover:border-sip/20 hover:shadow-lg transition-all duration-300 overflow-hidden">
+    <div className="group bg-white rounded-2xl border border-black/5 hover:border-sip/30 hover:shadow-lg transition-all duration-300 overflow-hidden">
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden bg-sip-bg">
         {imgError ? (
@@ -43,7 +43,7 @@ export default function MenuCard({ item }) {
         {/* Add / Quantity */}
         <div className="mt-3">
           {inCart ? (
-            <div className="flex items-center justify-between bg-sip-bg rounded-xl px-1 py-1">
+            <div className="flex items-center justify-between bg-sip/10 rounded-xl px-1 py-1">
               <button
                 onClick={() => updateQuantity(item.id, inCart.quantity - 1)}
                 className="w-8 h-8 flex items-center justify-center rounded-lg bg-white text-dark shadow-sm hover:bg-gray-50 transition-colors cursor-pointer"
@@ -55,7 +55,7 @@ export default function MenuCard({ item }) {
               </span>
               <button
                 onClick={() => updateQuantity(item.id, inCart.quantity + 1)}
-                className="w-8 h-8 flex items-center justify-center rounded-lg bg-sip text-white shadow-sm hover:bg-sip-dark transition-colors cursor-pointer"
+                className="w-8 h-8 flex items-center justify-center rounded-lg bg-sip text-dark shadow-sm hover:bg-sip-dark transition-colors cursor-pointer"
               >
                 <Plus size={13} />
               </button>
@@ -63,7 +63,7 @@ export default function MenuCard({ item }) {
           ) : (
             <button
               onClick={() => addItem(item)}
-              className="w-full flex items-center justify-center gap-1.5 bg-dark hover:bg-dark-soft text-white py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+              className="w-full flex items-center justify-center gap-1.5 bg-sip/15 hover:bg-sip/25 text-sip-dark py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
             >
               <Plus size={13} />
               Add to order

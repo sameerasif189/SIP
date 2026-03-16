@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { ShoppingBag, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "../context/CartContext";
+import SipLogo from "./SipLogo";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,15 +25,11 @@ export default function Navbar() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-14 sm:h-16">
             <Link to="/home" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-sip rounded-xl flex items-center justify-center shadow-lg shadow-sip/20">
-                <span className="font-[var(--font-display)] text-base font-bold text-white leading-none">
-                  SiP
-                </span>
-              </div>
+              <SipLogo size={38} />
               <div>
-                <p className="text-base font-bold leading-none tracking-wide">SIP</p>
+                <p className="text-sm font-bold leading-none tracking-wide">SiP</p>
                 <p className="text-[10px] text-white/40 leading-none mt-0.5 tracking-widest">
-                  ISLAMABAD
+                  Specialty Coffee
                 </p>
               </div>
             </Link>
@@ -44,7 +41,7 @@ export default function Navbar() {
                   to={link.to}
                   className={`px-4 py-1.5 rounded-full text-sm transition-all duration-200 ${
                     isActive(link.to)
-                      ? "bg-sip text-white font-medium"
+                      ? "bg-sip/20 text-sip-light font-medium"
                       : "text-white/60 hover:text-white hover:bg-white/5"
                   }`}
                 >
@@ -56,7 +53,7 @@ export default function Navbar() {
             <div className="flex items-center gap-2">
               <Link
                 to="/cart"
-                className="relative flex items-center gap-2 bg-sip/20 hover:bg-sip/30 px-3 py-1.5 rounded-full transition-colors"
+                className="relative flex items-center gap-2 bg-sip/15 hover:bg-sip/25 px-3 py-1.5 rounded-full transition-colors"
               >
                 <ShoppingBag size={16} className="text-sip-light" />
                 {totalItems > 0 && (
@@ -81,7 +78,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile menu - animated */}
+      {/* Mobile menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div

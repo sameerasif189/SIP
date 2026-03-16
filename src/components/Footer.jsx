@@ -1,4 +1,5 @@
 import { MapPin, Phone, Instagram, ArrowUpRight } from "lucide-react";
+import SipLogo from "./SipLogo";
 
 export default function Footer() {
   return (
@@ -7,11 +8,7 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row justify-between gap-6 sm:gap-8">
           <div>
             <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-8 h-8 bg-sip rounded-lg flex items-center justify-center">
-                <span className="font-[var(--font-display)] text-sm font-bold text-white">
-                  SiP
-                </span>
-              </div>
+              <SipLogo size={32} />
               <span className="font-semibold text-white text-sm">
                 SIP Coffee & Kitchen
               </span>

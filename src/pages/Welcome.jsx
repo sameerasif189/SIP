@@ -1,11 +1,34 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { QrCode, Hash, ArrowRight, Coffee } from "lucide-react";
+import { QrCode, Hash, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTable } from "../context/TableContext";
+import SipLogo from "../components/SipLogo";
+
+// Floating logo
+function FloatingLogo({ size, x, y, delay = 0, duration = 6 }) {
+  return (
+    <motion.div
+      className="absolute pointer-events-none"
+      style={{ left: x, top: y }}
+      animate={{
+        y: [0, -10, 0, 6, 0],
+        x: [0, 5, -3, 2, 0],
+      }}
+      transition={{
+        duration,
+        delay,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    >
+      <SipLogo size={size} className="opacity-60" />
+    </motion.div>
+  );
+}
 
 export default function Welcome() {
-  const [mode, setMode] = useState(null); // 'qr' | 'manual'
+  const [mode, setMode] = useState(null);
   const [selectedTable, setSelectedTable] = useState(null);
   const [scanning, setScanning] = useState(false);
   const { selectTable } = useTable();
@@ -30,8 +53,14 @@ export default function Welcome() {
   };
 
   return (
-    <div className="min-h-screen min-h-[100dvh] bg-dark flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen min-h-[100dvh] bg-dark flex items-center justify-center px-4 py-8 relative overflow-hidden">
+      {/* Floating logos */}
+      <FloatingLogo size={72} x="8%" y="10%" delay={0} duration={7} />
+      <FloatingLogo size={36} x="75%" y="8%" delay={1.2} duration={5} />
+      <FloatingLogo size={44} x="85%" y="70%" delay={0.5} duration={8} />
+      <FloatingLogo size={28} x="10%" y="80%" delay={2} duration={6} />
+
+      <div className="w-full max-w-sm relative z-10">
         {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
@@ -39,11 +68,16 @@ export default function Welcome() {
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="text-center mb-10"
         >
-          <div className="w-16 h-16 bg-sip/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Coffee size={32} className="text-sip" />
-          </div>
+          <motion.div
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="mx-auto mb-5 w-fit"
+          >
+            <SipLogo size={72} />
+          </motion.div>
           <h1 className="font-[var(--font-display)] text-3xl font-bold text-white">
-            Welcome to <span className="text-sip">SIP</span>
+            Select your table
           </h1>
           <p className="text-white/40 text-sm mt-2">
             How would you like to get started?
@@ -69,18 +103,14 @@ export default function Welcome() {
                   setMode("qr");
                   handleQrScan();
                 }}
-                className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-sip/30 rounded-2xl p-5 text-left transition-all cursor-pointer group"
+                className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-sip/40 rounded-2xl p-5 text-left transition-all cursor-pointer group"
               >
                 <div className="w-12 h-12 bg-sip/20 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-sip/30 transition-colors">
                   <QrCode size={22} className="text-sip" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-semibold text-sm">
-                    Scan QR Code
-                  </p>
-                  <p className="text-white/40 text-xs mt-0.5">
-                    Scan the code on your table
-                  </p>
+                  <p className="text-white font-semibold text-sm">Scan QR Code</p>
+                  <p className="text-white/40 text-xs mt-0.5">Scan the code on your table</p>
                 </div>
                 <ArrowRight size={16} className="text-white/30 group-hover:text-sip transition-colors shrink-0" />
               </motion.button>
@@ -90,25 +120,21 @@ export default function Welcome() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.25, duration: 0.3 }}
                 onClick={() => setMode("manual")}
-                className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-sip/30 rounded-2xl p-5 text-left transition-all cursor-pointer group"
+                className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-sip/40 rounded-2xl p-5 text-left transition-all cursor-pointer group"
               >
                 <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-white/15 transition-colors">
                   <Hash size={22} className="text-white/60" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-semibold text-sm">
-                    Enter Table Number
-                  </p>
-                  <p className="text-white/40 text-xs mt-0.5">
-                    Select your table manually
-                  </p>
+                  <p className="text-white font-semibold text-sm">Enter Table Number</p>
+                  <p className="text-white/40 text-xs mt-0.5">Select your table manually</p>
                 </div>
                 <ArrowRight size={16} className="text-white/30 group-hover:text-sip transition-colors shrink-0" />
               </motion.button>
             </motion.div>
           )}
 
-          {/* QR Scanning State */}
+          {/* QR Scanning */}
           {mode === "qr" && scanning && (
             <motion.div
               key="qr-scan"
@@ -123,14 +149,9 @@ export default function Welcome() {
                 <div className="absolute inset-0 border-2 border-sip rounded-3xl animate-pulse" />
               </div>
               <p className="text-white/60 text-sm">Scanning...</p>
-              <p className="text-white/30 text-xs mt-1">
-                Point your camera at the QR code
-              </p>
+              <p className="text-white/30 text-xs mt-1">Point your camera at the QR code</p>
               <button
-                onClick={() => {
-                  setMode(null);
-                  setScanning(false);
-                }}
+                onClick={() => { setMode(null); setScanning(false); }}
                 className="mt-6 text-white/40 hover:text-white/60 text-xs transition-colors cursor-pointer"
               >
                 Cancel
@@ -160,7 +181,7 @@ export default function Welcome() {
                     onClick={() => setSelectedTable(num)}
                     className={`aspect-square rounded-xl text-sm font-bold transition-all cursor-pointer flex items-center justify-center ${
                       selectedTable === num
-                        ? "bg-sip text-white shadow-lg shadow-sip/30 scale-105"
+                        ? "bg-sip text-dark shadow-lg shadow-sip/30 scale-105"
                         : "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white border border-white/5"
                     }`}
                   >
@@ -172,17 +193,14 @@ export default function Welcome() {
               <button
                 onClick={handleManualSelect}
                 disabled={!selectedTable}
-                className="w-full flex items-center justify-center gap-2 bg-sip hover:bg-sip-dark disabled:opacity-30 disabled:cursor-not-allowed text-white py-3.5 rounded-xl font-semibold text-sm transition-all cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 bg-sip hover:bg-sip-dark disabled:opacity-30 disabled:cursor-not-allowed text-dark font-semibold py-3.5 rounded-xl text-sm transition-all cursor-pointer"
               >
                 Continue to Menu
                 <ArrowRight size={16} />
               </button>
 
               <button
-                onClick={() => {
-                  setMode(null);
-                  setSelectedTable(null);
-                }}
+                onClick={() => { setMode(null); setSelectedTable(null); }}
                 className="w-full mt-3 text-white/40 hover:text-white/60 text-xs transition-colors cursor-pointer"
               >
                 Go back

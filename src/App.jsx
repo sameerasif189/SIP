@@ -4,6 +4,7 @@ import { CartProvider } from "./context/CartContext";
 import { TableProvider, useTable } from "./context/TableContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Login from "./pages/Login";
 import Welcome from "./pages/Welcome";
 import Home from "./pages/Home";
 import MenuPage from "./pages/MenuPage";
@@ -14,7 +15,7 @@ import Contact from "./pages/Contact";
 
 function RequireTable({ children }) {
   const { isSeated } = useTable();
-  if (!isSeated) return <Navigate to="/" replace />;
+  if (!isSeated) return <Navigate to="/welcome" replace />;
   return children;
 }
 
@@ -40,9 +41,15 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {/* Welcome page is the landing — no navbar/footer */}
+      {/* Login page — entry point */}
       <Route
         path="/"
+        element={isSeated ? <Navigate to="/home" replace /> : <Login />}
+      />
+
+      {/* Table selection — after login */}
+      <Route
+        path="/welcome"
         element={isSeated ? <Navigate to="/home" replace /> : <Welcome />}
       />
 
