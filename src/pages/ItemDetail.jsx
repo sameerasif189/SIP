@@ -94,17 +94,16 @@ export default function ItemDetail() {
         transition={{ duration: 0.4, delay: 0.1 }}
         className="max-w-5xl mx-auto px-5 pt-6"
       >
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl lg:text-3xl text-dark heading-font">{item.name}</h1>
-            <p className="text-gray-600 text-[15px] mt-2 leading-relaxed subtext-font">
-              {item.description}
-            </p>
-          </div>
-          <p className="text-xl lg:text-2xl text-dark shrink-0 price-font">
-            Rs.{item.price}/-
+        <div>
+          <h1 className="text-[28px] lg:text-[32px] text-dark heading-font leading-tight">{item.name}</h1>
+          <p className="text-[20px] mt-1 price-font">
+            Rs.{item.price.toLocaleString()}/-
           </p>
         </div>
+
+        <p className="text-[16px] mt-6 leading-relaxed subtext-font">
+          {item.description}
+        </p>
 
         {/* Options */}
         <AnimatePresence>
@@ -113,10 +112,10 @@ export default function ItemDetail() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="mt-6"
+              className="mt-8"
             >
-              <p className="font-semibold text-dark text-sm mb-3">
-                Choose your style
+              <p className="font-bold text-dark text-[14px] mb-3 tracking-tight">
+                Type of eggs
               </p>
               <div className="flex gap-2 flex-wrap">
                 {item.options.map((opt) => (
@@ -124,10 +123,10 @@ export default function ItemDetail() {
                     key={opt}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedOption(opt)}
-                    className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                    className={`px-5 py-2.5 rounded-full text-[14px] font-medium transition-all cursor-pointer ${
                       selectedOption === opt
-                        ? "bg-dark text-white shadow-md shadow-dark/20"
-                        : "bg-bg text-dark hover:bg-border"
+                        ? "bg-dark text-white"
+                        : "bg-white text-dark border border-gray-300 hover:border-gray-400"
                     }`}
                   >
                     {opt}
@@ -143,26 +142,25 @@ export default function ItemDetail() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="mt-6 flex items-center justify-between"
+          className="mt-8"
         >
-          <p className="font-semibold text-dark text-sm">Quantity</p>
-          <div className="inline-flex items-center bg-bg rounded-xl overflow-hidden">
+          <div className="inline-flex items-center bg-gray-100 rounded-full overflow-hidden">
             <motion.button
               whileTap={{ scale: 0.85 }}
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="w-11 h-11 flex items-center justify-center text-dark cursor-pointer hover:bg-border transition-colors"
+              className="w-12 h-12 flex items-center justify-center text-dark cursor-pointer hover:bg-gray-200 transition-colors"
             >
-              <Minus size={16} />
+              <Minus size={18} />
             </motion.button>
-            <span className="w-10 text-center font-bold text-dark text-lg">
+            <span className="w-10 text-center font-bold text-dark text-[16px]">
               {quantity}
             </span>
             <motion.button
               whileTap={{ scale: 0.85 }}
               onClick={() => setQuantity(quantity + 1)}
-              className="w-11 h-11 flex items-center justify-center text-dark cursor-pointer hover:bg-border transition-colors"
+              className="w-12 h-12 flex items-center justify-center text-dark cursor-pointer hover:bg-gray-200 transition-colors"
             >
-              <Plus size={16} />
+              <Plus size={18} />
             </motion.button>
           </div>
         </motion.div>
