@@ -25,7 +25,7 @@ export default function OrderConfirmed() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center justify-between px-5 pt-8 pb-4"
         >
-          <SipLogo size={48} className="shadow-md shadow-sip/10" />
+          <SipLogo size={48} />
           <Link
             to="/menu"
             className="bg-dark text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-dark/90 transition-colors"
@@ -137,8 +137,8 @@ export default function OrderConfirmed() {
         className="fixed bottom-6 left-4 right-4 z-50"
       >
         <div className="max-w-lg mx-auto bg-white/90 backdrop-blur-lg rounded-2xl p-4 shadow-xl shadow-dark/10 flex items-start gap-3">
-          <div className="w-10 h-10 bg-sip rounded-xl flex items-center justify-center shrink-0">
-            <span className="text-white text-xs font-bold">SiP</span>
+          <div className="w-10 h-10 bg-[#F5F0E8] border border-[#E8E0D0] rounded-xl flex items-center justify-center shrink-0">
+            <span className="text-dark text-xs font-bold">SiP</span>
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-dark">Your order is ready, enjoy your meal!</p>

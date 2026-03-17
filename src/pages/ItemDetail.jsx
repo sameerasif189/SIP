@@ -127,7 +127,7 @@ export default function ItemDetail() {
                     onClick={() => setSelectedOption(opt)}
                     className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                       selectedOption === opt
-                        ? "bg-sip text-white shadow-md shadow-sip/20"
+                        ? "bg-dark text-white shadow-md shadow-dark/20"
                         : "bg-bg text-dark hover:bg-border"
                     }`}
                   >
@@ -202,7 +202,7 @@ export default function ItemDetail() {
           <motion.button
             whileTap={{ scale: 0.98 }}
             onClick={handleAdd}
-            className="w-full bg-sip text-white py-4 rounded-2xl font-semibold text-[15px] cursor-pointer shadow-lg shadow-sip/30 hover:shadow-xl hover:shadow-sip/40 transition-shadow"
+            className="w-full bg-dark text-white py-4 rounded-2xl font-semibold text-[15px] cursor-pointer shadow-lg shadow-dark/20 hover:shadow-xl hover:shadow-dark/30 transition-shadow"
           >
             Add {quantity} to order · Rs.{totalPrice}/-
           </motion.button>

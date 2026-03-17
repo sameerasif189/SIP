@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-dark: #111;
+  --color-dark: #1A1A1A;
   --color-muted: #6B7280;
   --color-border: #E5E5E5;
   --color-bg: #F5F5F5;
   --color-white: #FFFFFF;
-  --color-sip: #5C8A4D;
-  --color-sip-light: #E8F0E5;
+  --color-sip: #1A1A1A;
+  --color-sip-light: #F5F0E8;
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
@@ -33,7 +33,7 @@
   100% { background-position: 200% 0; }
 }
 .animate-shimmer {
-  background: linear-gradient(90deg, #5C8A4D 25%, #8AB87C 50%, #5C8A4D 75%);
+  background: linear-gradient(90deg, #1A1A1A 25%, #444 50%, #1A1A1A 75%);
   background-size: 200% 100%;
   animation: shimmer 2s ease-in-out infinite;
 }

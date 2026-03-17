@@ -42,7 +42,7 @@ export default function DrinkRow({ item, index = 0 }) {
         className="flex items-start justify-between gap-4 p-4 rounded-2xl border border-border bg-white hover:shadow-md transition-shadow group"
       >
         <div className="flex flex-col flex-1 gap-1 min-w-0">
-          <h3 className="text-base lg:text-lg font-semibold text-dark line-clamp-2 group-hover:text-sip transition-colors">
+          <h3 className="text-base lg:text-lg font-semibold text-dark line-clamp-2 group-hover:text-dark/70 transition-colors">
             {item.name}
           </h3>
           <p className="text-sm text-muted line-clamp-1">
