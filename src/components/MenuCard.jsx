@@ -27,7 +27,7 @@ export default function MenuCard({ item, index = 0 }) {
           <p className="font-semibold text-sm text-dark mt-1">
             Rs.{item.price}/-
           </p>
-          <p className="text-xs text-gray-500 mt-1 leading-relaxed line-clamp-2">
+          <p className="text-sm text-gray-600 subtext-font mt-1 leading-relaxed line-clamp-2">
             {item.description}
           </p>
         </div>
