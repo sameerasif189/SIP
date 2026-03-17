@@ -6,7 +6,6 @@ import { menuData } from "../data/menu";
 import { useCart } from "../context/CartContext";
 import { useOrder } from "../context/OrderContext";
 import MenuCard from "../components/MenuCard";
-import DrinkRow from "../components/DrinkRow";
 import SipLogo from "../components/SipLogo";
 
 const STATUS_LABELS = [
@@ -85,10 +84,10 @@ export default function Home() {
           <div className="flex items-start gap-4 lg:gap-6">
             <SipLogo size={56} className="shadow-lg shadow-sip/30 lg:!w-[72px] lg:!h-[72px]" />
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl lg:text-3xl font-black text-dark tracking-tight leading-tight">
+              <h1 className="text-2xl lg:text-3xl font-black text-dark tracking-tighter leading-none">
                 SIP
               </h1>
-              <p className="text-muted text-xs lg:text-sm mt-0.5">Coffee & Kitchen</p>
+              <p className="text-muted text-[11px] lg:text-xs mt-0.5 tracking-tight">Coffee & Kitchen</p>
               <div className="flex items-center gap-2 flex-wrap mt-2 text-[11px] lg:text-xs text-muted">
                 <span className="flex items-center gap-1">
                   <MapPin size={11} />
@@ -135,7 +134,7 @@ export default function Home() {
               <button
                 key={cat.category}
                 onClick={() => scrollToCategory(cat.category)}
-                className={`text-[13px] lg:text-sm whitespace-nowrap px-4 lg:px-5 py-2 lg:py-2.5 rounded-full transition-all cursor-pointer font-medium ${
+                className={`text-xs lg:text-[13px] whitespace-nowrap px-3.5 lg:px-4 py-1.5 lg:py-2 rounded-full transition-all cursor-pointer font-semibold tracking-tight ${
                   activeCategory === cat.category
                     ? "bg-sip text-white shadow-sm shadow-sip/20"
                     : "bg-bg text-muted hover:text-dark"
@@ -166,7 +165,7 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <div className="space-y-10">
+          <div className="space-y-8">
             {menuData.map((category) => (
               <section
                 key={category.category}
@@ -175,30 +174,20 @@ export default function Home() {
                 className="scroll-mt-14"
               >
                 <motion.h2
-                  initial={{ opacity: 0, x: -10 }}
+                  initial={{ opacity: 0, x: -8 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.3 }}
-                  className="text-xl lg:text-2xl font-extrabold tracking-tight text-dark mb-4 lg:mb-6 uppercase"
+                  transition={{ duration: 0.25 }}
+                  className="text-lg lg:text-xl font-extrabold tracking-tighter text-dark mb-4 uppercase"
                 >
                   {category.category}.
                 </motion.h2>
 
-                {category.type === "list" ? (
-                  /* Drink list layout — text left, image right */
-                  <div className="space-y-3">
-                    {category.items.map((item, i) => (
-                      <DrinkRow key={item.id} item={item} index={i} />
-                    ))}
-                  </div>
-                ) : (
-                  /* Food card layout — horizontal scroll on mobile, grid on desktop */
-                  <div className="flex gap-4 overflow-x-auto scrollbar-hide sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-x-5 sm:gap-y-8 pb-2 sm:pb-0">
-                    {category.items.map((item, i) => (
-                      <MenuCard key={item.id} item={item} index={i} />
-                    ))}
-                  </div>
-                )}
+                <div className="flex gap-4 overflow-x-auto scrollbar-hide sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-x-4 sm:gap-y-6 pb-2 sm:pb-0">
+                  {category.items.map((item, i) => (
+                    <MenuCard key={item.id} item={item} index={i} />
+                  ))}
+                </div>
               </section>
             ))}
           </div>

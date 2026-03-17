@@ -2,17 +2,21 @@ import { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  Check,
   CreditCard,
-  Banknote,
-  Smartphone,
   Wallet,
-  CheckCircle2,
-  User,
-  Users,
-  Split,
+  Smartphone,
+  Banknote,
+  Tag,
+  Info,
+  X,
   Minus,
   Plus,
+  ListOrdered,
+  Clock,
+  PenLine,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useOrder } from "../context/OrderContext";
@@ -31,11 +35,11 @@ export default function Checkout() {
     orderNotes = "",
   } = location.state || {};
 
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [confirmed, setConfirmed] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("applepay");
   const [processing, setProcessing] = useState(false);
-  const [orderNumber, setOrderNumber] = useState(null);
+  const [showSplitBill, setShowSplitBill] = useState(false);
 
+  // Split bill state
   const [splitMode, setSplitMode] = useState("full");
   const [splitCount, setSplitCount] = useState(2);
   const [selectedItems, setSelectedItems] = useState(() => {
@@ -46,7 +50,7 @@ export default function Checkout() {
     return all;
   });
 
-  if (items.length === 0 && !confirmed) {
+  if (items.length === 0) {
     navigate("/cart");
     return null;
   }
@@ -68,103 +72,35 @@ export default function Checkout() {
     setProcessing(true);
     setTimeout(() => {
       const order = placeOrder({ items: [...items], grandTotal });
-      setOrderNumber(order.id);
-      setConfirmed(true);
-      setProcessing(false);
       clearCart();
+      navigate("/order-confirmed", {
+        state: {
+          orderNumber: order.id,
+          grandTotal,
+          yourTotal: splitMode !== "full" ? yourTotal : grandTotal,
+          splitMode,
+          splitCount,
+          paymentMethod,
+        },
+        replace: true,
+      });
     }, 1500);
   };
 
-  // Success screen
-  if (confirmed) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-5">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: "spring", stiffness: 200, damping: 20 }}
-          className="text-center max-w-sm"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 300, damping: 15 }}
-            className="w-20 h-20 bg-sip-light rounded-full flex items-center justify-center mx-auto mb-5"
-          >
-            <CheckCircle2 size={40} className="text-sip" />
-          </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-2xl font-bold text-dark mb-2"
-          >
-            Order Confirmed!
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="text-muted text-sm mb-1"
-          >
-            Your order is being prepared.
-          </motion.p>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.45 }}
-            className="text-muted text-xs mb-2"
-          >
-            Table 1 · Order #{orderNumber}
-          </motion.p>
-          {splitMode !== "full" && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="text-muted text-xs mb-6"
-            >
-              You paid Rs.{yourTotal}/-
-              {splitMode === "even" && ` (split ${splitCount} ways)`}
-              {splitMode === "item" && " (your items)"}
-            </motion.p>
-          )}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <Link
-              to="/menu"
-              className="block w-full bg-sip text-white text-center py-4 rounded-2xl font-semibold text-[15px] shadow-lg shadow-sip/30"
-            >
-              Back to menu
-            </Link>
-          </motion.div>
-        </motion.div>
-      </div>
-    );
-  }
-
-  const paymentOptions = [
-    { id: "card", icon: CreditCard, label: "Card", desc: "Visa, Mastercard" },
-    { id: "applepay", icon: Wallet, label: "Apple Pay", desc: "Tap to pay" },
-    { id: "googlepay", icon: Wallet, label: "Google Pay", desc: "Tap to pay" },
-    { id: "cash", icon: Banknote, label: "Cash", desc: "Pay at counter" },
-    { id: "jazzcash", icon: Smartphone, label: "JazzCash", desc: "Mobile wallet" },
-    { id: "easypaisa", icon: Smartphone, label: "Easypaisa", desc: "Mobile wallet" },
-  ];
-
-  const splitOptions = [
-    { id: "full", icon: User, label: "I'm paying", desc: "Full bill" },
-    { id: "even", icon: Users, label: "Split evenly", desc: "Divide equally" },
-    { id: "item", icon: Split, label: "By item", desc: "Pick your items" },
-  ];
-
-  const stagger = (i) => ({ delay: 0.05 + i * 0.05 });
+  const paymentMethodLabel = () => {
+    switch (paymentMethod) {
+      case "applepay": return "Apple Pay";
+      case "googlepay": return "Google Pay";
+      case "card": return "Credit Card";
+      case "cash": return "Cash";
+      case "jazzcash": return "JazzCash";
+      case "easypaisa": return "Easypaisa";
+      default: return "Pay";
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-white pb-28">
+    <div className="min-h-screen bg-white pb-36">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -173,237 +109,87 @@ export default function Checkout() {
       >
         <button
           onClick={() => navigate("/cart")}
-          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-bg transition-colors cursor-pointer"
+          className="cursor-pointer"
         >
-          <ArrowLeft size={18} className="text-dark" />
+          <ChevronLeft size={24} className="text-dark" />
         </button>
-        <h1 className="text-lg font-bold text-dark">Payment</h1>
+        <h1 className="text-lg font-bold text-dark">Your order</h1>
       </motion.div>
 
-      <div className="max-w-5xl mx-auto px-5 pt-6">
-        {/* Bill Splitting */}
+      <div className="max-w-lg mx-auto px-5 pt-6">
+        {/* Pay securely header */}
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={stagger(0)}
           className="mb-6"
         >
-          <p className="font-semibold text-dark text-sm mb-3">Who's paying?</p>
-          <div className="grid grid-cols-3 gap-2">
-            {splitOptions.map((opt) => (
-              <motion.button
-                key={opt.id}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setSplitMode(opt.id)}
-                className={`relative p-3.5 rounded-2xl border text-center transition-all cursor-pointer ${
-                  splitMode === opt.id
-                    ? "border-sip bg-sip-light"
-                    : "border-border hover:border-sip/30"
-                }`}
-              >
-                <opt.icon
-                  size={18}
-                  className={`mx-auto ${
-                    splitMode === opt.id ? "text-sip" : "text-muted"
-                  }`}
-                />
-                <p className={`font-semibold text-xs mt-2 ${splitMode === opt.id ? "text-sip" : "text-dark"}`}>
-                  {opt.label}
-                </p>
-                <p className="text-[10px] text-muted mt-0.5">{opt.desc}</p>
-              </motion.button>
-            ))}
-          </div>
+          <h2 className="text-xl font-bold text-dark">Pay securely</h2>
+          <p className="text-muted text-sm mt-1">All transactions are private and encrypted.</p>
         </motion.div>
 
-        {/* Even split */}
-        <AnimatePresence>
-          {splitMode === "even" && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mb-6 overflow-hidden"
-            >
-              <div className="p-4 border border-border rounded-2xl">
-                <p className="text-sm text-muted mb-3">How many people?</p>
-                <div className="flex items-center justify-center gap-4">
-                  <motion.button
-                    whileTap={{ scale: 0.85 }}
-                    onClick={() => setSplitCount(Math.max(2, splitCount - 1))}
-                    className="w-10 h-10 flex items-center justify-center rounded-xl bg-bg text-dark cursor-pointer hover:bg-border transition-colors"
-                  >
-                    <Minus size={16} />
-                  </motion.button>
-                  <span className="text-3xl font-black text-dark w-10 text-center">
-                    {splitCount}
-                  </span>
-                  <motion.button
-                    whileTap={{ scale: 0.85 }}
-                    onClick={() => setSplitCount(Math.min(10, splitCount + 1))}
-                    className="w-10 h-10 flex items-center justify-center rounded-xl bg-sip text-white cursor-pointer"
-                  >
-                    <Plus size={16} />
-                  </motion.button>
-                </div>
-                <p className="text-center text-xs text-muted mt-3">
-                  Rs.{Math.ceil(grandTotal / splitCount)}/- per person
-                </p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Per-item */}
-        <AnimatePresence>
-          {splitMode === "item" && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mb-6 overflow-hidden"
-            >
-              <div className="p-4 border border-border rounded-2xl">
-                <p className="text-sm text-muted mb-3">Select your items</p>
-                <div className="space-y-3">
-                  {items.map((item) => (
-                    <label
-                      key={item.id}
-                      className="flex items-center gap-3 cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={!!selectedItems[item.id]}
-                        onChange={() =>
-                          setSelectedItems((prev) => ({
-                            ...prev,
-                            [item.id]: !prev[item.id],
-                          }))
-                        }
-                        className="w-5 h-5 rounded accent-[#7BAF6E]"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-dark truncate">
-                          {item.name}
-                          <span className="text-muted font-normal"> x {item.quantity}</span>
-                        </p>
-                      </div>
-                      <span className="text-sm text-sip font-bold shrink-0">
-                        Rs.{item.price * item.quantity}/-
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Order Summary */}
+        {/* Payment Methods - Sunday style radio cards */}
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={stagger(1)}
-          className="mb-6"
+          transition={{ delay: 0.1 }}
+          className="space-y-3 mb-6"
         >
-          <p className="font-semibold text-dark text-sm mb-3">Order summary</p>
-          <div className="space-y-2">
-            {items.map((item) => (
-              <div key={item.id} className="flex justify-between text-sm">
-                <span className="text-muted">
-                  {item.name} x {item.quantity}
-                </span>
-                <span className="text-dark font-medium">
-                  Rs.{item.price * item.quantity}/-
-                </span>
+          {/* Apple Pay */}
+          <PaymentOption
+            selected={paymentMethod === "applepay"}
+            onClick={() => setPaymentMethod("applepay")}
+            label="Apple Pay"
+            icon={
+              <span className="text-xs font-bold bg-dark text-white px-2 py-0.5 rounded">Pay</span>
+            }
+          />
+
+          {/* Google Pay */}
+          <PaymentOption
+            selected={paymentMethod === "googlepay"}
+            onClick={() => setPaymentMethod("googlepay")}
+            label="Google Pay"
+            icon={
+              <span className="text-xs font-bold bg-white text-dark border border-border px-2 py-0.5 rounded">G Pay</span>
+            }
+          />
+
+          {/* Credit Card */}
+          <PaymentOption
+            selected={paymentMethod === "card"}
+            onClick={() => setPaymentMethod("card")}
+            label="Credit Card"
+            icon={
+              <div className="flex gap-1">
+                <span className="text-[10px] font-bold bg-blue-600 text-white px-1.5 py-0.5 rounded">VISA</span>
+                <span className="text-[10px] font-bold bg-dark text-white px-1.5 py-0.5 rounded">MC</span>
               </div>
-            ))}
-          </div>
-        </motion.div>
+            }
+          />
 
-        {orderNotes && (
-          <div className="mb-6 p-4 bg-sip-light rounded-2xl">
-            <p className="text-xs text-sip font-medium mb-1">Order notes</p>
-            <p className="text-sm text-dark">{orderNotes}</p>
-          </div>
-        )}
+          {/* Cash */}
+          <PaymentOption
+            selected={paymentMethod === "cash"}
+            onClick={() => setPaymentMethod("cash")}
+            label="Cash"
+            icon={<Banknote size={18} className="text-muted" />}
+          />
 
-        {/* Totals */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={stagger(2)}
-          className="mb-8 space-y-2.5 text-sm"
-        >
-          <div className="flex justify-between text-muted">
-            <span>Subtotal</span>
-            <span>Rs.{totalPrice}/-</span>
-          </div>
-          {tip > 0 && (
-            <div className="flex justify-between text-muted">
-              <span>Tip ({tip}%)</span>
-              <span>Rs.{tipAmount}/-</span>
-            </div>
-          )}
-          <div className="flex justify-between text-muted">
-            <span>Service fee (1%)</span>
-            <span>Rs.{serviceFee}/-</span>
-          </div>
-          <div className="flex justify-between text-muted">
-            <span>GST (5%)</span>
-            <span>Rs.{gst}/-</span>
-          </div>
-          <div className="flex justify-between font-bold text-dark text-lg pt-3 border-t border-border">
-            <span>Total</span>
-            <span className="text-sip">Rs.{grandTotal}/-</span>
-          </div>
-          {splitMode !== "full" && (
-            <div className="flex justify-between font-bold text-sip text-base pt-1">
-              <span>
-                {splitMode === "even"
-                  ? `Your share (1/${splitCount})`
-                  : "Your items"}
-              </span>
-              <span>Rs.{yourTotal}/-</span>
-            </div>
-          )}
-        </motion.div>
+          {/* JazzCash */}
+          <PaymentOption
+            selected={paymentMethod === "jazzcash"}
+            onClick={() => setPaymentMethod("jazzcash")}
+            label="JazzCash"
+            icon={<Smartphone size={18} className="text-red-500" />}
+          />
 
-        {/* Payment Methods */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={stagger(3)}
-          className="mb-6"
-        >
-          <p className="font-semibold text-dark text-sm mb-3">
-            How would you like to pay?
-          </p>
-          <div className="grid grid-cols-3 gap-2">
-            {paymentOptions.map((opt) => (
-              <motion.button
-                key={opt.id}
-                whileTap={{ scale: 0.93 }}
-                onClick={() => setPaymentMethod(opt.id)}
-                className={`flex flex-col items-center gap-1.5 p-3.5 rounded-2xl border text-center transition-all cursor-pointer ${
-                  paymentMethod === opt.id
-                    ? "border-sip bg-sip-light"
-                    : "border-border hover:border-sip/30"
-                }`}
-              >
-                <opt.icon
-                  size={20}
-                  className={
-                    paymentMethod === opt.id ? "text-sip" : "text-muted"
-                  }
-                />
-                <p className={`font-semibold text-xs ${paymentMethod === opt.id ? "text-sip" : "text-dark"}`}>
-                  {opt.label}
-                </p>
-                <p className="text-[10px] text-muted leading-tight">{opt.desc}</p>
-              </motion.button>
-            ))}
-          </div>
+          {/* Easypaisa */}
+          <PaymentOption
+            selected={paymentMethod === "easypaisa"}
+            onClick={() => setPaymentMethod("easypaisa")}
+            label="Easypaisa"
+            icon={<Smartphone size={18} className="text-green-500" />}
+          />
         </motion.div>
 
         {/* Card Details */}
@@ -415,47 +201,106 @@ export default function Checkout() {
               exit={{ opacity: 0, height: 0 }}
               className="mb-6 space-y-3 overflow-hidden"
             >
-              <p className="font-semibold text-dark text-sm mb-3">Card details</p>
               <input
                 type="text"
                 placeholder="Cardholder name"
-                className="w-full px-4 py-3.5 rounded-2xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-sip/20"
+                className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10"
               />
               <input
                 type="text"
                 placeholder="1234 5678 9012 3456"
-                className="w-full px-4 py-3.5 rounded-2xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-sip/20"
+                className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10"
               />
               <div className="grid grid-cols-2 gap-3">
                 <input
                   type="text"
                   placeholder="MM / YY"
-                  className="w-full px-4 py-3.5 rounded-2xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-sip/20"
+                  className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10"
                 />
                 <input
                   type="text"
                   placeholder="CVV"
-                  className="w-full px-4 py-3.5 rounded-2xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-sip/20"
+                  className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10"
                 />
               </div>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Promo code + Split bill */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="space-y-3 mb-6"
+        >
+          <button className="flex items-center gap-3 w-full py-3 cursor-pointer group">
+            <Tag size={18} className="text-muted" />
+            <span className="text-sm font-medium text-dark">Add a promo code</span>
+            <ChevronRight size={16} className="text-muted ml-auto" />
+          </button>
+
+          <button
+            onClick={() => setShowSplitBill(true)}
+            className="flex items-center gap-3 w-full py-3 cursor-pointer group"
+          >
+            <ListOrdered size={18} className="text-muted" />
+            <span className="text-sm font-medium text-dark">
+              {splitMode === "full" ? "Split the bill" :
+               splitMode === "even" ? `Split ${splitCount} ways` : "Paying for your items"}
+            </span>
+            <ChevronRight size={16} className="text-muted ml-auto" />
+          </button>
+        </motion.div>
+
+        {/* Price breakdown - Sunday style */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="border-t border-border pt-5 space-y-3 text-sm"
+        >
+          <div className="flex justify-between text-dark">
+            <span>Subtotal</span>
+            <span className="font-medium">Rs.{totalPrice}/-</span>
+          </div>
+          {tip > 0 && (
+            <div className="flex justify-between text-dark">
+              <span>Tips ({tip}%)</span>
+              <span className="font-medium">Rs.{tipAmount}/-</span>
+            </div>
+          )}
+          <div className="flex justify-between text-dark">
+            <span className="flex items-center gap-1">
+              Service fee
+              <Info size={14} className="text-muted" />
+            </span>
+            <span className="font-medium">Rs.{serviceFee}/-</span>
+          </div>
+          <div className="flex justify-between text-dark">
+            <span>GST (5%)</span>
+            <span className="font-medium">Rs.{gst}/-</span>
+          </div>
+          <div className="flex justify-between text-dark text-lg font-bold pt-3 border-t border-border">
+            <span>Total</span>
+            <span>Rs.{splitMode === "full" ? grandTotal : yourTotal}/-</span>
+          </div>
+        </motion.div>
       </div>
 
-      {/* Pay button */}
+      {/* Pay button - Sunday style big black pill */}
       <motion.div
         initial={{ y: 100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/90 backdrop-blur-md border-t border-border/60"
+        className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white border-t border-border/60"
       >
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-lg mx-auto">
           <motion.button
             whileTap={{ scale: 0.98 }}
             onClick={handlePay}
             disabled={!paymentMethod || processing}
-            className="w-full bg-sip text-white py-4 rounded-2xl font-semibold text-[15px] shadow-lg shadow-sip/30 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none transition-shadow hover:shadow-xl hover:shadow-sip/40"
+            className="w-full bg-dark text-white py-4 rounded-full font-semibold text-[15px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-all"
           >
             {processing ? (
               <span className="flex items-center justify-center gap-2">
@@ -463,11 +308,149 @@ export default function Checkout() {
                 Processing...
               </span>
             ) : (
-              `Pay Rs.${splitMode === "full" ? grandTotal : yourTotal}/-`
+              `Pay with ${paymentMethodLabel()}`
             )}
+          </motion.button>
+          <p className="text-center text-[11px] text-muted mt-3">
+            By continuing, I agree to the <span className="underline">User Terms</span> and <span className="underline">Privacy Policy</span>.
+          </p>
+          <p className="text-center text-[11px] text-muted mt-1 flex items-center justify-center gap-1">
+            <span>🔒</span> secure payments with <span className="font-bold text-dark">SiP</span>
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Split the Bill Modal */}
+      <AnimatePresence>
+        {showSplitBill && (
+          <SplitBillModal
+            items={items}
+            grandTotal={grandTotal}
+            splitMode={splitMode}
+            setSplitMode={setSplitMode}
+            splitCount={splitCount}
+            setSplitCount={setSplitCount}
+            selectedItems={selectedItems}
+            setSelectedItems={setSelectedItems}
+            onClose={() => setShowSplitBill(false)}
+          />
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function PaymentOption({ selected, onClick, label, icon }) {
+  return (
+    <motion.button
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 cursor-pointer transition-all ${
+        selected
+          ? "border-dark bg-white"
+          : "border-border bg-white hover:border-dark/20"
+      }`}
+    >
+      <span className="font-medium text-dark text-[15px]">{label}</span>
+      <div className="flex items-center gap-3">
+        {icon}
+        <div
+          className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+            selected ? "border-dark bg-dark" : "border-border"
+          }`}
+        >
+          {selected && <Check size={14} className="text-white" />}
+        </div>
+      </div>
+    </motion.button>
+  );
+}
+
+function SplitBillModal({
+  items,
+  grandTotal,
+  splitMode,
+  setSplitMode,
+  splitCount,
+  setSplitCount,
+  selectedItems,
+  setSelectedItems,
+  onClose,
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white rounded-t-3xl w-full max-w-lg"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+          <button onClick={onClose} className="cursor-pointer">
+            <ChevronLeft size={20} className="text-dark" />
+          </button>
+          <h3 className="font-bold text-dark text-lg">Split the bill</h3>
+          <button onClick={onClose} className="cursor-pointer">
+            <X size={20} className="text-dark" />
+          </button>
+        </div>
+
+        <div className="p-5 space-y-3 pb-8">
+          {/* Pay for your items */}
+          <motion.button
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              setSplitMode("item");
+              onClose();
+            }}
+            className={`w-full flex items-center gap-4 p-5 rounded-2xl cursor-pointer transition-all ${
+              splitMode === "item" ? "bg-dark text-white" : "bg-dark text-white"
+            }`}
+          >
+            <ListOrdered size={20} />
+            <span className="font-semibold text-[15px]">Pay for your items</span>
+          </motion.button>
+
+          {/* Divide equally */}
+          <motion.button
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              setSplitMode("even");
+              onClose();
+            }}
+            className={`w-full flex items-center gap-4 p-5 rounded-2xl cursor-pointer transition-all ${
+              splitMode === "even" ? "bg-dark text-white" : "bg-dark text-white"
+            }`}
+          >
+            <Clock size={20} />
+            <span className="font-semibold text-[15px]">Divide the bill equally</span>
+          </motion.button>
+
+          {/* Custom amount */}
+          <motion.button
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              setSplitMode("custom");
+              onClose();
+            }}
+            className={`w-full flex items-center gap-4 p-5 rounded-2xl cursor-pointer transition-all ${
+              splitMode === "custom" ? "bg-dark text-white" : "bg-dark text-white"
+            }`}
+          >
+            <PenLine size={20} />
+            <span className="font-semibold text-[15px]">Pay a custom amount</span>
           </motion.button>
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }
