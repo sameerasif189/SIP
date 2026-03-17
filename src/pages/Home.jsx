@@ -75,8 +75,8 @@ export default function Home() {
 
       {/* Welcome text */}
       <div className="text-center px-6 mt-4 mb-6">
-        <h1 className="text-2xl font-bold text-dark">Welcome to SiP</h1>
-        <p className="text-gray-500 text-sm mt-2 leading-relaxed max-w-xs mx-auto">
+        <h1 className="text-2xl text-dark heading-font">Welcome to SiP</h1>
+        <p className="text-gray-500 text-sm mt-2 leading-relaxed max-w-xs mx-auto subtext-font">
           SiP, in the heart of Islamabad, offers specialty coffee and fresh kitchen dishes in a warm, modern setting.
         </p>
       </div>
@@ -115,7 +115,7 @@ export default function Home() {
         ) : (
           /* Category grid */
           <div>
-            <h2 className="text-lg font-extrabold tracking-tight mb-4 text-dark">
+            <h2 className="text-lg tracking-tight mb-4 text-dark heading-font">
               Menu
             </h2>
             <div className="grid grid-cols-2 gap-3">
@@ -149,7 +149,7 @@ export default function Home() {
                         />
                       )}
                     </div>
-                    <p className="font-semibold text-dark text-sm mt-2">{cat.category}</p>
+                    <p className="text-dark text-sm mt-2 item-name-font">{cat.category}</p>
                   </Link>
                 );
               })}

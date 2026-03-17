@@ -96,12 +96,12 @@ export default function ItemDetail() {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-dark">{item.name}</h1>
+            <h1 className="text-2xl lg:text-3xl text-dark heading-font">{item.name}</h1>
             <p className="text-gray-600 text-[15px] mt-2 leading-relaxed subtext-font">
               {item.description}
             </p>
           </div>
-          <p className="text-xl lg:text-2xl font-black text-dark shrink-0">
+          <p className="text-xl lg:text-2xl text-dark shrink-0 price-font">
             Rs.{item.price}/-
           </p>
         </div>
@@ -176,7 +176,7 @@ export default function ItemDetail() {
             transition={{ duration: 0.4 }}
             className="mt-10 border-t border-border pt-6"
           >
-            <h3 className="text-xl font-extrabold tracking-tight text-dark mb-4 uppercase">
+            <h3 className="text-xl tracking-tight text-dark mb-4 uppercase heading-font">
               You might also like.
             </h3>
             <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2">
@@ -193,9 +193,9 @@ export default function ItemDetail() {
                     loading="lazy"
                   />
                   <div className="p-2">
-                    <div className="font-bold text-xs mb-1 text-dark line-clamp-2">{r.name}</div>
+                    <div className="text-xs mb-1 text-dark line-clamp-2 item-name-font">{r.name}</div>
                     <div className="text-xs text-gray-600 mb-1 line-clamp-1 subtext-font">{r.description}</div>
-                    <div className="font-bold text-sm text-dark">Rs.{r.price}/-</div>
+                    <div className="text-sm text-dark price-font">Rs.{r.price}/-</div>
                   </div>
                 </Link>
               ))}

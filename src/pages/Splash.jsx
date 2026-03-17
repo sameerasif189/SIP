@@ -31,7 +31,7 @@ export default function Splash() {
               initial={{ opacity: 0, letterSpacing: "0.3em" }}
               animate={{ opacity: 1, letterSpacing: "-0.02em" }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="text-5xl font-black text-dark"
+              className="text-5xl text-dark heading-font"
             >
               SIP
             </motion.h1>

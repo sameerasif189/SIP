@@ -113,7 +113,7 @@ export default function Checkout() {
         >
           <ChevronLeft size={24} className="text-dark" />
         </button>
-        <h1 className="text-lg font-bold text-dark">Your order</h1>
+        <h1 className="text-lg text-dark heading-font">Your order</h1>
       </motion.div>
 
       <div className="max-w-lg mx-auto px-5 pt-6">
@@ -123,7 +123,7 @@ export default function Checkout() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-6"
         >
-          <h2 className="text-xl font-bold text-dark">Pay securely</h2>
+          <h2 className="text-xl text-dark heading-font">Pay securely</h2>
           <p className="text-muted text-sm mt-1">All transactions are private and encrypted.</p>
         </motion.div>
 
@@ -281,7 +281,7 @@ export default function Checkout() {
             <span>GST (5%)</span>
             <span className="font-medium">Rs.{gst}/-</span>
           </div>
-          <div className="flex justify-between text-dark text-lg font-bold pt-3 border-t border-border">
+          <div className="flex justify-between text-dark text-lg pt-3 border-t border-border price-font">
             <span>Total</span>
             <span>Rs.{splitMode === "full" ? grandTotal : yourTotal}/-</span>
           </div>
@@ -398,7 +398,7 @@ function SplitBillModal({
           <button onClick={onClose} className="cursor-pointer">
             <ChevronLeft size={20} className="text-dark" />
           </button>
-          <h3 className="font-bold text-dark text-lg">Split the bill</h3>
+          <h3 className="text-dark text-lg heading-font">Split the bill</h3>
           <button onClick={onClose} className="cursor-pointer">
             <X size={20} className="text-dark" />
           </button>
