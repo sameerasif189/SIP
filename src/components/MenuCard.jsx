@@ -13,28 +13,18 @@ export default function MenuCard({ item, index = 0 }) {
     >
       <Link
         to={`/item/${item.id}`}
-        className="block shrink-0 w-[180px] sm:w-auto group"
+        className="block shrink-0 w-56 sm:w-auto bg-white rounded-lg shadow cursor-pointer hover:shadow-lg transition-shadow"
       >
-        <div className="rounded-xl overflow-hidden bg-bg">
-          <motion.img
-            src={item.image}
-            alt={item.name}
-            className="w-full aspect-[4/3] object-cover"
-            loading="lazy"
-            whileHover={{ scale: 1.04 }}
-            transition={{ duration: 0.3 }}
-          />
-        </div>
-        <div className="pt-2.5 pb-1">
-          <h3 className="font-semibold text-[13px] text-dark leading-snug">
-            {item.name}
-          </h3>
-          <p className="text-muted text-[11px] mt-1 leading-snug line-clamp-2">
-            {item.description}
-          </p>
-          <p className="font-bold text-dark text-sm mt-2">
-            Rs.{item.price}/-
-          </p>
+        <img
+          src={item.image}
+          alt={item.name}
+          className="w-full h-32 object-cover rounded-t-lg"
+          loading="lazy"
+        />
+        <div className="p-3">
+          <div className="font-bold text-xs mb-1 text-dark">{item.name}</div>
+          <div className="text-xs text-gray-500 mb-2 line-clamp-2">{item.description}</div>
+          <div className="font-bold text-sm text-dark">Rs.{item.price}/-</div>
         </div>
       </Link>
     </motion.div>
