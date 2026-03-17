@@ -8,7 +8,7 @@
   --color-white: #FFFFFF;
   --color-sip: #1A1A1A;
   --color-sip-light: #F5F0E8;
-  --font-sans: 'Montserrat', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 @layer base {
@@ -19,17 +19,17 @@
     margin: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
   }
 }
 
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar { display: none; }
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-  .heading-font { font-family: 'Montserrat', system-ui, sans-serif; font-weight: 800; }
-  .subtext-font { font-family: 'Montserrat', system-ui, sans-serif; font-weight: 400; }
-  .price-font { font-family: 'Montserrat', system-ui, sans-serif; font-weight: 700; }
-  .item-name-font { font-family: 'Montserrat', system-ui, sans-serif; font-weight: 500; }
+  .heading-font { font-family: 'Inter', system-ui, sans-serif; font-weight: 800; letter-spacing: -0.03em; }
+  .subtext-font { font-family: 'Inter', system-ui, sans-serif; font-weight: 400; letter-spacing: -0.01em; }
+  .price-font { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; letter-spacing: -0.02em; }
+  .item-name-font { font-family: 'Inter', system-ui, sans-serif; font-weight: 500; letter-spacing: -0.02em; }
 }
 
 @keyframes shimmer {
