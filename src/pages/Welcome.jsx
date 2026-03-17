@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, ArrowRight, ChevronDown } from "lucide-react";
-import SipLogo from "../components/SipLogo";
+import { Mail, ArrowRight, ChevronDown, ScanLine } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function Welcome() {
   const navigate = useNavigate();
@@ -13,7 +13,8 @@ export default function Welcome() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [selectedTable, setSelectedTable] = useState(table);
-  const [showTablePicker, setShowTablePicker] = useState(!table);
+  const [showTablePicker, setShowTablePicker] = useState(false);
+  const [showQR, setShowQR] = useState(false);
 
   const tables = Array.from({ length: 20 }, (_, i) => i + 1);
 
@@ -38,47 +39,63 @@ export default function Welcome() {
     <div className="min-h-screen bg-white flex flex-col">
       {/* Top section */}
       <div className="flex-1 flex flex-col items-center justify-center px-5 pt-12 pb-6">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex justify-center mb-5"
-        >
-          <SipLogo size={64} className="shadow-xl shadow-sip/20" />
-        </motion.div>
+        {/* Minimal text logo */}
         <motion.h1
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="text-2xl font-black text-dark tracking-tight mb-1"
+          transition={{ duration: 0.4 }}
+          className="text-3xl font-black text-dark tracking-tight mb-0.5"
         >
-          Welcome to SIP
+          SIP
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-muted text-sm mb-5"
+          transition={{ delay: 0.1 }}
+          className="text-muted text-xs tracking-widest uppercase mb-8"
         >
           Coffee & Kitchen
         </motion.p>
 
-        {/* Table Selector */}
+        {/* Table / QR selection */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.25 }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="flex gap-3 mb-2"
         >
+          {/* Select table button */}
           <button
             onClick={() => setShowTablePicker(true)}
-            className="inline-flex items-center gap-2 bg-dark text-white rounded-full px-5 py-2.5 cursor-pointer hover:bg-dark/90 transition-colors"
+            className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 cursor-pointer transition-colors text-sm font-semibold ${
+              selectedTable
+                ? "bg-dark text-white"
+                : "bg-bg text-dark border border-border hover:bg-border"
+            }`}
           >
-            <span className="text-sm font-semibold">
-              {selectedTable ? `Table #${selectedTable}` : "Select your table"}
-            </span>
-            <ChevronDown size={16} />
+            {selectedTable ? `Table #${selectedTable}` : "Select table"}
+            <ChevronDown size={14} />
+          </button>
+
+          {/* Scan QR button */}
+          <button
+            onClick={() => setShowQR(true)}
+            className="inline-flex items-center gap-2 bg-bg text-dark border border-border rounded-full px-5 py-2.5 cursor-pointer hover:bg-border transition-colors text-sm font-semibold"
+          >
+            <ScanLine size={16} />
+            Scan QR
           </button>
         </motion.div>
+
+        {selectedTable && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-muted text-xs"
+          >
+            Seated at table {selectedTable}
+          </motion.p>
+        )}
       </div>
 
       {/* Table Picker Modal */}
@@ -88,8 +105,8 @@ export default function Welcome() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center"
-            onClick={() => selectedTable && setShowTablePicker(false)}
+            className="fixed inset-0 bg-black/40 z-50 flex items-end justify-center"
+            onClick={() => setShowTablePicker(false)}
           >
             <motion.div
               initial={{ y: "100%" }}
@@ -100,9 +117,9 @@ export default function Welcome() {
               className="bg-white rounded-t-3xl w-full max-w-lg p-6 pb-8"
             >
               <div className="w-10 h-1 bg-border rounded-full mx-auto mb-5" />
-              <h3 className="text-xl font-bold text-dark mb-1">Select your table</h3>
+              <h3 className="text-lg font-bold text-dark mb-1">Select your table</h3>
               <p className="text-muted text-sm mb-5">Choose the table number you're seated at</p>
-              <div className="grid grid-cols-5 gap-3 max-h-60 overflow-y-auto">
+              <div className="grid grid-cols-5 gap-3 max-h-64 overflow-y-auto">
                 {tables.map((t) => (
                   <motion.button
                     key={t}
@@ -126,7 +143,71 @@ export default function Welcome() {
         )}
       </AnimatePresence>
 
-      {/* Bottom section */}
+      {/* QR Scanner Modal */}
+      <AnimatePresence>
+        {showQR && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 z-50 flex items-end justify-center"
+            onClick={() => setShowQR(false)}
+          >
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-t-3xl w-full max-w-lg p-6 pb-8"
+            >
+              <div className="w-10 h-1 bg-border rounded-full mx-auto mb-5" />
+              <h3 className="text-lg font-bold text-dark mb-1 text-center">Scan QR code</h3>
+              <p className="text-muted text-sm mb-6 text-center">
+                Scan the QR code on your table to get started
+              </p>
+
+              {/* QR code display area */}
+              <div className="flex justify-center mb-6">
+                <div className="bg-bg rounded-3xl p-8">
+                  <QRCodeSVG
+                    value={`${window.location.origin}/welcome?table=1`}
+                    size={160}
+                    bgColor="transparent"
+                    fgColor="#111"
+                    level="M"
+                  />
+                </div>
+              </div>
+
+              <p className="text-center text-xs text-muted mb-5">
+                Point your camera at the QR code on the table
+              </p>
+
+              {/* Quick table select as fallback */}
+              <div className="border-t border-border pt-4">
+                <p className="text-xs text-muted mb-3 text-center">Or select table manually</p>
+                <div className="flex gap-2 justify-center flex-wrap">
+                  {[1, 2, 3, 4, 5, 6].map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => {
+                        setSelectedTable(String(t));
+                        setShowQR(false);
+                      }}
+                      className="w-11 h-11 rounded-xl bg-bg text-dark text-sm font-bold cursor-pointer hover:bg-border transition-colors"
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Bottom section - sign in buttons */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -146,9 +227,9 @@ export default function Welcome() {
               <motion.button
                 whileTap={{ scale: 0.98 }}
                 onClick={handleGoogleLogin}
-                className="w-full flex items-center justify-center gap-3 bg-white text-dark py-4 rounded-2xl font-semibold text-[15px] border border-border cursor-pointer hover:bg-bg transition-colors"
+                className="w-full flex items-center justify-center gap-3 bg-white text-dark py-4 rounded-full font-semibold text-[15px] border border-border cursor-pointer hover:bg-bg transition-colors"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24">
+                <svg width="18" height="18" viewBox="0 0 24 24">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
                   <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                   <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
@@ -161,9 +242,9 @@ export default function Welcome() {
               <motion.button
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setShowLogin(true)}
-                className="w-full flex items-center justify-center gap-2 bg-dark text-white py-4 rounded-2xl font-semibold text-[15px] cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 bg-dark text-white py-4 rounded-full font-semibold text-[15px] cursor-pointer"
               >
-                <Mail size={18} />
+                <Mail size={16} />
                 Sign in with email
               </motion.button>
 
@@ -185,7 +266,7 @@ export default function Welcome() {
                 placeholder="Your name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3.5 rounded-2xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10"
+                className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10"
               />
               <input
                 type="email"
@@ -193,15 +274,15 @@ export default function Welcome() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3.5 rounded-2xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10"
+                className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10"
               />
               <motion.button
                 whileTap={{ scale: 0.98 }}
                 type="submit"
-                className="w-full bg-dark text-white py-4 rounded-2xl font-semibold text-[15px] cursor-pointer"
+                className="w-full bg-dark text-white py-4 rounded-full font-semibold text-[15px] cursor-pointer"
               >
                 Continue
-                <ArrowRight size={16} className="inline ml-2" />
+                <ArrowRight size={14} className="inline ml-2" />
               </motion.button>
               <button
                 type="button"
