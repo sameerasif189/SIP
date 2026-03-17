@@ -1,7 +1,6 @@
 export const menuData = [
   {
     category: "Breakfast",
-    type: "cards",
     items: [
       {
         id: 1,
@@ -46,7 +45,6 @@ export const menuData = [
   },
   {
     category: "Salads",
-    type: "cards",
     items: [
       {
         id: 6,
@@ -66,7 +64,6 @@ export const menuData = [
   },
   {
     category: "Sandwiches",
-    type: "cards",
     items: [
       {
         id: 8,
@@ -114,7 +111,6 @@ export const menuData = [
   },
   {
     category: "Coffee",
-    type: "list",
     items: [
       { id: 14, name: "Espresso", description: "Rich espresso shot served hot.", price: 200, image: "https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?auto=format&fit=crop&w=400&q=80" },
       { id: 15, name: "Cappuccino", description: "Classic cappuccino served hot with a velvety finish.", price: 220, image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=400&q=80" },
@@ -134,7 +130,6 @@ export const menuData = [
   },
   {
     category: "Slow Bar",
-    type: "list",
     items: [
       { id: 28, name: "Tier 1", description: "Ask the barista for the current slow bar selection.", price: null, image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=400&q=80" },
       { id: 29, name: "Tier 2", description: "Available hot or cold.", price: 1395, image: "https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=400&q=80", options: ["Hot", "Cold"] },
@@ -143,7 +138,6 @@ export const menuData = [
   },
   {
     category: "Not Coffee",
-    type: "list",
     items: [
       { id: 31, name: "Hot/Iced Chocolate", description: "Hot or iced chocolate.", price: 795, image: "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=400&q=80", options: ["Hot", "Iced"] },
       { id: 32, name: "Sip Signature Chocolate", description: "Sip signature chocolate, available hot or iced.", price: 1195, image: "https://images.unsplash.com/photo-1517578239113-b03992dcdd25?auto=format&fit=crop&w=400&q=80", options: ["Hot", "Iced"] },
@@ -157,7 +151,6 @@ export const menuData = [
   },
   {
     category: "Matcha",
-    type: "list",
     items: [
       { id: 39, name: "Matcha", description: "Classic matcha, available hot or iced.", price: 795, image: "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&w=400&q=80", options: ["Hot", "Iced"] },
       { id: 40, name: "Spanish Matcha", description: "Spanish-style matcha.", price: 895, image: "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=400&q=80" },
@@ -167,7 +160,6 @@ export const menuData = [
   },
   {
     category: "Extras",
-    type: "list",
     items: [
       { id: 43, name: "Fries", description: "Golden crispy fries.", price: 695, image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=400&q=80" },
       { id: 44, name: "Extra Cheese", description: "Add extra cheese to any item.", price: 75, image: "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?auto=format&fit=crop&w=400&q=80" },
