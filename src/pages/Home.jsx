@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ShoppingBag, ChevronRight, UtensilsCrossed } from "lucide-react";
+import { Search } from "lucide-react";
 import { menuData } from "../data/menu";
 import { useCart } from "../context/CartContext";
 import { useOrder } from "../context/OrderContext";
@@ -15,42 +15,11 @@ const STATUS_LABELS = [
   "Your order has been served",
 ];
 
-const INITIAL_SHOW = 4;
-
 export default function Home() {
-  const [activeCategory, setActiveCategory] = useState(menuData[0].category);
   const [searchQuery, setSearchQuery] = useState("");
-  const [expandedCategories, setExpandedCategories] = useState({});
   const { totalItems, totalPrice } = useCart();
   const { activeOrder, dismissOrder, ORDER_STEPS } = useOrder();
   const navigate = useNavigate();
-  const sectionRefs = useRef({});
-  const tabsRef = useRef(null);
-
-  const scrollToCategory = (cat) => {
-    setActiveCategory(cat);
-    sectionRefs.current[cat]?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  };
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveCategory(entry.target.dataset.category);
-          }
-        });
-      },
-      { rootMargin: "-120px 0px -60% 0px", threshold: 0 }
-    );
-    Object.values(sectionRefs.current).forEach((el) => {
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
-  }, []);
 
   const isSearching = searchQuery.length > 0;
   const searchResults = isSearching
@@ -113,7 +82,7 @@ export default function Home() {
       </div>
 
       {/* Search bar */}
-      <div className="px-5 mb-4 max-w-lg mx-auto">
+      <div className="px-5 mb-6 max-w-lg mx-auto">
         <div className="relative">
           <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
@@ -126,80 +95,17 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Category grid - Sunday style */}
-      {!isSearching && (
-        <div className="px-5 max-w-lg mx-auto mb-6">
-          <div className="grid grid-cols-2 gap-3">
-            {menuData.map((cat) => {
-              const imgs = categoryImages[cat.category] || [];
-              return (
-                <button
-                  key={cat.category}
-                  onClick={() => scrollToCategory(cat.category)}
-                  className="text-left cursor-pointer group"
-                >
-                  <div className="grid grid-cols-2 gap-0.5 rounded-xl overflow-hidden">
-                    {imgs.length >= 2 ? (
-                      <>
-                        <img
-                          src={imgs[0]}
-                          alt=""
-                          className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                        <img
-                          src={imgs[1]}
-                          alt=""
-                          className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </>
-                    ) : (
-                      <img
-                        src={imgs[0]}
-                        alt=""
-                        className="w-full aspect-[2/1] object-cover col-span-2 group-hover:scale-105 transition-transform duration-300"
-                      />
-                    )}
-                  </div>
-                  <p className="font-semibold text-dark text-sm mt-2">{cat.category}</p>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Category pills — sticky */}
-      <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-border/60" ref={tabsRef}>
-        <div className="max-w-lg mx-auto px-5">
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide py-3">
-            {menuData.map((cat) => (
-              <button
-                key={cat.category}
-                onClick={() => scrollToCategory(cat.category)}
-                className={`text-xs whitespace-nowrap px-3.5 py-1.5 rounded-full transition-all cursor-pointer font-semibold tracking-tight ${
-                  activeCategory === cat.category
-                    ? "bg-dark text-white shadow-sm"
-                    : "bg-bg text-muted hover:text-dark"
-                }`}
-              >
-                {cat.category}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Menu sections */}
-      <div className="max-w-lg mx-auto px-5 pt-6">
+      <div className="max-w-lg mx-auto px-5">
         {isSearching ? (
+          /* Search results */
           <div>
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-sm text-gray-500 mb-2">
               {searchResults.length} result{searchResults.length !== 1 ? "s" : ""} for &ldquo;{searchQuery}&rdquo;
             </p>
             {searchResults.length === 0 ? (
               <p className="text-gray-500 text-sm py-16 text-center">Nothing found.</p>
             ) : (
-              <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+              <div>
                 {searchResults.map((item, i) => (
                   <MenuCard key={item.id} item={item} index={i} />
                 ))}
@@ -207,48 +113,47 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <div className="space-y-6">
-            {menuData.map((category) => {
-              const isExpanded = expandedCategories[category.category];
-              const visibleItems = isExpanded
-                ? category.items
-                : category.items.slice(0, INITIAL_SHOW);
-              const hasMore = category.items.length > INITIAL_SHOW;
-
-              return (
-                <section
-                  key={category.category}
-                  ref={(el) => (sectionRefs.current[category.category] = el)}
-                  data-category={category.category}
-                  className="scroll-mt-14 py-6"
-                >
-                  <h2 className="text-xl font-extrabold tracking-tight mb-4 text-dark uppercase">
-                    {category.category}.
-                  </h2>
-
-                  <div className="flex space-x-4 overflow-x-auto scrollbar-hide pb-2">
-                    {visibleItems.map((item, i) => (
-                      <MenuCard key={item.id} item={item} index={i} />
-                    ))}
-                  </div>
-
-                  {hasMore && !isExpanded && (
-                    <button
-                      onClick={() =>
-                        setExpandedCategories((prev) => ({
-                          ...prev,
-                          [category.category]: true,
-                        }))
-                      }
-                      className="mt-3 text-sm font-semibold text-dark flex items-center gap-1 cursor-pointer hover:text-dark/70 transition-colors"
-                    >
-                      See more
-                      <ChevronRight size={16} />
-                    </button>
-                  )}
-                </section>
-              );
-            })}
+          /* Category grid */
+          <div>
+            <h2 className="text-lg font-extrabold tracking-tight mb-4 text-dark">
+              Menu
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              {menuData.map((cat) => {
+                const imgs = categoryImages[cat.category] || [];
+                return (
+                  <Link
+                    key={cat.category}
+                    to={`/category/${encodeURIComponent(cat.category)}`}
+                    className="text-left group"
+                  >
+                    <div className="grid grid-cols-2 gap-0.5 rounded-xl overflow-hidden">
+                      {imgs.length >= 2 ? (
+                        <>
+                          <img
+                            src={imgs[0]}
+                            alt=""
+                            className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          <img
+                            src={imgs[1]}
+                            alt=""
+                            className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </>
+                      ) : (
+                        <img
+                          src={imgs[0]}
+                          alt=""
+                          className="w-full aspect-[2/1] object-cover col-span-2 group-hover:scale-105 transition-transform duration-300"
+                        />
+                      )}
+                    </div>
+                    <p className="font-semibold text-dark text-sm mt-2">{cat.category}</p>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>

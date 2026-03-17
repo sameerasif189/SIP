@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { CartProvider } from "./context/CartContext";
 import { OrderProvider } from "./context/OrderContext";
 import Home from "./pages/Home";
+import CategoryMenu from "./pages/CategoryMenu";
 import ItemDetail from "./pages/ItemDetail";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
@@ -15,6 +16,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/menu" element={<Home />} />
+            <Route path="/category/:name" element={<CategoryMenu />} />
             <Route path="/item/:id" element={<ItemDetail />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
