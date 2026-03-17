@@ -21,13 +21,13 @@ export default function MenuCard({ item, index = 0 }) {
       >
         {/* Text content */}
         <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-[15px] text-dark leading-snug">
+          <h3 className="font-semibold text-[15px] text-gray-900 heading-font normal-case leading-snug">
             {item.name}
           </h3>
           <p className="font-semibold text-sm text-dark mt-1">
             Rs.{item.price}/-
           </p>
-          <p className="text-xs text-gray-500 mt-1 leading-relaxed line-clamp-2">
+          <p className="text-sm text-gray-600 subtext-font mt-1 leading-relaxed line-clamp-2">
             {item.description}
           </p>
         </div>

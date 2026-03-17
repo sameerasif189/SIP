@@ -26,6 +26,8 @@
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar { display: none; }
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  .heading-font { font-family: 'DM Serif Display', 'Georgia', serif; }
+  .subtext-font { font-family: 'Lora', 'Georgia', serif; }
 }
 
 @keyframes shimmer {

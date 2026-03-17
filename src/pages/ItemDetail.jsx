@@ -97,7 +97,7 @@ export default function ItemDetail() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl lg:text-3xl font-bold text-dark">{item.name}</h1>
-            <p className="text-muted text-[15px] mt-2 leading-relaxed">
+            <p className="text-gray-600 text-[15px] mt-2 leading-relaxed subtext-font">
               {item.description}
             </p>
           </div>
@@ -194,7 +194,7 @@ export default function ItemDetail() {
                   />
                   <div className="p-2">
                     <div className="font-bold text-xs mb-1 text-dark line-clamp-2">{r.name}</div>
-                    <div className="text-xs text-gray-500 mb-1 line-clamp-1">{r.description}</div>
+                    <div className="text-xs text-gray-600 mb-1 line-clamp-1 subtext-font">{r.description}</div>
                     <div className="font-bold text-sm text-dark">Rs.{r.price}/-</div>
                   </div>
                 </Link>
