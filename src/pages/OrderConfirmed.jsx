@@ -41,7 +41,7 @@ export default function OrderConfirmed() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-3xl font-bold text-dark mb-2"
+            className="text-3xl text-dark mb-2 heading-font"
           >
             Enjoy your meal
           </motion.h1>
@@ -99,8 +99,8 @@ export default function OrderConfirmed() {
             transition={{ delay: 0.7 }}
             className="flex justify-between items-center mb-4"
           >
-            <span className="text-2xl font-bold text-dark">Total</span>
-            <span className="text-2xl font-bold text-dark">
+            <span className="text-2xl text-dark price-font">Total</span>
+            <span className="text-2xl text-dark price-font">
               Rs.{splitMode === "full" ? grandTotal : yourTotal}/-
             </span>
           </motion.div>

@@ -69,7 +69,7 @@ export default function Cart() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-3xl font-bold text-dark mb-2"
+              className="text-3xl text-dark mb-2 heading-font"
             >
               {headingText}
             </motion.h1>
@@ -127,8 +127,8 @@ export default function Cart() {
               transition={{ delay: 0.7 }}
               className="flex justify-between items-center mb-4"
             >
-              <span className="text-2xl font-bold text-dark">Total</span>
-              <span className="text-2xl font-bold text-dark">
+              <span className="text-2xl text-dark price-font">Total</span>
+              <span className="text-2xl text-dark price-font">
                 Rs.{activeOrder.grandTotal}/-
               </span>
             </motion.div>
@@ -214,7 +214,7 @@ export default function Cart() {
           <button onClick={() => navigate("/menu")} className="cursor-pointer">
             <ChevronLeft size={24} className="text-dark" />
           </button>
-          <p className="font-bold text-dark text-lg">Your order</p>
+          <p className="text-dark text-lg heading-font">Your order</p>
         </div>
         <div className="flex-1 flex items-center justify-center">
           <motion.div
@@ -246,7 +246,7 @@ export default function Cart() {
         <button onClick={() => navigate("/menu")} className="cursor-pointer">
           <ChevronLeft size={24} className="text-dark" />
         </button>
-        <p className="font-bold text-dark text-lg">Your order</p>
+        <p className="text-dark text-lg heading-font">Your order</p>
       </motion.div>
 
       <div className="max-w-lg mx-auto px-5 pt-6">
@@ -270,10 +270,10 @@ export default function Cart() {
                 />
                 {/* Name + price */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-dark text-[15px] leading-tight">
+                  <h3 className="text-dark text-[15px] leading-tight item-name-font">
                     {item.name}
                   </h3>
-                  <p className="text-muted text-sm mt-0.5">
+                  <p className="text-muted text-sm mt-0.5 price-font">
                     Rs.{item.price}/-
                   </p>
                 </div>
@@ -336,7 +336,7 @@ export default function Cart() {
             transition={{ delay: 0.3 }}
             className="mb-8"
           >
-            <h3 className="text-lg font-bold text-dark mb-1">Popular with your order</h3>
+            <h3 className="text-lg text-dark mb-1 heading-font">Popular with your order</h3>
             <p className="text-muted text-sm mb-4">Other customers also bought these</p>
             <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-5 px-5">
               {popularItems.map((item) => (
@@ -404,7 +404,7 @@ export default function Cart() {
             <span>GST (5%)</span>
             <span>Rs.{gst}/-</span>
           </div>
-          <div className="flex justify-between font-bold text-dark text-lg pt-3 border-t border-border">
+          <div className="flex justify-between text-dark text-lg pt-3 border-t border-border price-font">
             <span>Total</span>
             <span>Rs.{grandTotal}/-</span>
           </div>
@@ -459,8 +459,8 @@ function PopularCard({ item }) {
           <Plus size={14} />
         </motion.button>
       </div>
-      <p className="font-semibold text-dark text-sm mt-2 leading-tight">{item.name}</p>
-      <p className="text-muted text-sm mt-0.5">Rs.{item.price}/-</p>
+      <p className="text-dark text-sm mt-2 leading-tight item-name-font">{item.name}</p>
+      <p className="text-muted text-sm mt-0.5 price-font">Rs.{item.price}/-</p>
     </motion.div>
   );
 }

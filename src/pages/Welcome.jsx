@@ -44,7 +44,7 @@ export default function Welcome() {
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="text-3xl font-black text-dark tracking-tight mb-0.5"
+          className="text-3xl text-dark tracking-tight mb-0.5 heading-font"
         >
           SIP
         </motion.h1>
@@ -117,7 +117,7 @@ export default function Welcome() {
               className="bg-white rounded-t-3xl w-full max-w-lg p-6 pb-8"
             >
               <div className="w-10 h-1 bg-border rounded-full mx-auto mb-5" />
-              <h3 className="text-lg font-bold text-dark mb-1">Select your table</h3>
+              <h3 className="text-lg text-dark mb-1 heading-font">Select your table</h3>
               <p className="text-muted text-sm mb-5">Choose the table number you're seated at</p>
               <div className="grid grid-cols-5 gap-3 max-h-64 overflow-y-auto">
                 {tables.map((t) => (
@@ -162,7 +162,7 @@ export default function Welcome() {
               className="bg-white rounded-t-3xl w-full max-w-lg p-6 pb-8"
             >
               <div className="w-10 h-1 bg-border rounded-full mx-auto mb-5" />
-              <h3 className="text-lg font-bold text-dark mb-1 text-center">Scan QR code</h3>
+              <h3 className="text-lg text-dark mb-1 text-center heading-font">Scan QR code</h3>
               <p className="text-muted text-sm mb-6 text-center">
                 Scan the QR code on your table to get started
               </p>

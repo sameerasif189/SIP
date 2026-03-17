@@ -34,7 +34,7 @@ export default function Scan() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-3xl font-black text-dark tracking-tight mb-0.5"
+          className="text-3xl text-dark tracking-tight mb-0.5 heading-font"
         >
           SIP
         </motion.h1>
