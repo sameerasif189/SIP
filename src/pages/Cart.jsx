@@ -1,15 +1,26 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, Minus, Plus, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Minus, Plus, Trash2, MessageSquare } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useOrder } from "../context/OrderContext";
 import { getAllItems } from "../data/menu";
+import SipLogo from "../components/SipLogo";
+
+const STATUS_MESSAGES = [
+  "Your order has been placed. We're getting it ready for you!",
+  "Your order is being prepared by our kitchen team.",
+  "Your order is ready and on its way to your table!",
+  "Your order has been delivered to your table. If you have any problem, do not hesitate to contact the staff.",
+];
 
 export default function Cart() {
   const { items, updateQuantity, removeItem, totalPrice, totalItems } = useCart();
+  const { activeOrder, ORDER_STEPS } = useOrder();
   const navigate = useNavigate();
   const [tip, setTip] = useState(0);
   const [orderNotes, setOrderNotes] = useState("");
+  const [showDetails, setShowDetails] = useState(false);
 
   const tipOptions = [
     { label: "No tip", value: 0 },
@@ -28,6 +39,174 @@ export default function Cart() {
   const allItems = getAllItems().filter((i) => !cartIds.has(i.id) && i.price);
   const popularItems = allItems.sort(() => 0.5 - Math.random()).slice(0, 6);
 
+  // If cart is empty but there's an active order, show order progress
+  if (items.length === 0 && activeOrder) {
+    const step = activeOrder.step;
+    const headingText = step >= 3 ? "Enjoy your meal" : step >= 2 ? "Almost ready!" : "Getting ready";
+
+    return (
+      <div className="min-h-screen bg-bg">
+        <div className="max-w-lg mx-auto">
+          {/* Top bar with logo + Order more */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-between px-5 pt-8 pb-4"
+          >
+            <SipLogo size={44} />
+            <Link
+              to="/menu"
+              className="bg-dark text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-dark/90 transition-colors"
+            >
+              Order more
+            </Link>
+          </motion.div>
+
+          {/* White card */}
+          <div className="bg-white rounded-t-3xl min-h-[calc(100vh-100px)] px-5 pt-8 pb-8">
+            {/* Heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-3xl font-bold text-dark mb-2"
+            >
+              {headingText}
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-muted text-sm mb-8"
+            >
+              Your order is #{activeOrder.id}
+            </motion.p>
+
+            {/* Progress bar */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="flex gap-2 mb-8"
+            >
+              {ORDER_STEPS.map((_, i) => (
+                <div key={i} className="flex-1 h-1.5 rounded-full bg-border overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: i <= step ? "100%" : "0%" }}
+                    transition={{ delay: 0.4 + i * 0.2, duration: 0.5, ease: "easeOut" }}
+                    className={`h-full rounded-full ${
+                      i <= step ? "bg-dark" : ""
+                    }`}
+                  />
+                </div>
+              ))}
+            </motion.div>
+
+            {/* Status message bubble */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="bg-[#EDE9F8] rounded-2xl p-5 mb-8 flex gap-3"
+            >
+              <div className="w-8 h-8 bg-[#6B5CE7]/20 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                <MessageSquare size={16} className="text-[#6B5CE7]" />
+              </div>
+              <p className="text-dark text-sm leading-relaxed">
+                {STATUS_MESSAGES[step] || STATUS_MESSAGES[0]}
+              </p>
+            </motion.div>
+
+            <div className="border-t border-border my-6" />
+
+            {/* Total */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+              className="flex justify-between items-center mb-4"
+            >
+              <span className="text-2xl font-bold text-dark">Total</span>
+              <span className="text-2xl font-bold text-dark">
+                Rs.{activeOrder.grandTotal}/-
+              </span>
+            </motion.div>
+
+            {/* Order details */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              <button
+                onClick={() => setShowDetails(!showDetails)}
+                className="flex items-center justify-between w-full py-3 cursor-pointer"
+              >
+                <span className="text-sm text-dark font-medium">Order details</span>
+                <motion.div animate={{ rotate: showDetails ? 90 : 0 }}>
+                  <ChevronRight size={16} className="text-muted" />
+                </motion.div>
+              </button>
+
+              <AnimatePresence>
+                {showDetails && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="space-y-3 pb-4">
+                      {activeOrder.items.map((item) => (
+                        <div key={item.id} className="flex justify-between text-sm">
+                          <span className="text-muted">
+                            {item.name} x {item.quantity}
+                          </span>
+                          <span className="text-dark font-medium">
+                            Rs.{item.price * item.quantity}/-
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Push notification toast */}
+        {step >= 2 && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 1.5, type: "spring", stiffness: 200, damping: 20 }}
+            className="fixed bottom-6 left-4 right-4 z-50"
+          >
+            <div className="max-w-lg mx-auto bg-white/90 backdrop-blur-lg rounded-2xl p-4 shadow-xl shadow-dark/10 flex items-start gap-3">
+              <div className="w-10 h-10 bg-sip rounded-xl flex items-center justify-center shrink-0">
+                <span className="text-white text-xs font-bold">SiP</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-dark">
+                  {step >= 3 ? "Your order is ready, enjoy your meal!" : "Your order is almost ready!"}
+                </p>
+                <p className="text-xs text-muted mt-0.5">
+                  {step >= 3
+                    ? "Hey, your order is on its way, the waiter will bring to you."
+                    : "We're putting the finishing touches on your order."}
+                </p>
+              </div>
+              <span className="text-xs text-muted shrink-0">now</span>
+            </div>
+          </motion.div>
+        )}
+      </div>
+    );
+  }
+
+  // Empty cart, no active order
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-white flex flex-col">
