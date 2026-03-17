@@ -26,7 +26,7 @@
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar { display: none; }
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-  .heading-font { font-family: 'Inter', system-ui, sans-serif; font-weight: 900; letter-spacing: -0.04em; }
+  .heading-font { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; letter-spacing: -0.04em; }
   .subtext-font { font-family: 'Inter', system-ui, sans-serif; font-weight: 400; letter-spacing: -0.005em; color: #6B7280; }
   .price-font { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; letter-spacing: -0.03em; color: #2D3748; }
   .item-name-font { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; letter-spacing: -0.03em; }
