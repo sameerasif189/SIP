@@ -1,14 +1,13 @@
 export default function SipLogo({ size = 48, className = "" }) {
-  const fontSize = size * 0.36;
-  const radius = size * 0.22;
+  const fontSize = size * 0.28;
 
   return (
     <div
-      className={`bg-sip flex items-center justify-center shrink-0 ${className}`}
-      style={{ width: size, height: size, borderRadius: radius }}
+      className={`bg-[#F5F0E8] border-2 border-[#E8E0D0] rounded-full flex items-center justify-center shrink-0 shadow-md ${className}`}
+      style={{ width: size, height: size }}
     >
       <span
-        className="font-bold text-white leading-none select-none"
+        className="font-bold text-dark leading-none select-none tracking-tight"
         style={{ fontSize }}
       >
         SiP

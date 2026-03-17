@@ -1,8 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import { OrderProvider } from "./context/OrderContext";
-import Splash from "./pages/Splash";
-import Welcome from "./pages/Welcome";
 import Home from "./pages/Home";
 import ItemDetail from "./pages/ItemDetail";
 import Cart from "./pages/Cart";
@@ -15,8 +13,7 @@ function App() {
       <OrderProvider>
         <Router>
           <Routes>
-            <Route path="/" element={<Splash />} />
-            <Route path="/welcome" element={<Welcome />} />
+            <Route path="/" element={<Home />} />
             <Route path="/menu" element={<Home />} />
             <Route path="/item/:id" element={<ItemDetail />} />
             <Route path="/cart" element={<Cart />} />
