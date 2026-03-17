@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Minus, Plus, Heart } from "lucide-react";
 import { menuData } from "../data/menu";
 import { useCart } from "../context/CartContext";
-import MenuCard from "../components/MenuCard";
 
 export default function ItemDetail() {
   const { id } = useParams();
@@ -180,11 +179,25 @@ export default function ItemDetail() {
             <h3 className="text-xl font-extrabold tracking-tight text-dark mb-4 uppercase">
               You might also like.
             </h3>
-            <div className="flex space-x-4 overflow-x-auto scrollbar-hide pb-2">
+            <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2">
               {related.map((r, i) => (
-                <div key={r.id} className="shrink-0">
-                  <MenuCard item={r} index={i} />
-                </div>
+                <Link
+                  key={r.id}
+                  to={`/item/${r.id}`}
+                  className="shrink-0 w-32 bg-white rounded-lg shadow hover:shadow-lg transition-shadow"
+                >
+                  <img
+                    src={r.image}
+                    alt={r.name}
+                    className="w-full h-24 object-cover rounded-t-lg"
+                    loading="lazy"
+                  />
+                  <div className="p-2">
+                    <div className="font-bold text-xs mb-1 text-dark line-clamp-2">{r.name}</div>
+                    <div className="text-xs text-gray-500 mb-1 line-clamp-1">{r.description}</div>
+                    <div className="font-bold text-sm text-dark">Rs.{r.price}/-</div>
+                  </div>
+                </Link>
               ))}
             </div>
           </motion.div>

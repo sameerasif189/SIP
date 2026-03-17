@@ -15,9 +15,12 @@ const STATUS_LABELS = [
   "Your order has been served",
 ];
 
+const INITIAL_SHOW = 4;
+
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState(menuData[0].category);
   const [searchQuery, setSearchQuery] = useState("");
+  const [expandedCategories, setExpandedCategories] = useState({});
   const { totalItems, totalPrice } = useCart();
   const { activeOrder, dismissOrder, ORDER_STEPS } = useOrder();
   const navigate = useNavigate();
@@ -205,24 +208,47 @@ export default function Home() {
           </div>
         ) : (
           <div className="space-y-6">
-            {menuData.map((category) => (
-              <section
-                key={category.category}
-                ref={(el) => (sectionRefs.current[category.category] = el)}
-                data-category={category.category}
-                className="scroll-mt-14 py-6"
-              >
-                <h2 className="text-xl font-extrabold tracking-tight mb-4 text-dark uppercase">
-                  {category.category} at SiP.
-                </h2>
+            {menuData.map((category) => {
+              const isExpanded = expandedCategories[category.category];
+              const visibleItems = isExpanded
+                ? category.items
+                : category.items.slice(0, INITIAL_SHOW);
+              const hasMore = category.items.length > INITIAL_SHOW;
 
-                <div className="flex space-x-4 overflow-x-auto scrollbar-hide pb-2">
-                  {category.items.map((item, i) => (
-                    <MenuCard key={item.id} item={item} index={i} />
-                  ))}
-                </div>
-              </section>
-            ))}
+              return (
+                <section
+                  key={category.category}
+                  ref={(el) => (sectionRefs.current[category.category] = el)}
+                  data-category={category.category}
+                  className="scroll-mt-14 py-6"
+                >
+                  <h2 className="text-xl font-extrabold tracking-tight mb-4 text-dark uppercase">
+                    {category.category}.
+                  </h2>
+
+                  <div className="flex space-x-4 overflow-x-auto scrollbar-hide pb-2">
+                    {visibleItems.map((item, i) => (
+                      <MenuCard key={item.id} item={item} index={i} />
+                    ))}
+                  </div>
+
+                  {hasMore && !isExpanded && (
+                    <button
+                      onClick={() =>
+                        setExpandedCategories((prev) => ({
+                          ...prev,
+                          [category.category]: true,
+                        }))
+                      }
+                      className="mt-3 text-sm font-semibold text-dark flex items-center gap-1 cursor-pointer hover:text-dark/70 transition-colors"
+                    >
+                      See more
+                      <ChevronRight size={16} />
+                    </button>
+                  )}
+                </section>
+              );
+            })}
           </div>
         )}
       </div>
