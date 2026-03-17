@@ -65,8 +65,8 @@ export default function CategoryMenu() {
           >
             <ChevronLeft size={20} className="text-dark" />
           </button>
-          <h1 className="flex-1 text-center font-bold text-dark text-[17px]">
-            {menuData[currentIndex].category}
+          <h1 className="flex-1 text-center font-bold text-dark text-[17px] heading-font normal-case">
+            {activeCategory || menuData[currentIndex].category}
           </h1>
           <div className="w-9" /> {/* Spacer for centering */}
         </div>
@@ -100,7 +100,7 @@ export default function CategoryMenu() {
             data-category={category.category}
             className="scroll-mt-28 pt-6"
           >
-            <h2 className="text-lg font-extrabold tracking-tight mb-1 text-dark">
+            <h2 className="text-xl font-semibold text-gray-900 heading-font normal-case mb-1">
               {category.category}
             </h2>
 
