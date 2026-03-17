@@ -177,12 +177,12 @@ export default function ItemDetail() {
             transition={{ duration: 0.4 }}
             className="mt-10 border-t border-border pt-6"
           >
-            <h3 className="font-display font-bold italic text-dark text-lg lg:text-xl mb-4">
-              You might also like
+            <h3 className="text-xl font-extrabold tracking-tight text-dark mb-4 uppercase">
+              You might also like.
             </h3>
-            <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+            <div className="flex space-x-4 overflow-x-auto scrollbar-hide pb-2">
               {related.map((r, i) => (
-                <div key={r.id} className="w-[180px] shrink-0">
+                <div key={r.id} className="shrink-0">
                   <MenuCard item={r} index={i} />
                 </div>
               ))}
