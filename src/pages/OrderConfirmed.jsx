@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ChevronRight, MessageSquare } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronRight, MessageSquare, X, Star } from "lucide-react";
 import SipLogo from "../components/SipLogo";
+
+const EMOJI_FACES = ["😞", "😕", "😐", "🙂", "😍"];
 
 export default function OrderConfirmed() {
   const location = useLocation();
@@ -14,7 +17,34 @@ export default function OrderConfirmed() {
   } = location.state || {};
 
   const steps = ["Order placed", "Being prepared", "Ready to serve", "Delivered"];
-  const currentStep = 3; // Show as fully delivered (all steps complete)
+  const currentStep = 3;
+
+  // Review state
+  const [showReview, setShowReview] = useState(false);
+  const [reviewStep, setReviewStep] = useState(0); // 0 = stars, 1 = detailed
+  const [overallRating, setOverallRating] = useState(0);
+  const [categoryRatings, setCategoryRatings] = useState({
+    food: 0,
+    service: 0,
+    ambiance: 0,
+    value: 0,
+  });
+  const [reviewText, setReviewText] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const setCategoryRating = (category, value) => {
+    setCategoryRatings((prev) => ({ ...prev, [category]: value }));
+  };
+
+  const handleStarClick = (stars) => {
+    setOverallRating(stars);
+    setTimeout(() => setReviewStep(1), 400);
+  };
+
+  const handleSubmitReview = () => {
+    setSubmitted(true);
+    setTimeout(() => setShowReview(false), 1500);
+  };
 
   return (
     <div className="min-h-screen bg-bg">
@@ -41,7 +71,7 @@ export default function OrderConfirmed() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-3xl text-dark mb-2 heading-font"
+            className="text-3xl text-dark mb-1.5 heading-font"
           >
             Enjoy your meal
           </motion.h1>
@@ -49,17 +79,17 @@ export default function OrderConfirmed() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-muted text-sm mb-8"
+            className="text-muted text-sm mb-6"
           >
             Your order is #{orderNumber}
           </motion.p>
 
-          {/* Progress bar - Sunday style */}
+          {/* Progress bar */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="flex gap-2 mb-8"
+            className="flex gap-2 mb-6"
           >
             {steps.map((_, i) => (
               <motion.div
@@ -74,12 +104,12 @@ export default function OrderConfirmed() {
             ))}
           </motion.div>
 
-          {/* Status message - Sunday style bubble */}
+          {/* Status message */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="bg-[#E8E4F8] rounded-2xl p-5 mb-8 flex gap-3"
+            className="bg-[#E8E4F8] rounded-2xl p-5 mb-6 flex gap-3"
           >
             <div className="w-8 h-8 bg-[#6B5CE7]/20 rounded-full flex items-center justify-center shrink-0 mt-0.5">
               <MessageSquare size={16} className="text-[#6B5CE7]" />
@@ -90,14 +120,14 @@ export default function OrderConfirmed() {
           </motion.div>
 
           {/* Divider */}
-          <div className="border-t border-border my-6" />
+          <div className="border-t border-border my-5" />
 
           {/* Total */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7 }}
-            className="flex justify-between items-center mb-4"
+            className="flex justify-between items-center mb-3"
           >
             <span className="text-2xl text-dark price-font">Total</span>
             <span className="text-2xl text-dark price-font">
@@ -110,9 +140,9 @@ export default function OrderConfirmed() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.75 }}
-              className="text-muted text-sm mb-4"
+              className="text-muted text-sm mb-3"
             >
-              {splitMode === "even" ? `Split ${splitCount} ways` : "Your items only"}
+              {splitMode === "even" ? `Split ${splitCount} ways` : splitMode === "custom" ? "Custom amount" : "Your items only"}
             </motion.p>
           )}
 
@@ -126,6 +156,52 @@ export default function OrderConfirmed() {
             <span className="text-sm text-dark font-medium">Order details</span>
             <ChevronRight size={16} className="text-muted" />
           </motion.button>
+
+          {/* Review CTA */}
+          {!submitted && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.0 }}
+              className="mt-6"
+            >
+              <button
+                onClick={() => setShowReview(true)}
+                className="w-full bg-[#3D4F3D] text-white rounded-2xl p-6 cursor-pointer text-left"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <SipLogo size={40} />
+                  <X size={18} className="text-white/50" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-1 heading-font">
+                  Share your experience at SiP
+                </h3>
+                <p className="text-white/60 text-sm mb-4">Click on stars to leave a review.</p>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      size={32}
+                      className="text-[#C5B97A]"
+                      fill="#C5B97A"
+                      strokeWidth={0}
+                    />
+                  ))}
+                </div>
+              </button>
+            </motion.div>
+          )}
+
+          {submitted && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="mt-6 bg-[#3D4F3D] text-white rounded-2xl p-6 text-center"
+            >
+              <p className="text-lg font-semibold mb-1">Thank you for your feedback!</p>
+              <p className="text-white/60 text-sm">We appreciate your review.</p>
+            </motion.div>
+          )}
         </div>
       </div>
 
@@ -134,7 +210,7 @@ export default function OrderConfirmed() {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 1.2, type: "spring", stiffness: 200, damping: 20 }}
-        className="fixed bottom-6 left-4 right-4 z-50"
+        className="fixed bottom-6 left-4 right-4 z-40"
       >
         <div className="max-w-lg mx-auto bg-white/90 backdrop-blur-lg rounded-2xl p-4 shadow-xl shadow-dark/10 flex items-start gap-3">
           <div className="w-10 h-10 bg-[#F5F0E8] border border-[#E8E0D0] rounded-xl flex items-center justify-center shrink-0">
@@ -149,6 +225,159 @@ export default function OrderConfirmed() {
           <span className="text-xs text-muted shrink-0">now</span>
         </div>
       </motion.div>
+
+      {/* ── Review Modal ── */}
+      <AnimatePresence>
+        {showReview && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-end justify-center"
+            onClick={() => setShowReview(false)}
+          >
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#3D4F3D] rounded-t-3xl w-full max-w-lg min-h-[85vh] flex flex-col"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 py-4 shrink-0">
+                <button onClick={() => {
+                  if (reviewStep === 1) setReviewStep(0);
+                  else setShowReview(false);
+                }} className="cursor-pointer text-white/60">
+                  <span className="text-sm">Back</span>
+                </button>
+                <button onClick={() => setShowReview(false)} className="cursor-pointer">
+                  <X size={20} className="text-white/60" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto px-5 pb-8">
+                <AnimatePresence mode="wait">
+                  {/* Step 0: Overall star rating */}
+                  {reviewStep === 0 && (
+                    <motion.div
+                      key="stars"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      className="flex flex-col items-center pt-12"
+                    >
+                      <SipLogo size={56} />
+                      <h2 className="text-2xl font-bold text-white mt-6 mb-2 heading-font text-center">
+                        Share your experience<br />at SiP
+                      </h2>
+                      <p className="text-white/50 text-sm mb-8">Click on stars to leave a review.</p>
+                      <div className="flex gap-2">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            onClick={() => handleStarClick(star)}
+                            className="cursor-pointer transition-transform hover:scale-110"
+                          >
+                            <Star
+                              size={40}
+                              className={star <= overallRating ? "text-[#C5B97A]" : "text-[#6B7B6B]"}
+                              fill={star <= overallRating ? "#C5B97A" : "none"}
+                              strokeWidth={star <= overallRating ? 0 : 1.5}
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Step 1: Detailed feedback */}
+                  {reviewStep === 1 && (
+                    <motion.div
+                      key="detailed"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                    >
+                      {/* Stars display */}
+                      <div className="flex justify-center gap-1 mb-4">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            onClick={() => setOverallRating(star)}
+                            className="cursor-pointer"
+                          >
+                            <Star
+                              size={28}
+                              className={star <= overallRating ? "text-[#C5B97A]" : "text-[#6B7B6B]"}
+                              fill={star <= overallRating ? "#C5B97A" : "none"}
+                              strokeWidth={star <= overallRating ? 0 : 1.5}
+                            />
+                          </button>
+                        ))}
+                      </div>
+
+                      <h2 className="text-xl font-bold text-white text-center mb-1 heading-font">
+                        Can you tell us more?
+                      </h2>
+                      <p className="text-white/50 text-sm text-center mb-8">
+                        You've been served by our team.
+                      </p>
+
+                      {/* Category ratings */}
+                      <div className="space-y-5 mb-8">
+                        {[
+                          { key: "food", label: "Food & Drinks" },
+                          { key: "service", label: "Service" },
+                          { key: "ambiance", label: "Ambiance" },
+                          { key: "value", label: "Value for money" },
+                        ].map(({ key, label }) => (
+                          <div key={key} className="flex items-center justify-between">
+                            <span className="text-white text-sm font-medium">{label}</span>
+                            <div className="flex gap-1.5">
+                              {EMOJI_FACES.map((emoji, i) => (
+                                <button
+                                  key={i}
+                                  onClick={() => setCategoryRating(key, i + 1)}
+                                  className={`w-8 h-8 rounded-full flex items-center justify-center cursor-pointer transition-all text-base ${
+                                    categoryRatings[key] === i + 1
+                                      ? "bg-white/20 scale-110"
+                                      : "bg-white/5 opacity-50 hover:opacity-80"
+                                  }`}
+                                >
+                                  {emoji}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Text feedback */}
+                      <textarea
+                        value={reviewText}
+                        onChange={(e) => setReviewText(e.target.value)}
+                        placeholder="Thank you so much, we really enjoyed it! A little note for next time, the music was a bit loud 🥰"
+                        className="w-full bg-[#4A5C4A] text-white placeholder:text-white/30 rounded-2xl p-4 text-sm min-h-[100px] resize-none focus:outline-none focus:ring-2 focus:ring-white/20 border-none"
+                      />
+
+                      {/* Submit */}
+                      <motion.button
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleSubmitReview}
+                        className="w-full bg-white text-[#3D4F3D] py-4 rounded-full font-semibold text-[15px] cursor-pointer mt-6"
+                      >
+                        Submit review
+                      </motion.button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
