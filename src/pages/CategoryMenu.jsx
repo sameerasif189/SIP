@@ -110,23 +110,50 @@ export default function CategoryMenu() {
 
       {/* Menu items */}
       <div className="max-w-lg mx-auto px-5 pt-2">
-        {menuData.map((category) => (
-          <section
-            key={category.category}
-            ref={(el) => (sectionRefs.current[category.category] = el)}
-            data-category={category.category}
-            className="scroll-mt-28 pt-6"
-          >
-            <h2 className="text-xl text-gray-900 heading-font normal-case mb-1">
-              {category.category}
-            </h2>
+        {menuData.map((category, catIdx) => (
+          <div key={category.category}>
+            <section
+              ref={(el) => (sectionRefs.current[category.category] = el)}
+              data-category={category.category}
+              className="scroll-mt-28 pt-6"
+            >
+              <h2 className="text-xl text-gray-900 heading-font normal-case mb-1">
+                {category.category}
+              </h2>
 
-            <div>
-              {category.items.map((item, i) => (
-                <MenuCard key={item.id} item={item} index={i} />
-              ))}
-            </div>
-          </section>
+              <div>
+                {category.items.map((item, i) => (
+                  <MenuCard key={item.id} item={item} index={i} />
+                ))}
+              </div>
+            </section>
+
+            {/* Event banner after every 3rd category */}
+            {(catIdx === 2 || catIdx === 5) && catIdx < menuData.length - 1 && (
+              <div className="my-6 rounded-2xl overflow-hidden relative">
+                <img
+                  src={catIdx === 2
+                    ? "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=80"
+                    : "https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=800&q=80"
+                  }
+                  alt="Event"
+                  className="w-full h-40 object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <p className="text-white/70 text-xs font-semibold uppercase tracking-wider mb-0.5">
+                    {catIdx === 2 ? "This Weekend" : "Every Sunday"}
+                  </p>
+                  <h3 className="text-white text-base font-bold heading-font leading-snug">
+                    {catIdx === 2 ? "Live Jazz Night at SiP" : "Brunch Specials at SiP"}
+                  </h3>
+                  <p className="text-white/60 text-xs mt-0.5">
+                    {catIdx === 2 ? "Friday 8 PM — Enjoy live music with your dinner" : "11 AM – 3 PM — Unlimited brunch for Rs.2,500/-"}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
         ))}
       </div>
 
