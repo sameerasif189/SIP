@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronUp, MessageSquare, X, Star } from "lucide-react";
+import { ChevronDown, ChevronUp, MessageSquare, Star, X } from "lucide-react";
 import { useOrder } from "../context/OrderContext";
 import SipLogo from "../components/SipLogo";
+import eidImg from "../assets/Eid.png";
 
 const EMOJI_FACES = ["😞", "😕", "😐", "🙂", "😍"];
 
@@ -35,16 +36,9 @@ export default function OrderConfirmed() {
   const [showReview, setShowReview] = useState(false);
   const [reviewStep, setReviewStep] = useState(0);
   const [overallRating, setOverallRating] = useState(0);
-  const [categoryRatings, setCategoryRatings] = useState({
-    food: 0,
-    service: 0,
-    ambiance: 0,
-    value: 0,
-  });
+  const [categoryRatings, setCategoryRatings] = useState({ food: 0, service: 0, ambiance: 0, value: 0 });
   const [reviewText, setReviewText] = useState("");
   const [submitted, setSubmitted] = useState(false);
-
-  // No auto-show — feedback is triggered by the button below
 
   const setCategoryRating = (category, value) => {
     setCategoryRatings((prev) => ({ ...prev, [category]: value }));
@@ -63,34 +57,35 @@ export default function OrderConfirmed() {
   return (
     <div className="min-h-screen bg-bg pb-24">
       <div className="max-w-lg mx-auto">
-        {/* Top header with logo + Order more */}
+        {/* Header: Order more left | SipLogo center | Leave a review right */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between px-5 pt-8 pb-4"
+          className="relative flex items-center justify-center pt-8 pb-4"
         >
+          <Link
+            to="/menu"
+            className="absolute left-0 bg-dark text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-dark/90 transition-colors"
+          >
+            Order more
+          </Link>
           <SipLogo size={48} />
-          <div className="flex items-center gap-2">
-            {!submitted && (
-              <button
-                onClick={() => setShowReview(true)}
-                className="bg-white border border-border text-dark px-4 py-2.5 rounded-full text-sm font-semibold hover:bg-bg transition-colors cursor-pointer flex items-center gap-1.5"
-              >
-                <Star size={14} />
-                Feedback
-              </button>
-            )}
-            <Link
-              to="/menu"
-              className="bg-dark text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-dark/90 transition-colors"
+          {!submitted ? (
+            <button
+              onClick={() => setShowReview(true)}
+              className="absolute right-0 inline-flex items-center gap-1.5 bg-white border border-border text-dark px-4 py-2.5 rounded-full text-sm font-semibold hover:bg-bg transition-colors cursor-pointer"
             >
-              Order more
-            </Link>
-          </div>
+              <Star size={14} />
+              Review
+            </button>
+          ) : (
+            <div className="absolute right-0 w-[80px]" />
+          )}
         </motion.div>
 
         {/* Main content card */}
         <div className="bg-white rounded-t-3xl min-h-[calc(100vh-100px)] px-5 pt-8 pb-8">
+
           <motion.h1
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -214,48 +209,40 @@ export default function OrderConfirmed() {
             </motion.div>
           )}
 
-          {/* Feedback card */}
-          {!submitted ? (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9 }}
-              className="mt-6"
-            >
-              <button
-                onClick={() => setShowReview(true)}
-                className="w-full bg-[#3D4F3D] text-white rounded-2xl p-6 cursor-pointer text-left"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <SipLogo size={40} />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-1 heading-font">
-                  Share your experience at SiP
+          {/* Alaaya Chand Raat banner */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+            className="mt-6 rounded-2xl overflow-hidden bg-[#1C3557]"
+          >
+            <div className="flex min-h-[200px]">
+              {/* Text left */}
+              <div className="flex-1 p-5 flex flex-col justify-center">
+                <p className="text-[#7EB8F7] text-[11px] font-semibold uppercase tracking-widest mb-2">
+                  Chand Raat Special
+                </p>
+                <h3 className="text-white text-[20px] font-bold heading-font leading-tight mb-1.5">
+                  Alaaya Chand Raat Is Coming To SiP
                 </h3>
-                <p className="text-white/60 text-sm mb-4">Click on stars to leave a review.</p>
-                <div className="flex gap-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                      key={star}
-                      size={32}
-                      className="text-[#C5B97A]"
-                      fill="#C5B97A"
-                      strokeWidth={0}
-                    />
-                  ))}
-                </div>
-              </button>
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="mt-6 bg-[#3D4F3D] text-white rounded-2xl p-6 text-center"
-            >
-              <p className="text-lg font-semibold mb-1">Thank you for your feedback!</p>
-              <p className="text-white/60 text-sm">We appreciate your review.</p>
-            </motion.div>
-          )}
+                <p className="text-white/55 text-sm leading-relaxed mb-4">
+                  Celebrate Eid with live music, mehndi & our special festive menu — tonight only
+                </p>
+                <button className="bg-white/15 hover:bg-white/25 transition-colors text-white text-sm font-semibold px-4 py-2 rounded-full cursor-pointer self-start">
+                  Learn more
+                </button>
+              </div>
+              {/* Image right */}
+              <div className="w-[40%] relative overflow-hidden">
+                <img
+                  src={eidImg}
+                  alt="Eid Mubarak"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#1C3557] via-[#1C3557]/40 to-transparent" />
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
 
@@ -278,7 +265,7 @@ export default function OrderConfirmed() {
         </div>
       </motion.div>
 
-      {/* ── Review Modal ── */}
+      {/* Review Modal */}
       <AnimatePresence>
         {showReview && (
           <motion.div
@@ -296,12 +283,8 @@ export default function OrderConfirmed() {
               onClick={(e) => e.stopPropagation()}
               className="bg-[#3D4F3D] rounded-t-3xl w-full max-w-lg min-h-[85vh] flex flex-col"
             >
-              {/* Header */}
               <div className="flex items-center justify-between px-5 py-4 shrink-0">
-                <button onClick={() => {
-                  if (reviewStep === 1) setReviewStep(0);
-                  else setShowReview(false);
-                }} className="cursor-pointer text-white/60">
+                <button onClick={() => { if (reviewStep === 1) setReviewStep(0); else setShowReview(false); }} className="cursor-pointer text-white/60">
                   <span className="text-sm">Back</span>
                 </button>
                 <button onClick={() => setShowReview(false)} className="cursor-pointer">
@@ -311,7 +294,6 @@ export default function OrderConfirmed() {
 
               <div className="flex-1 overflow-y-auto px-5 pb-8">
                 <AnimatePresence mode="wait">
-                  {/* Step 0: Overall star rating */}
                   {reviewStep === 0 && (
                     <motion.div
                       key="stars"
@@ -327,11 +309,7 @@ export default function OrderConfirmed() {
                       <p className="text-white/50 text-sm mb-8">Click on stars to leave a review.</p>
                       <div className="flex gap-2">
                         {[1, 2, 3, 4, 5].map((star) => (
-                          <button
-                            key={star}
-                            onClick={() => handleStarClick(star)}
-                            className="cursor-pointer transition-transform hover:scale-110"
-                          >
+                          <button key={star} onClick={() => handleStarClick(star)} className="cursor-pointer transition-transform hover:scale-110">
                             <Star
                               size={40}
                               className={star <= overallRating ? "text-[#C5B97A]" : "text-[#6B7B6B]"}
@@ -344,7 +322,6 @@ export default function OrderConfirmed() {
                     </motion.div>
                   )}
 
-                  {/* Step 1: Detailed feedback */}
                   {reviewStep === 1 && (
                     <motion.div
                       key="detailed"
@@ -354,11 +331,7 @@ export default function OrderConfirmed() {
                     >
                       <div className="flex justify-center gap-1 mb-4">
                         {[1, 2, 3, 4, 5].map((star) => (
-                          <button
-                            key={star}
-                            onClick={() => setOverallRating(star)}
-                            className="cursor-pointer"
-                          >
+                          <button key={star} onClick={() => setOverallRating(star)} className="cursor-pointer">
                             <Star
                               size={28}
                               className={star <= overallRating ? "text-[#C5B97A]" : "text-[#6B7B6B]"}
@@ -368,13 +341,8 @@ export default function OrderConfirmed() {
                           </button>
                         ))}
                       </div>
-
-                      <h2 className="text-xl font-bold text-white text-center mb-1 heading-font">
-                        Can you tell us more?
-                      </h2>
-                      <p className="text-white/50 text-sm text-center mb-8">
-                        You've been served by our team.
-                      </p>
+                      <h2 className="text-xl font-bold text-white text-center mb-1 heading-font">Can you tell us more?</h2>
+                      <p className="text-white/50 text-sm text-center mb-8">You've been served by our team.</p>
 
                       <div className="space-y-5 mb-8">
                         {[
@@ -391,9 +359,7 @@ export default function OrderConfirmed() {
                                   key={i}
                                   onClick={() => setCategoryRating(key, i + 1)}
                                   className={`w-8 h-8 rounded-full flex items-center justify-center cursor-pointer transition-all text-base ${
-                                    categoryRatings[key] === i + 1
-                                      ? "bg-white/20 scale-110"
-                                      : "bg-white/5 opacity-50 hover:opacity-80"
+                                    categoryRatings[key] === i + 1 ? "bg-white/20 scale-110" : "bg-white/5 opacity-50 hover:opacity-80"
                                   }`}
                                 >
                                   {emoji}

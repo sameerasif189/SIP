@@ -550,12 +550,16 @@ function CheckoutModal({ items, totalPrice, tip, tipAmount, serviceFee, gst, gra
   const { placeOrder } = useOrder();
   const navigate = useNavigate();
 
+  // Two-step flow: "split" (step 1) → "payment" (step 2)
+  const [step, setStep] = useState("split");
+
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [showNewCardForm, setShowNewCardForm] = useState(false);
   const [processing, setProcessing] = useState(false);
-  const [showSplitBill, setShowSplitBill] = useState(false);
 
+  // Split bill state
   const [splitMode, setSplitMode] = useState("full");
+  const [splitView, setSplitView] = useState("main"); // main | even | item | custom
   const [splitCount, setSplitCount] = useState(2);
   const [totalPeople, setTotalPeople] = useState(2);
   const [payingFor, setPayingFor] = useState(1);
@@ -564,6 +568,13 @@ function CheckoutModal({ items, totalPrice, tip, tipAmount, serviceFee, gst, gra
     const all = {};
     items.forEach((item) => { all[item.id] = true; });
     return all;
+  });
+  const [guestCount, setGuestCount] = useState(2);
+  const [guestItems, setGuestItems] = useState(() => {
+    const g = { 1: {} };
+    items.forEach((item) => { g[1][item.id] = true; });
+    for (let i = 2; i <= 4; i++) g[i] = {};
+    return g;
   });
 
   const getYourTotal = () => {
@@ -616,10 +627,50 @@ function CheckoutModal({ items, totalPrice, tip, tipAmount, serviceFee, gst, gra
   };
 
   const splitModeLabel = () => {
-    if (splitMode === "full") return "Split the bill";
+    if (splitMode === "full") return "Paying full bill";
     if (splitMode === "even") return `Split ${totalPeople} ways (${payingFor} paying)`;
     if (splitMode === "item") return "Paying for your items";
     if (splitMode === "custom") return `Custom: Rs.${customAmount || 0}/-`;
+    return "Paying full bill";
+  };
+
+  // Split bill helpers
+  const toggleGuestItem = (guest, itemId) => {
+    setGuestItems((prev) => ({ ...prev, [guest]: { ...prev[guest], [itemId]: !prev[guest][itemId] } }));
+  };
+  const selectAllForGuest = (guest) => {
+    const allSelected = items.every((item) => guestItems[guest]?.[item.id]);
+    const updated = { ...guestItems[guest] };
+    items.forEach((item) => { updated[item.id] = !allSelected; });
+    setGuestItems((prev) => ({ ...prev, [guest]: updated }));
+  };
+  const confirmSplitAndProceed = (mode) => {
+    setSplitMode(mode);
+    if (mode === "item") setSelectedItems(guestItems[1] || {});
+    setStep("payment");
+  };
+  const evenTotal = Math.ceil((grandTotal * payingFor) / totalPeople);
+  const fraction = totalPeople > 0 ? payingFor / totalPeople : 0;
+  const guestTotal = (gn) => items.filter((i) => guestItems[gn]?.[i.id]).reduce((s, i) => s + i.price * i.quantity, 0);
+  const guestGrandTotal = (gn) => { const sub = guestTotal(gn); return totalPrice === 0 ? 0 : Math.ceil(grandTotal * (sub / totalPrice)); };
+
+  const handleBack = () => {
+    if (step === "payment") {
+      setStep("split");
+      setSplitView("main");
+    } else if (splitView !== "main") {
+      setSplitView("main");
+    } else {
+      onClose();
+    }
+  };
+
+  const headerTitle = () => {
+    if (step === "payment") return "Pay securely";
+    if (splitView === "main") return "Split the bill";
+    if (splitView === "even") return "Divide the bill equally";
+    if (splitView === "item") return "Edit split";
+    if (splitView === "custom") return "Pay a custom amount";
     return "Split the bill";
   };
 
@@ -641,158 +692,289 @@ function CheckoutModal({ items, totalPrice, tip, tipAmount, serviceFee, gst, gra
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
+          <button onClick={handleBack} className="cursor-pointer">
+            <ChevronLeft size={20} className="text-dark" />
+          </button>
+          <h3 className="text-dark text-base heading-font">{headerTitle()}</h3>
           <button onClick={onClose} className="cursor-pointer">
             <X size={20} className="text-dark" />
           </button>
-          <h3 className="text-dark text-base heading-font">Pay securely</h3>
-          <div className="w-5" />
         </div>
 
-        {/* Scrollable content */}
-        <div className="overflow-y-auto flex-1 px-5 pt-4 pb-6">
-          <p className="text-muted text-sm mb-4">All transactions are private and encrypted.</p>
+        <AnimatePresence mode="wait">
+          {/* ═══ STEP 1: SPLIT BILL ═══ */}
+          {step === "split" && (
+            <motion.div
+              key="split-step"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="overflow-y-auto flex-1"
+            >
+              <AnimatePresence mode="wait">
+                {/* Main split options */}
+                {splitView === "main" && (
+                  <motion.div key="split-main" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="p-5 space-y-3 pb-8">
+                    <p className="text-muted text-sm mb-4">How would you like to pay?</p>
+                    <motion.button whileTap={{ scale: 0.98 }} onClick={() => confirmSplitAndProceed("full")}
+                      className="w-full flex items-center gap-4 p-5 rounded-2xl cursor-pointer bg-dark text-white">
+                      <Banknote size={20} /><span className="font-semibold text-[15px]">Pay the full bill</span>
+                    </motion.button>
+                    <motion.button whileTap={{ scale: 0.98 }} onClick={() => setSplitView("item")}
+                      className="w-full flex items-center gap-4 p-5 rounded-2xl cursor-pointer bg-dark text-white">
+                      <ListOrdered size={20} /><span className="font-semibold text-[15px]">Pay for your items</span>
+                    </motion.button>
+                    <motion.button whileTap={{ scale: 0.98 }} onClick={() => setSplitView("even")}
+                      className="w-full flex items-center gap-4 p-5 rounded-2xl cursor-pointer bg-dark text-white">
+                      <Clock size={20} /><span className="font-semibold text-[15px]">Divide the bill equally</span>
+                    </motion.button>
+                    <motion.button whileTap={{ scale: 0.98 }} onClick={() => setSplitView("custom")}
+                      className="w-full flex items-center gap-4 p-5 rounded-2xl cursor-pointer bg-dark text-white">
+                      <PenLine size={20} /><span className="font-semibold text-[15px]">Pay a custom amount</span>
+                    </motion.button>
+                  </motion.div>
+                )}
 
-          {/* Saved card */}
-          <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-2">Saved card</p>
-          <PaymentOption
-            selected={paymentMethod === "saved"}
-            onClick={() => setPaymentMethod("saved")}
-            label="Visa ending in 4242"
-            icon={<span className="text-[10px] font-bold bg-blue-600 text-white px-1.5 py-0.5 rounded">VISA</span>}
-          />
+                {/* Even split */}
+                {splitView === "even" && (
+                  <motion.div key="split-even" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="p-5 pb-8">
+                    <div className="flex flex-col items-center mb-8">
+                      <div className="relative w-[160px] h-[160px]">
+                        <CircleProgress fraction={fraction} />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <span className="text-xl text-dark font-bold tracking-tight leading-none">Rs.{grandTotal}/-</span>
+                          <span className="text-xs text-muted mt-1">Amount to share</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-5 mb-8 flex flex-col items-center">
+                      <CounterRow label="Paying for" value={payingFor} onChange={(v) => setPayingFor(Math.min(v, totalPeople))} min={1} max={totalPeople} suffix="people" />
+                      <CounterRow label="Out of" value={totalPeople} onChange={(v) => { setTotalPeople(v); if (payingFor > v) setPayingFor(v); }} min={2} max={20} suffix="at the table" />
+                    </div>
+                    <div className="flex justify-between items-center border-t border-border pt-4 mb-6">
+                      <span className="text-dark font-medium">Total</span>
+                      <span className="text-dark font-bold text-lg">Rs.{evenTotal}/-</span>
+                    </div>
+                    <motion.button whileTap={{ scale: 0.98 }} onClick={() => confirmSplitAndProceed("even")} className="w-full bg-dark text-white py-4 rounded-full font-semibold text-[15px] cursor-pointer">Continue to payment</motion.button>
+                  </motion.div>
+                )}
 
-          {/* Other methods */}
-          <p className="text-xs text-muted font-semibold uppercase tracking-wide mt-4 mb-2">Other methods</p>
-          <div className="space-y-2.5 mb-4">
-            <PaymentOption selected={paymentMethod === "card"} onClick={() => setPaymentMethod("card")} label="Credit Card"
-              icon={<div className="flex gap-1"><span className="text-[10px] font-bold bg-blue-600 text-white px-1.5 py-0.5 rounded">VISA</span><span className="text-[10px] font-bold bg-dark text-white px-1.5 py-0.5 rounded">MC</span></div>} />
-            <PaymentOption selected={paymentMethod === "debit"} onClick={() => setPaymentMethod("debit")} label="Debit Card" icon={<CreditCard size={18} className="text-muted" />} />
-            <PaymentOption selected={paymentMethod === "cash"} onClick={() => setPaymentMethod("cash")} label="Cash" icon={<Banknote size={18} className="text-muted" />} />
-            <PaymentOption selected={paymentMethod === "jazzcash"} onClick={() => setPaymentMethod("jazzcash")} label="JazzCash" icon={<Smartphone size={18} className="text-red-500" />} />
-            <PaymentOption selected={paymentMethod === "easypaisa"} onClick={() => setPaymentMethod("easypaisa")} label="Easypaisa" icon={<Smartphone size={18} className="text-green-500" />} />
-          </div>
+                {/* Item-based split */}
+                {splitView === "item" && (
+                  <motion.div key="split-item" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="p-5 pb-8">
+                    {Array.from({ length: guestCount }, (_, i) => i + 1).map((guest) => (
+                      <div key={guest} className="mb-6">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="text-dark font-bold text-lg heading-font">Guest {guest}</h4>
+                          <button onClick={() => selectAllForGuest(guest)} className="text-sm text-dark font-medium cursor-pointer hover:underline">Select all</button>
+                        </div>
+                        <div className="space-y-2">
+                          {items.map((item) => {
+                            const checked = !!guestItems[guest]?.[item.id];
+                            return (
+                              <button key={item.id} onClick={() => toggleGuestItem(guest, item.id)}
+                                className={`w-full flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all ${checked ? "border-dark bg-bg" : "border-border bg-white"}`}>
+                                <span className="text-dark text-sm font-medium">{item.name}</span>
+                                <div className="flex items-center gap-3">
+                                  <span className="text-dark text-sm font-medium">Rs.{(item.price * item.quantity).toFixed(0)}/-</span>
+                                  <div className={`w-5 h-5 rounded flex items-center justify-center transition-all ${checked ? "bg-dark" : "border-2 border-border"}`}>
+                                    {checked && <Check size={12} className="text-white" />}
+                                  </div>
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                    <div className="flex gap-3 mb-6">
+                      {guestCount < 6 && (
+                        <button onClick={() => { const next = guestCount + 1; setGuestCount(next); setGuestItems((prev) => ({ ...prev, [next]: {} })); }}
+                          className="flex-1 py-3 rounded-full border border-border text-sm font-medium text-dark cursor-pointer hover:bg-bg transition-colors">+ Add guest</button>
+                      )}
+                      {guestCount > 2 && (
+                        <button onClick={() => { const updated = { ...guestItems }; delete updated[guestCount]; setGuestItems(updated); setGuestCount(guestCount - 1); }}
+                          className="flex-1 py-3 rounded-full border border-border text-sm font-medium text-muted cursor-pointer hover:bg-bg transition-colors">Remove guest</button>
+                      )}
+                    </div>
+                    <div className="flex justify-between items-center border-t border-border pt-4 mb-6">
+                      <span className="text-dark font-medium">Total</span>
+                      <span className="text-dark font-bold text-lg">Rs.{guestGrandTotal(1)}/-</span>
+                    </div>
+                    <motion.button whileTap={{ scale: 0.98 }} onClick={() => confirmSplitAndProceed("item")} className="w-full bg-dark text-white py-4 rounded-full font-semibold text-[15px] cursor-pointer">Continue to payment</motion.button>
+                  </motion.div>
+                )}
 
-          {/* Card Details */}
-          <AnimatePresence>
-            {(paymentMethod === "card" || paymentMethod === "debit") && (
-              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="mb-4 space-y-3 overflow-hidden">
-                <input type="text" placeholder="Cardholder name" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
-                <input type="text" placeholder="1234 5678 9012 3456" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
-                <div className="grid grid-cols-2 gap-3">
-                  <input type="text" placeholder="MM / YY" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
-                  <input type="text" placeholder="CVV" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                {/* Custom amount */}
+                {splitView === "custom" && (
+                  <motion.div key="split-custom" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="p-5 pb-8">
+                    <div className="flex flex-col items-center mb-8">
+                      <p className="text-muted text-sm mb-2">Total bill: Rs.{grandTotal}/-</p>
+                      <div className="relative w-full max-w-xs">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-bold text-dark">Rs.</span>
+                        <input type="number" value={customAmount}
+                          onChange={(e) => { const v = e.target.value; if (v === "" || parseFloat(v) <= grandTotal) setCustomAmount(v); }}
+                          placeholder="0" className="w-full text-center text-3xl font-bold text-dark py-6 bg-bg rounded-2xl focus:outline-none focus:ring-2 focus:ring-dark/10 pl-14 pr-6" />
+                      </div>
+                      <p className="text-muted text-xs mt-3">Enter the amount you want to pay</p>
+                    </div>
+                    <div className="flex gap-2 justify-center mb-8">
+                      {[Math.ceil(grandTotal / 4), Math.ceil(grandTotal / 3), Math.ceil(grandTotal / 2), grandTotal].map((amount, i) => (
+                        <button key={i} onClick={() => setCustomAmount(String(amount))}
+                          className={`px-4 py-2 rounded-full text-sm font-medium cursor-pointer transition-all ${customAmount === String(amount) ? "bg-dark text-white" : "bg-bg text-dark hover:bg-border"}`}>
+                          Rs.{amount}/-
+                        </button>
+                      ))}
+                    </div>
+                    {customAmount && parseFloat(customAmount) > 0 && (
+                      <div className="text-center text-sm text-muted mb-6">Remaining: Rs.{grandTotal - parseFloat(customAmount)}/-</div>
+                    )}
+                    <motion.button whileTap={{ scale: 0.98 }} onClick={() => confirmSplitAndProceed("custom")}
+                      disabled={!customAmount || parseFloat(customAmount) <= 0}
+                      className="w-full bg-dark text-white py-4 rounded-full font-semibold text-[15px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">Continue to payment</motion.button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          )}
 
-          {/* Add new card */}
-          <button onClick={() => setShowNewCardForm(!showNewCardForm)} className="flex items-center gap-3 w-full py-3 cursor-pointer">
-            <CreditCard size={18} className="text-muted" />
-            <span className="text-sm font-medium text-dark">Add a new card</span>
-            <ChevronRight size={16} className="text-muted ml-auto" />
-          </button>
-          <AnimatePresence>
-            {showNewCardForm && (
-              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="space-y-3 overflow-hidden pt-2 mb-4">
-                <input type="text" placeholder="Cardholder name" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
-                <input type="text" placeholder="Card number" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
-                <div className="grid grid-cols-2 gap-3">
-                  <input type="text" placeholder="MM / YY" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
-                  <input type="text" placeholder="CVV" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
-                </div>
-                <button className="w-full py-3 rounded-full border border-dark text-dark text-sm font-semibold cursor-pointer hover:bg-bg transition-colors">Save card</button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Promo + Split */}
-          <div className="border-t border-border mt-2 pt-2 space-y-1 mb-4">
-            <button className="flex items-center gap-3 w-full py-3 cursor-pointer">
-              <Tag size={18} className="text-muted" />
-              <span className="text-sm font-medium text-dark">Add a promo code</span>
-              <ChevronRight size={16} className="text-muted ml-auto" />
-            </button>
-            <button onClick={() => setShowSplitBill(true)} className="flex items-center gap-3 w-full py-3 cursor-pointer">
-              <ListOrdered size={18} className="text-muted" />
-              <span className="text-sm font-medium text-dark">{splitModeLabel()}</span>
-              <ChevronRight size={16} className="text-muted ml-auto" />
-            </button>
-          </div>
-
-          {/* Price breakdown */}
-          <div className="border-t border-border pt-4 space-y-2.5 text-sm">
-            <div className="flex justify-between text-dark">
-              <span>Subtotal</span>
-              <span className="font-medium">Rs.{totalPrice}/-</span>
-            </div>
-            {tip > 0 && (
-              <div className="flex justify-between text-dark">
-                <span>Tips ({tip}%)</span>
-                <span className="font-medium">Rs.{tipAmount}/-</span>
+          {/* ═══ STEP 2: PAYMENT ═══ */}
+          {step === "payment" && (
+            <motion.div
+              key="payment-step"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="flex flex-col flex-1 overflow-hidden"
+            >
+              {/* Split summary badge */}
+              <div className="px-5 pt-4">
+                <button onClick={() => { setStep("split"); setSplitView("main"); }} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-bg text-sm text-dark font-medium cursor-pointer hover:bg-border transition-colors mb-3">
+                  <ListOrdered size={14} className="text-muted" />
+                  {splitModeLabel()}
+                  <ChevronRight size={14} className="text-muted" />
+                </button>
               </div>
-            )}
-            <div className="flex justify-between text-dark">
-              <span className="flex items-center gap-1">Service fee <Info size={14} className="text-muted" /></span>
-              <span className="font-medium">Rs.{serviceFee}/-</span>
-            </div>
-            <div className="flex justify-between text-dark">
-              <span>GST (5%)</span>
-              <span className="font-medium">Rs.{gst}/-</span>
-            </div>
-            <div className="flex justify-between text-dark text-lg pt-3 border-t border-border price-font">
-              <span>Total</span>
-              <span>Rs.{splitMode === "full" ? grandTotal : yourTotal}/-</span>
-            </div>
-          </div>
-        </div>
 
-        {/* Pay button */}
-        <div className="px-5 pb-5 pt-3 border-t border-border/60 shrink-0">
-          <motion.button
-            whileTap={{ scale: 0.98 }}
-            onClick={handlePay}
-            disabled={!paymentMethod || processing}
-            className="w-full bg-dark text-white py-4 rounded-full font-semibold text-[15px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-          >
-            {processing ? (
-              <span className="flex items-center justify-center gap-2">
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Processing...
-              </span>
-            ) : (
-              `Pay with ${paymentMethodLabel()}`
-            )}
-          </motion.button>
-          <p className="text-center text-[11px] text-muted mt-2 flex items-center justify-center gap-1">
-            <span>🔒</span> secure payments with <span className="font-bold text-dark">SiP</span>
-          </p>
-        </div>
+              {/* Scrollable content */}
+              <div className="overflow-y-auto flex-1 px-5 pt-2 pb-6">
+                <p className="text-muted text-sm mb-4">All transactions are private and encrypted.</p>
+
+                {/* Saved card */}
+                <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-2">Saved card</p>
+                <PaymentOption
+                  selected={paymentMethod === "saved"}
+                  onClick={() => setPaymentMethod("saved")}
+                  label="Visa ending in 4242"
+                  icon={<span className="text-[10px] font-bold bg-blue-600 text-white px-1.5 py-0.5 rounded">VISA</span>}
+                />
+
+                {/* Other methods */}
+                <p className="text-xs text-muted font-semibold uppercase tracking-wide mt-4 mb-2">Other methods</p>
+                <div className="space-y-2.5 mb-4">
+                  <PaymentOption selected={paymentMethod === "card"} onClick={() => setPaymentMethod("card")} label="Credit Card"
+                    icon={<div className="flex gap-1"><span className="text-[10px] font-bold bg-blue-600 text-white px-1.5 py-0.5 rounded">VISA</span><span className="text-[10px] font-bold bg-dark text-white px-1.5 py-0.5 rounded">MC</span></div>} />
+                  <PaymentOption selected={paymentMethod === "debit"} onClick={() => setPaymentMethod("debit")} label="Debit Card" icon={<CreditCard size={18} className="text-muted" />} />
+                  <PaymentOption selected={paymentMethod === "cash"} onClick={() => setPaymentMethod("cash")} label="Cash" icon={<Banknote size={18} className="text-muted" />} />
+                  <PaymentOption selected={paymentMethod === "jazzcash"} onClick={() => setPaymentMethod("jazzcash")} label="JazzCash" icon={<Smartphone size={18} className="text-red-500" />} />
+                  <PaymentOption selected={paymentMethod === "easypaisa"} onClick={() => setPaymentMethod("easypaisa")} label="Easypaisa" icon={<Smartphone size={18} className="text-green-500" />} />
+                </div>
+
+                {/* Card Details */}
+                <AnimatePresence>
+                  {(paymentMethod === "card" || paymentMethod === "debit") && (
+                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="mb-4 space-y-3 overflow-hidden">
+                      <input type="text" placeholder="Cardholder name" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
+                      <input type="text" placeholder="1234 5678 9012 3456" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
+                      <div className="grid grid-cols-2 gap-3">
+                        <input type="text" placeholder="MM / YY" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
+                        <input type="text" placeholder="CVV" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Add new card */}
+                <button onClick={() => setShowNewCardForm(!showNewCardForm)} className="flex items-center gap-3 w-full py-3 cursor-pointer">
+                  <CreditCard size={18} className="text-muted" />
+                  <span className="text-sm font-medium text-dark">Add a new card</span>
+                  <ChevronRight size={16} className="text-muted ml-auto" />
+                </button>
+                <AnimatePresence>
+                  {showNewCardForm && (
+                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="space-y-3 overflow-hidden pt-2 mb-4">
+                      <input type="text" placeholder="Cardholder name" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
+                      <input type="text" placeholder="Card number" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
+                      <div className="grid grid-cols-2 gap-3">
+                        <input type="text" placeholder="MM / YY" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
+                        <input type="text" placeholder="CVV" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
+                      </div>
+                      <button className="w-full py-3 rounded-full border border-dark text-dark text-sm font-semibold cursor-pointer hover:bg-bg transition-colors">Save card</button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Promo code */}
+                <div className="border-t border-border mt-2 pt-2 mb-4">
+                  <button className="flex items-center gap-3 w-full py-3 cursor-pointer">
+                    <Tag size={18} className="text-muted" />
+                    <span className="text-sm font-medium text-dark">Add a promo code</span>
+                    <ChevronRight size={16} className="text-muted ml-auto" />
+                  </button>
+                </div>
+
+                {/* Price breakdown */}
+                <div className="border-t border-border pt-4 space-y-2.5 text-sm">
+                  <div className="flex justify-between text-dark">
+                    <span>Subtotal</span>
+                    <span className="font-medium">Rs.{totalPrice}/-</span>
+                  </div>
+                  {tip > 0 && (
+                    <div className="flex justify-between text-dark">
+                      <span>Tips ({tip}%)</span>
+                      <span className="font-medium">Rs.{tipAmount}/-</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-dark">
+                    <span className="flex items-center gap-1">Service fee <Info size={14} className="text-muted" /></span>
+                    <span className="font-medium">Rs.{serviceFee}/-</span>
+                  </div>
+                  <div className="flex justify-between text-dark">
+                    <span>GST (5%)</span>
+                    <span className="font-medium">Rs.{gst}/-</span>
+                  </div>
+                  <div className="flex justify-between text-dark text-lg pt-3 border-t border-border price-font">
+                    <span>Total</span>
+                    <span>Rs.{splitMode === "full" ? grandTotal : yourTotal}/-</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Pay button */}
+              <div className="px-5 pb-5 pt-3 border-t border-border/60 shrink-0">
+                <motion.button
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handlePay}
+                  disabled={!paymentMethod || processing}
+                  className="w-full bg-dark text-white py-4 rounded-full font-semibold text-[15px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                >
+                  {processing ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Processing...
+                    </span>
+                  ) : (
+                    `Pay with ${paymentMethodLabel()}`
+                  )}
+                </motion.button>
+                <p className="text-center text-[11px] text-muted mt-2 flex items-center justify-center gap-1">
+                  <span>🔒</span> secure payments with <span className="font-bold text-dark">SiP</span>
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
-
-      {/* Split Bill sub-modal */}
-      <AnimatePresence>
-        {showSplitBill && (
-          <SplitBillModal
-            items={items}
-            grandTotal={grandTotal}
-            totalPrice={totalPrice}
-            splitMode={splitMode}
-            setSplitMode={setSplitMode}
-            splitCount={splitCount}
-            setSplitCount={setSplitCount}
-            totalPeople={totalPeople}
-            setTotalPeople={setTotalPeople}
-            payingFor={payingFor}
-            setPayingFor={setPayingFor}
-            customAmount={customAmount}
-            setCustomAmount={setCustomAmount}
-            selectedItems={selectedItems}
-            setSelectedItems={setSelectedItems}
-            onClose={() => setShowSplitBill(false)}
-          />
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }
@@ -853,185 +1035,3 @@ function CounterRow({ label, value, onChange, min = 1, max = 20, suffix }) {
   );
 }
 
-function SplitBillModal({
-  items, grandTotal, totalPrice, splitMode, setSplitMode,
-  splitCount, setSplitCount, totalPeople, setTotalPeople,
-  payingFor, setPayingFor, customAmount, setCustomAmount,
-  selectedItems, setSelectedItems, onClose,
-}) {
-  const [view, setView] = useState("main");
-  const [guestCount, setGuestCount] = useState(2);
-  const [guestItems, setGuestItems] = useState(() => {
-    const g = { 1: {} };
-    items.forEach((item) => { g[1][item.id] = true; });
-    for (let i = 2; i <= 4; i++) g[i] = {};
-    return g;
-  });
-
-  const toggleGuestItem = (guest, itemId) => {
-    setGuestItems((prev) => ({ ...prev, [guest]: { ...prev[guest], [itemId]: !prev[guest][itemId] } }));
-  };
-  const selectAllForGuest = (guest) => {
-    const allSelected = items.every((item) => guestItems[guest]?.[item.id]);
-    const updated = { ...guestItems[guest] };
-    items.forEach((item) => { updated[item.id] = !allSelected; });
-    setGuestItems((prev) => ({ ...prev, [guest]: updated }));
-  };
-  const confirmItemSplit = () => { setSelectedItems(guestItems[1] || {}); setSplitMode("item"); onClose(); };
-  const confirmEvenSplit = () => { setSplitMode("even"); onClose(); };
-  const confirmCustom = () => { setSplitMode("custom"); onClose(); };
-
-  const evenTotal = Math.ceil((grandTotal * payingFor) / totalPeople);
-  const fraction = totalPeople > 0 ? payingFor / totalPeople : 0;
-  const guestTotal = (gn) => items.filter((i) => guestItems[gn]?.[i.id]).reduce((s, i) => s + i.price * i.quantity, 0);
-  const guestGrandTotal = (gn) => { const sub = guestTotal(gn); return totalPrice === 0 ? 0 : Math.ceil(grandTotal * (sub / totalPrice)); };
-
-  const viewTitle = () => {
-    if (view === "main") return "Split the bill";
-    if (view === "even") return "Divide the bill equally";
-    if (view === "item") return "Edit split";
-    if (view === "custom") return "Pay a custom amount";
-    return "Split the bill";
-  };
-  const goBack = () => { if (view === "main") onClose(); else setView("main"); };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 z-[60] flex items-end justify-center"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-t-3xl w-full max-w-lg max-h-[90vh] flex flex-col"
-      >
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
-          <button onClick={goBack} className="cursor-pointer"><ChevronLeft size={20} className="text-dark" /></button>
-          <h3 className="text-dark text-base heading-font">{viewTitle()}</h3>
-          <button onClick={onClose} className="cursor-pointer"><X size={20} className="text-dark" /></button>
-        </div>
-
-        <div className="overflow-y-auto flex-1">
-          <AnimatePresence mode="wait">
-            {view === "main" && (
-              <motion.div key="main" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="p-5 space-y-3 pb-8">
-                <motion.button whileTap={{ scale: 0.98 }} onClick={() => setView("item")} className="w-full flex items-center gap-4 p-5 rounded-2xl cursor-pointer bg-dark text-white">
-                  <ListOrdered size={20} /><span className="font-semibold text-[15px]">Pay for your items</span>
-                </motion.button>
-                <motion.button whileTap={{ scale: 0.98 }} onClick={() => setView("even")} className="w-full flex items-center gap-4 p-5 rounded-2xl cursor-pointer bg-dark text-white">
-                  <Clock size={20} /><span className="font-semibold text-[15px]">Divide the bill equally</span>
-                </motion.button>
-                <motion.button whileTap={{ scale: 0.98 }} onClick={() => setView("custom")} className="w-full flex items-center gap-4 p-5 rounded-2xl cursor-pointer bg-dark text-white">
-                  <PenLine size={20} /><span className="font-semibold text-[15px]">Pay a custom amount</span>
-                </motion.button>
-              </motion.div>
-            )}
-
-            {view === "even" && (
-              <motion.div key="even" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="p-5 pb-8">
-                <div className="flex flex-col items-center mb-8">
-                  <div className="relative w-[160px] h-[160px]">
-                    <CircleProgress fraction={fraction} />
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-xl text-dark font-bold tracking-tight leading-none">Rs.{grandTotal}/-</span>
-                      <span className="text-xs text-muted mt-1">Amount to share</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-5 mb-8 flex flex-col items-center">
-                  <CounterRow label="Paying for" value={payingFor} onChange={(v) => setPayingFor(Math.min(v, totalPeople))} min={1} max={totalPeople} suffix="people" />
-                  <CounterRow label="Out of" value={totalPeople} onChange={(v) => { setTotalPeople(v); if (payingFor > v) setPayingFor(v); }} min={2} max={20} suffix="at the table" />
-                </div>
-                <div className="flex justify-between items-center border-t border-border pt-4 mb-6">
-                  <span className="text-dark font-medium">Total</span>
-                  <span className="text-dark font-bold text-lg">Rs.{evenTotal}/-</span>
-                </div>
-                <motion.button whileTap={{ scale: 0.98 }} onClick={confirmEvenSplit} className="w-full bg-dark text-white py-4 rounded-full font-semibold text-[15px] cursor-pointer">Confirm</motion.button>
-              </motion.div>
-            )}
-
-            {view === "item" && (
-              <motion.div key="item" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="p-5 pb-8">
-                {Array.from({ length: guestCount }, (_, i) => i + 1).map((guest) => (
-                  <div key={guest} className="mb-6">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-dark font-bold text-lg heading-font">Guest {guest}</h4>
-                      <button onClick={() => selectAllForGuest(guest)} className="text-sm text-dark font-medium cursor-pointer hover:underline">Select all</button>
-                    </div>
-                    <div className="space-y-2">
-                      {items.map((item) => {
-                        const checked = !!guestItems[guest]?.[item.id];
-                        return (
-                          <button key={item.id} onClick={() => toggleGuestItem(guest, item.id)}
-                            className={`w-full flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all ${checked ? "border-dark bg-bg" : "border-border bg-white"}`}>
-                            <span className="text-dark text-sm font-medium">{item.name}</span>
-                            <div className="flex items-center gap-3">
-                              <span className="text-dark text-sm font-medium">Rs.{(item.price * item.quantity).toFixed(0)}/-</span>
-                              <div className={`w-5 h-5 rounded flex items-center justify-center transition-all ${checked ? "bg-dark" : "border-2 border-border"}`}>
-                                {checked && <Check size={12} className="text-white" />}
-                              </div>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-                <div className="flex gap-3 mb-6">
-                  {guestCount < 6 && (
-                    <button onClick={() => { const next = guestCount + 1; setGuestCount(next); setGuestItems((prev) => ({ ...prev, [next]: {} })); }}
-                      className="flex-1 py-3 rounded-full border border-border text-sm font-medium text-dark cursor-pointer hover:bg-bg transition-colors">+ Add guest</button>
-                  )}
-                  {guestCount > 2 && (
-                    <button onClick={() => { const updated = { ...guestItems }; delete updated[guestCount]; setGuestItems(updated); setGuestCount(guestCount - 1); }}
-                      className="flex-1 py-3 rounded-full border border-border text-sm font-medium text-muted cursor-pointer hover:bg-bg transition-colors">Remove guest</button>
-                  )}
-                </div>
-                <div className="flex justify-between items-center border-t border-border pt-4 mb-6">
-                  <span className="text-dark font-medium">Total</span>
-                  <span className="text-dark font-bold text-lg">Rs.{guestGrandTotal(1)}/-</span>
-                </div>
-                <motion.button whileTap={{ scale: 0.98 }} onClick={confirmItemSplit} className="w-full bg-dark text-white py-4 rounded-full font-semibold text-[15px] cursor-pointer">Confirm</motion.button>
-              </motion.div>
-            )}
-
-            {view === "custom" && (
-              <motion.div key="custom" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="p-5 pb-8">
-                <div className="flex flex-col items-center mb-8">
-                  <p className="text-muted text-sm mb-2">Total bill: Rs.{grandTotal}/-</p>
-                  <div className="relative w-full max-w-xs">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-bold text-dark">Rs.</span>
-                    <input type="number" value={customAmount}
-                      onChange={(e) => { const v = e.target.value; if (v === "" || parseFloat(v) <= grandTotal) setCustomAmount(v); }}
-                      placeholder="0" className="w-full text-center text-3xl font-bold text-dark py-6 bg-bg rounded-2xl focus:outline-none focus:ring-2 focus:ring-dark/10 pl-14 pr-6" />
-                  </div>
-                  <p className="text-muted text-xs mt-3">Enter the amount you want to pay</p>
-                </div>
-                <div className="flex gap-2 justify-center mb-8">
-                  {[Math.ceil(grandTotal / 4), Math.ceil(grandTotal / 3), Math.ceil(grandTotal / 2), grandTotal].map((amount, i) => (
-                    <button key={i} onClick={() => setCustomAmount(String(amount))}
-                      className={`px-4 py-2 rounded-full text-sm font-medium cursor-pointer transition-all ${customAmount === String(amount) ? "bg-dark text-white" : "bg-bg text-dark hover:bg-border"}`}>
-                      Rs.{amount}/-
-                    </button>
-                  ))}
-                </div>
-                {customAmount && parseFloat(customAmount) > 0 && (
-                  <div className="text-center text-sm text-muted mb-6">Remaining: Rs.{grandTotal - parseFloat(customAmount)}/-</div>
-                )}
-                <motion.button whileTap={{ scale: 0.98 }} onClick={confirmCustom}
-                  disabled={!customAmount || parseFloat(customAmount) <= 0}
-                  className="w-full bg-dark text-white py-4 rounded-full font-semibold text-[15px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">Confirm</motion.button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}

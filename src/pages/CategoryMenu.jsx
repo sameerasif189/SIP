@@ -5,6 +5,9 @@ import { ChevronLeft, ShoppingBag } from "lucide-react";
 import { menuData } from "../data/menu";
 import { useCart } from "../context/CartContext";
 import MenuCard from "../components/MenuCard";
+import SipLogo from "../components/SipLogo";
+import eidImg from "../assets/Eid.png";
+import banglesImg from "../assets/bangles.png";
 
 export default function CategoryMenu() {
   const { name } = useParams();
@@ -85,7 +88,7 @@ export default function CategoryMenu() {
           <h1 className="flex-1 text-center text-dark text-[17px] heading-font normal-case">
             {activeCategory || menuData[currentIndex].category}
           </h1>
-          <div className="w-9" /> {/* Spacer for centering */}
+          <SipLogo size={36} />
         </div>
 
         {/* Category tabs */}
@@ -122,34 +125,96 @@ export default function CategoryMenu() {
               </h2>
 
               <div>
-                {category.items.map((item, i) => (
-                  <MenuCard key={item.id} item={item} index={i} />
-                ))}
+                {category.subcategories ? (
+                  category.subcategories.map((sub) => {
+                    const subItems = category.items.filter((item) => item.subcategory === sub);
+                    if (subItems.length === 0) return null;
+                    return (
+                      <div key={sub} className="mt-4 first:mt-0">
+                        <p className="text-xs text-dark font-bold uppercase tracking-widest mb-3 mt-2 border-b border-gray-200 pb-2">{sub}</p>
+                        {subItems.map((item, i) => (
+                          <MenuCard key={item.id} item={item} index={i} />
+                        ))}
+                      </div>
+                    );
+                  })
+                ) : (
+                  category.items.map((item, i) => (
+                    <MenuCard key={item.id} item={item} index={i} />
+                  ))
+                )}
               </div>
             </section>
 
-            {/* Event banner after every 3rd category */}
+            {/* Bangle Stalls banner */}
+            {catIdx === 4 && (
+              <div className="my-8 rounded-2xl overflow-hidden bg-[#1C3557]">
+                <div className="flex min-h-[300px]">
+                  {/* Text left */}
+                  <div className="flex-1 p-7 flex flex-col justify-center">
+                    <p className="text-[#7EB8F7] text-[11px] font-semibold uppercase tracking-widest mb-2">
+                      Upcoming Event
+                    </p>
+                    <h3 className="text-white text-[22px] font-bold heading-font leading-tight mb-2">
+                      Bangle Stalls Are Coming To SiP
+                    </h3>
+                    <p className="text-white/55 text-[15px] leading-relaxed mb-5">
+                      Beautiful bangle stalls at SiP — this Thursday, 7 PM to 12 AM
+                    </p>
+                    <button className="bg-white/15 hover:bg-white/25 transition-colors text-white text-sm font-semibold px-5 py-2.5 rounded-full cursor-pointer self-start">
+                      Learn more
+                    </button>
+                  </div>
+                  {/* Image right — zoomed & cropped to show only bangles */}
+                  <div className="w-[45%] relative overflow-hidden">
+                    <img
+                      src={banglesImg}
+                      alt="Bangle stalls"
+                      className="absolute inset-0 w-full h-full object-cover object-[25%_90%] scale-[5]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#1C3557] via-[#1C3557]/40 to-transparent" />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Alaaya Chand Raat banner */}
             {(catIdx === 2 || catIdx === 5) && catIdx < menuData.length - 1 && (
-              <div className="my-6 rounded-2xl overflow-hidden relative">
-                <img
-                  src={catIdx === 2
-                    ? "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=80"
-                    : "https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=800&q=80"
-                  }
-                  alt="Event"
-                  className="w-full h-40 object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <p className="text-white/70 text-xs font-semibold uppercase tracking-wider mb-0.5">
-                    {catIdx === 2 ? "This Weekend" : "Every Sunday"}
-                  </p>
-                  <h3 className="text-white text-base font-bold heading-font leading-snug">
-                    {catIdx === 2 ? "Live Jazz Night at SiP" : "Brunch Specials at SiP"}
-                  </h3>
-                  <p className="text-white/60 text-xs mt-0.5">
-                    {catIdx === 2 ? "Friday 8 PM — Enjoy live music with your dinner" : "11 AM – 3 PM — Unlimited brunch for Rs.2,500/-"}
-                  </p>
+              <div className="my-8 rounded-2xl overflow-hidden bg-[#1C3557]">
+                <div className="flex min-h-[220px]">
+                  {/* Text left */}
+                  <div className="flex-1 p-6 flex flex-col justify-center relative">
+                    {/* SVG Eid decorations */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                      <svg className="absolute top-3 left-4 opacity-30" width="20" height="20" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                      <svg className="absolute bottom-4 left-8 opacity-20" width="14" height="14" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                    </div>
+                    <div className="relative z-10">
+                      <p className="text-[#7EB8F7] text-[11px] font-semibold uppercase tracking-widest mb-2">
+                        {catIdx === 2 ? "Chand Raat Special" : "Eid Celebration"}
+                      </p>
+                      <h3 className="text-white text-[20px] font-bold heading-font leading-tight mb-1.5">
+                        {catIdx === 2 ? "Alaaya Chand Raat Is Coming To SiP" : "Eid Brunch Is Coming To SiP"}
+                      </h3>
+                      <p className="text-white/55 text-sm leading-relaxed mb-4">
+                        {catIdx === 2
+                          ? "Celebrate Eid with live music, mehndi & our special festive menu — tonight only"
+                          : "Join us for a festive brunch this Eid — 11 AM to 3 PM for Rs.2,500/-"}
+                      </p>
+                      <button className="bg-white/15 hover:bg-white/25 transition-colors text-white text-sm font-semibold px-4 py-2 rounded-full cursor-pointer">
+                        Learn more
+                      </button>
+                    </div>
+                  </div>
+                  {/* Image right */}
+                  <div className="w-[40%] relative overflow-hidden">
+                    <img
+                      src={eidImg}
+                      alt="Eid Mubarak"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#1C3557] via-[#1C3557]/40 to-transparent" />
+                  </div>
                 </div>
               </div>
             )}
