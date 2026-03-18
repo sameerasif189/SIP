@@ -5,14 +5,23 @@ import { ChevronLeft, ShoppingBag } from "lucide-react";
 import { menuData } from "../data/menu";
 import { useCart } from "../context/CartContext";
 import MenuCard from "../components/MenuCard";
+import SipLogo from "../components/SipLogo";
 
 export default function CategoryMenu() {
   const { name } = useParams();
   const navigate = useNavigate();
   const { totalItems, totalPrice } = useCart();
   const [activeCategory, setActiveCategory] = useState(name);
+  const [activeSubcategories, setActiveSubcategories] = useState({});
   const sectionRefs = useRef({});
   const isScrollingRef = useRef(false);
+
+  const toggleSubcategory = (category, sub) => {
+    setActiveSubcategories((prev) => ({
+      ...prev,
+      [category]: prev[category] === sub ? null : sub,
+    }));
+  };
 
   const currentIndex = menuData.findIndex(
     (c) => c.category.toLowerCase() === name?.toLowerCase()
@@ -117,14 +126,51 @@ export default function CategoryMenu() {
               data-category={category.category}
               className="scroll-mt-28 pt-6"
             >
-              <h2 className="text-xl text-gray-900 heading-font normal-case mb-1">
-                {category.category}
-              </h2>
+              {/* Logo + Category heading */}
+              <div className="flex items-center gap-2.5 mb-1">
+                <SipLogo size={32} />
+                <h2 className="text-xl text-gray-900 heading-font normal-case">
+                  {category.category}
+                </h2>
+              </div>
+
+              {/* Subcategory filter pills */}
+              {category.subcategories && category.subcategories.length > 0 && (
+                <div className="flex gap-2 mt-2 mb-3 overflow-x-auto scrollbar-hide">
+                  <button
+                    onClick={() => setActiveSubcategories((prev) => ({ ...prev, [category.category]: null }))}
+                    className={`text-xs whitespace-nowrap px-3 py-1.5 rounded-full transition-all cursor-pointer font-medium border ${
+                      !activeSubcategories[category.category]
+                        ? "bg-dark text-white border-dark"
+                        : "text-muted border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    All
+                  </button>
+                  {category.subcategories.map((sub) => (
+                    <button
+                      key={sub}
+                      onClick={() => toggleSubcategory(category.category, sub)}
+                      className={`text-xs whitespace-nowrap px-3 py-1.5 rounded-full transition-all cursor-pointer font-medium border ${
+                        activeSubcategories[category.category] === sub
+                          ? "bg-dark text-white border-dark"
+                          : "text-muted border-gray-200 hover:border-gray-300"
+                      }`}
+                    >
+                      {sub}
+                    </button>
+                  ))}
+                </div>
+              )}
 
               <div>
-                {category.items.map((item, i) => (
-                  <MenuCard key={item.id} item={item} index={i} />
-                ))}
+                {category.items
+                  .filter((item) =>
+                    !activeSubcategories[category.category] || item.subcategory === activeSubcategories[category.category]
+                  )
+                  .map((item, i) => (
+                    <MenuCard key={item.id} item={item} index={i} />
+                  ))}
               </div>
             </section>
 
