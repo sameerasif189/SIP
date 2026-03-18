@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Minus, Plus, Trash2, MessageSquare } from "lucide-react";
+import { ChevronLeft, ChevronRight, Minus, Plus, Trash2, MessageSquare, Star } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useOrder } from "../context/OrderContext";
 import { getAllItems } from "../data/menu";
@@ -173,6 +173,49 @@ export default function Cart() {
                 )}
               </AnimatePresence>
             </motion.div>
+
+            {/* Leave a review button */}
+            {step >= 3 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.0 }}
+                className="mt-6"
+              >
+                <button
+                  onClick={() => navigate("/order-confirmed", {
+                    state: {
+                      orderNumber: activeOrder.id,
+                      grandTotal: activeOrder.grandTotal,
+                      yourTotal: activeOrder.grandTotal,
+                      splitMode: "full",
+                      splitCount: 2,
+                      items: activeOrder.items,
+                    },
+                  })}
+                  className="w-full bg-[#3D4F3D] text-white rounded-2xl p-6 cursor-pointer text-left"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <SipLogo size={36} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-1 heading-font">
+                    Share your experience at SiP
+                  </h3>
+                  <p className="text-white/60 text-sm mb-3">Click on stars to leave a review.</p>
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star
+                        key={star}
+                        size={28}
+                        className="text-[#C5B97A]"
+                        fill="#C5B97A"
+                        strokeWidth={0}
+                      />
+                    ))}
+                  </div>
+                </button>
+              </motion.div>
+            )}
           </div>
         </div>
 
@@ -185,9 +228,7 @@ export default function Cart() {
             className="fixed bottom-6 left-4 right-4 z-50"
           >
             <div className="max-w-lg mx-auto bg-white/90 backdrop-blur-lg rounded-2xl p-4 shadow-xl shadow-dark/10 flex items-start gap-3">
-              <div className="w-10 h-10 bg-[#F5F0E8] border border-[#E8E0D0] rounded-xl flex items-center justify-center shrink-0">
-                <span className="text-dark text-xs font-bold">SiP</span>
-              </div>
+              <SipLogo size={40} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-dark">
                   {step >= 3 ? "Your order is ready, enjoy your meal!" : "Your order is almost ready!"}

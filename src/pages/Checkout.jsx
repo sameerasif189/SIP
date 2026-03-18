@@ -358,18 +358,20 @@ function PaymentOption({ selected, onClick, label, icon }) {
 
 /* ─── Circular progress ring for divide equally ─── */
 function CircleProgress({ fraction }) {
-  const r = 54;
+  const size = 160;
+  const center = size / 2;
+  const r = 64;
   const circumference = 2 * Math.PI * r;
   const offset = circumference * (1 - fraction);
   return (
-    <svg width="140" height="140" viewBox="0 0 140 140">
-      <circle cx="70" cy="70" r={r} fill="none" stroke="#E5E5E5" strokeWidth="8" />
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <circle cx={center} cy={center} r={r} fill="none" stroke="#E5E5E5" strokeWidth="8" />
       <circle
-        cx="70" cy="70" r={r} fill="none" stroke="#1A1A1A" strokeWidth="8"
+        cx={center} cy={center} r={r} fill="none" stroke="#1A1A1A" strokeWidth="8"
         strokeLinecap="round"
         strokeDasharray={circumference}
         strokeDashoffset={offset}
-        transform="rotate(-90 70 70)"
+        transform={`rotate(-90 ${center} ${center})`}
         style={{ transition: "stroke-dashoffset 0.4s ease" }}
       />
     </svg>
@@ -571,11 +573,11 @@ function SplitBillModal({
               >
                 {/* Circular progress */}
                 <div className="flex flex-col items-center mb-8">
-                  <div className="relative">
+                  <div className="relative w-[160px] h-[160px]">
                     <CircleProgress fraction={fraction} />
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-2xl text-dark font-bold tracking-tight">Rs.{grandTotal}/-</span>
-                      <span className="text-xs text-muted mt-0.5">Amount to share</span>
+                      <span className="text-xl text-dark font-bold tracking-tight leading-none">Rs.{grandTotal}/-</span>
+                      <span className="text-xs text-muted mt-1">Amount to share</span>
                     </div>
                   </div>
                 </div>
