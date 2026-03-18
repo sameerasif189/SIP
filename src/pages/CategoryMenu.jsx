@@ -92,10 +92,7 @@ export default function CategoryMenu() {
             <ChevronLeft size={20} className="text-dark" />
           </button>
           <div className="flex-1 text-center">
-            <h1 className="text-dark text-[17px] heading-font normal-case leading-tight">
-              {activeCategory || menuData[currentIndex].category}
-            </h1>
-            <p className="text-[#5C8A4D] text-[11px] font-bold uppercase tracking-widest">
+            <p className="text-[#5C8A4D] text-sm font-bold uppercase tracking-widest">
               Table Tap!
             </p>
           </div>
