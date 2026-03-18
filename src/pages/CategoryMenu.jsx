@@ -91,10 +91,15 @@ export default function CategoryMenu() {
           >
             <ChevronLeft size={20} className="text-dark" />
           </button>
-          <h1 className="flex-1 text-center text-dark text-[17px] heading-font normal-case">
-            {activeCategory || menuData[currentIndex].category}
-          </h1>
-          <div className="w-9" /> {/* Spacer for centering */}
+          <div className="flex-1 text-center">
+            <h1 className="text-dark text-[17px] heading-font normal-case leading-tight">
+              {activeCategory || menuData[currentIndex].category}
+            </h1>
+            <p className="text-[#5C8A4D] text-[11px] font-bold uppercase tracking-widest">
+              Table Tap!
+            </p>
+          </div>
+          <SipLogo size={36} />
         </div>
 
         {/* Category tabs */}
@@ -126,13 +131,9 @@ export default function CategoryMenu() {
               data-category={category.category}
               className="scroll-mt-28 pt-6"
             >
-              {/* Logo + Category heading */}
-              <div className="flex items-center gap-2.5 mb-1">
-                <SipLogo size={32} />
-                <h2 className="text-xl text-gray-900 heading-font normal-case">
-                  {category.category}
-                </h2>
-              </div>
+              <h2 className="text-xl text-gray-900 heading-font normal-case mb-1">
+                {category.category}
+              </h2>
 
               {/* Subcategory filter pills */}
               {category.subcategories && category.subcategories.length > 0 && (
