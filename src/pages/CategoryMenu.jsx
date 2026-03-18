@@ -86,7 +86,7 @@ export default function CategoryMenu() {
     <div className="min-h-screen bg-white pb-28">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-white border-b border-gray-100">
-        <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
+        <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
           <button
             onClick={() => navigate("/")}
             className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
@@ -178,6 +178,7 @@ export default function CategoryMenu() {
             {catIdx === 4 && (
               <div className="my-8 rounded-2xl overflow-hidden bg-[#1C3557]">
                 <div className="flex min-h-[300px]">
+                  {/* Text left */}
                   <div className="flex-1 p-7 flex flex-col justify-center">
                     <p className="text-[#7EB8F7] text-[11px] font-semibold uppercase tracking-widest mb-2">
                       Upcoming Event
@@ -192,6 +193,7 @@ export default function CategoryMenu() {
                       Learn more
                     </button>
                   </div>
+                  {/* Image right — zoomed & cropped to show only bangles */}
                   <div className="w-[45%] relative overflow-hidden">
                     <img
                       src={banglesImg}
@@ -208,7 +210,9 @@ export default function CategoryMenu() {
             {(catIdx === 2 || catIdx === 5) && catIdx < menuData.length - 1 && (
               <div className="my-8 rounded-2xl overflow-hidden bg-[#1C3557]">
                 <div className="flex min-h-[220px]">
+                  {/* Text left */}
                   <div className="flex-1 p-6 flex flex-col justify-center relative">
+                    {/* SVG Eid decorations */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
                       <svg className="absolute top-3 left-4 opacity-30" width="20" height="20" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
                       <svg className="absolute bottom-4 left-8 opacity-20" width="14" height="14" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
@@ -230,6 +234,7 @@ export default function CategoryMenu() {
                       </button>
                     </div>
                   </div>
+                  {/* Image right */}
                   <div className="w-[40%] relative overflow-hidden">
                     <img
                       src={eidImg}
