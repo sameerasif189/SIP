@@ -75,6 +75,7 @@ export default function Home() {
 
       {/* Welcome text */}
       <div className="text-center px-6 mt-4 mb-6">
+        <p className="text-[#5C8A4D] text-xs font-bold uppercase tracking-widest mb-1">Table Tap!</p>
         <h1 className="text-2xl text-dark heading-font">Welcome to SiP</h1>
         <p className="text-gray-500 text-sm mt-2 leading-relaxed max-w-xs mx-auto subtext-font">
           SiP, in the heart of Islamabad, offers specialty coffee and fresh kitchen dishes in a warm, modern setting.
