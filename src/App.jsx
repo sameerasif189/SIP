@@ -7,12 +7,14 @@ import ItemDetail from "./pages/ItemDetail";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderConfirmed from "./pages/OrderConfirmed";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
     <CartProvider>
       <OrderProvider>
         <Router>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/menu" element={<Home />} />
