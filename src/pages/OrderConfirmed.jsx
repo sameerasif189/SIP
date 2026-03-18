@@ -2,9 +2,17 @@ import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp, MessageSquare, X, Star } from "lucide-react";
+import { useOrder } from "../context/OrderContext";
 import SipLogo from "../components/SipLogo";
 
 const EMOJI_FACES = ["😞", "😕", "😐", "🙂", "😍"];
+
+const STATUS_MESSAGES = [
+  "Your order has been placed. The kitchen will start on it shortly!",
+  "Your order is being prepared by our chefs. Sit tight!",
+  "Your order is ready and on its way to your table!",
+  "Your order has been delivered to your table. If you have any problem, do not hesitate to contact the staff.",
+];
 
 export default function OrderConfirmed() {
   const location = useLocation();
@@ -17,8 +25,9 @@ export default function OrderConfirmed() {
     items = [],
   } = location.state || {};
 
-  const steps = ["Order placed", "Being prepared", "Ready to serve", "Delivered"];
-  const currentStep = 3;
+  const { activeOrder, ORDER_STEPS } = useOrder();
+  const steps = ORDER_STEPS;
+  const currentStep = activeOrder?.step ?? 3;
 
   const [showDetails, setShowDetails] = useState(false);
 
@@ -35,13 +44,13 @@ export default function OrderConfirmed() {
   const [reviewText, setReviewText] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  // Auto-show review after 3s
+  // Auto-show review once order reaches "Being prepared" (step 1)
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!submitted) setShowReview(true);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [submitted]);
+    if (currentStep >= 1 && !submitted && !showReview) {
+      const timer = setTimeout(() => setShowReview(true), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [currentStep, submitted, showReview]);
 
   const setCategoryRating = (category, value) => {
     setCategoryRatings((prev) => ({ ...prev, [category]: value }));
@@ -83,7 +92,7 @@ export default function OrderConfirmed() {
             transition={{ delay: 0.1 }}
             className="text-3xl text-dark mb-1.5 heading-font"
           >
-            Enjoy your meal
+            {currentStep === 0 ? "Order placed!" : currentStep === 1 ? "Getting ready..." : currentStep === 2 ? "Almost ready!" : "Enjoy your meal"}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -125,7 +134,7 @@ export default function OrderConfirmed() {
               <MessageSquare size={16} className="text-[#6B5CE7]" />
             </div>
             <p className="text-dark text-sm leading-relaxed">
-              Your order has been delivered to your table. If you have any problem, do not hesitate to contact the staff.
+              {STATUS_MESSAGES[currentStep] || STATUS_MESSAGES[0]}
             </p>
           </motion.div>
 

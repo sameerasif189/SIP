@@ -12,6 +12,7 @@ export default function CategoryMenu() {
   const { totalItems, totalPrice } = useCart();
   const [activeCategory, setActiveCategory] = useState(name);
   const sectionRefs = useRef({});
+  const isScrollingRef = useRef(false);
 
   const currentIndex = menuData.findIndex(
     (c) => c.category.toLowerCase() === name?.toLowerCase()
@@ -24,6 +25,7 @@ export default function CategoryMenu() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
+        if (isScrollingRef.current) return;
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setActiveCategory(entry.target.dataset.category);
@@ -39,11 +41,16 @@ export default function CategoryMenu() {
   }, []);
 
   const scrollToCategory = (cat) => {
+    isScrollingRef.current = true;
     setActiveCategory(cat);
     sectionRefs.current[cat]?.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
+    // Re-enable observer after scroll settles
+    setTimeout(() => {
+      isScrollingRef.current = false;
+    }, 800);
   };
 
   if (currentIndex === -1) {

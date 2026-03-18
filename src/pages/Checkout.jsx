@@ -35,7 +35,8 @@ export default function Checkout() {
     orderNotes = "",
   } = location.state || {};
 
-  const [paymentMethod, setPaymentMethod] = useState("applepay");
+  const [paymentMethod, setPaymentMethod] = useState("card");
+  const [showNewCardForm, setShowNewCardForm] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [showSplitBill, setShowSplitBill] = useState(false);
 
@@ -98,9 +99,9 @@ export default function Checkout() {
 
   const paymentMethodLabel = () => {
     switch (paymentMethod) {
-      case "applepay": return "Apple Pay";
-      case "googlepay": return "Google Pay";
+      case "saved": return "Saved Card";
       case "card": return "Credit Card";
+      case "debit": return "Debit Card";
       case "cash": return "Cash";
       case "jazzcash": return "JazzCash";
       case "easypaisa": return "Easypaisa";
@@ -144,6 +145,24 @@ export default function Checkout() {
           <p className="text-muted text-sm mt-0.5">All transactions are private and encrypted.</p>
         </motion.div>
 
+        {/* Saved card option */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="mb-4"
+        >
+          <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-2">Saved card</p>
+          <PaymentOption
+            selected={paymentMethod === "saved"}
+            onClick={() => setPaymentMethod("saved")}
+            label="Visa ending in 4242"
+            icon={
+              <span className="text-[10px] font-bold bg-blue-600 text-white px-1.5 py-0.5 rounded">VISA</span>
+            }
+          />
+        </motion.div>
+
         {/* Payment Methods */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -151,18 +170,7 @@ export default function Checkout() {
           transition={{ delay: 0.1 }}
           className="space-y-2.5 mb-5"
         >
-          <PaymentOption
-            selected={paymentMethod === "applepay"}
-            onClick={() => setPaymentMethod("applepay")}
-            label="Apple Pay"
-            icon={<span className="text-xs font-bold bg-dark text-white px-2 py-0.5 rounded">Pay</span>}
-          />
-          <PaymentOption
-            selected={paymentMethod === "googlepay"}
-            onClick={() => setPaymentMethod("googlepay")}
-            label="Google Pay"
-            icon={<span className="text-xs font-bold bg-white text-dark border border-border px-2 py-0.5 rounded">G Pay</span>}
-          />
+          <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-1">Other methods</p>
           <PaymentOption
             selected={paymentMethod === "card"}
             onClick={() => setPaymentMethod("card")}
@@ -173,6 +181,12 @@ export default function Checkout() {
                 <span className="text-[10px] font-bold bg-dark text-white px-1.5 py-0.5 rounded">MC</span>
               </div>
             }
+          />
+          <PaymentOption
+            selected={paymentMethod === "debit"}
+            onClick={() => setPaymentMethod("debit")}
+            label="Debit Card"
+            icon={<CreditCard size={18} className="text-muted" />}
           />
           <PaymentOption
             selected={paymentMethod === "cash"}
@@ -194,9 +208,9 @@ export default function Checkout() {
           />
         </motion.div>
 
-        {/* Card Details */}
+        {/* Card Details (for credit or debit card) */}
         <AnimatePresence>
-          {paymentMethod === "card" && (
+          {(paymentMethod === "card" || paymentMethod === "debit") && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
@@ -212,6 +226,43 @@ export default function Checkout() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Add new card */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.15 }}
+          className="mb-5"
+        >
+          <button
+            onClick={() => setShowNewCardForm(!showNewCardForm)}
+            className="flex items-center gap-3 w-full py-3 cursor-pointer group"
+          >
+            <CreditCard size={18} className="text-muted" />
+            <span className="text-sm font-medium text-dark">Add a new card</span>
+            <ChevronRight size={16} className="text-muted ml-auto" />
+          </button>
+          <AnimatePresence>
+            {showNewCardForm && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="space-y-3 overflow-hidden pt-2"
+              >
+                <input type="text" placeholder="Cardholder name" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
+                <input type="text" placeholder="Card number" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
+                <div className="grid grid-cols-2 gap-3">
+                  <input type="text" placeholder="MM / YY" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
+                  <input type="text" placeholder="CVV" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
+                </div>
+                <button className="w-full py-3 rounded-full border border-dark text-dark text-sm font-semibold cursor-pointer hover:bg-bg transition-colors">
+                  Save card
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
 
         {/* Promo code + Split bill */}
         <motion.div
