@@ -214,26 +214,26 @@ export default function OrderConfirmed() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9 }}
-            className="mt-6 rounded-2xl overflow-hidden bg-[#1C3557]"
+            className="mt-8 rounded-2xl overflow-hidden bg-[#1C3557]"
           >
-            <div className="flex min-h-[200px]">
+            <div className="flex min-h-[340px]">
               {/* Text left */}
-              <div className="flex-1 p-5 flex flex-col justify-center">
+              <div className="flex-1 p-8 flex flex-col justify-center">
                 <p className="text-[#7EB8F7] text-[11px] font-semibold uppercase tracking-widest mb-2">
                   Chand Raat Special
                 </p>
-                <h3 className="text-white text-[20px] font-bold heading-font leading-tight mb-1.5">
+                <h3 className="text-white text-[24px] font-bold heading-font leading-tight mb-2">
                   Alaaya Chand Raat Is Coming To SiP
                 </h3>
-                <p className="text-white/55 text-sm leading-relaxed mb-4">
+                <p className="text-white/55 text-[15px] leading-relaxed mb-6">
                   Celebrate Eid with live music, mehndi & our special festive menu — tonight only
                 </p>
-                <button className="bg-white/15 hover:bg-white/25 transition-colors text-white text-sm font-semibold px-4 py-2 rounded-full cursor-pointer self-start">
+                <button className="bg-white/15 hover:bg-white/25 transition-colors text-white text-sm font-semibold px-5 py-3 rounded-full cursor-pointer self-start">
                   Learn more
                 </button>
               </div>
               {/* Image right */}
-              <div className="w-[40%] relative overflow-hidden">
+              <div className="w-[50%] relative overflow-hidden">
                 <img
                   src={eidImg}
                   alt="Eid Mubarak"

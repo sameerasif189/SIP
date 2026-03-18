@@ -78,16 +78,21 @@ export default function CategoryMenu() {
     <div className="min-h-screen bg-white pb-28">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-white border-b border-gray-100">
-        <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
+        <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
           <button
             onClick={() => navigate("/")}
             className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
           >
             <ChevronLeft size={20} className="text-dark" />
           </button>
-          <h1 className="flex-1 text-center text-dark text-[17px] heading-font normal-case">
-            {activeCategory || menuData[currentIndex].category}
-          </h1>
+          <div className="flex-1 text-center">
+            <h1 className="text-dark text-[17px] heading-font normal-case">
+              {activeCategory || menuData[currentIndex].category}
+            </h1>
+            <p className="text-[#00FF00] text-[11px] font-bold uppercase tracking-widest mt-0.5">
+              TABLE TAP!
+            </p>
+          </div>
           <SipLogo size={36} />
         </div>
 
@@ -131,7 +136,10 @@ export default function CategoryMenu() {
                     if (subItems.length === 0) return null;
                     return (
                       <div key={sub} className="mt-4 first:mt-0">
-                        <p className="text-xs text-dark font-bold uppercase tracking-widest mb-3 mt-2 border-b border-gray-200 pb-2">{sub}</p>
+                        <div className="mt-5 mb-3 first:mt-2">
+                          <p className="text-sm text-dark font-bold uppercase tracking-widest">{sub}</p>
+                          <div className="h-0.5 w-10 bg-dark rounded-full mt-1.5" />
+                        </div>
                         {subItems.map((item, i) => (
                           <MenuCard key={item.id} item={item} index={i} />
                         ))}
