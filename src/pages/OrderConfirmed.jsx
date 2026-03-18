@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, MessageSquare, X, Star } from "lucide-react";
+import { ChevronDown, ChevronUp, MessageSquare, X, Star } from "lucide-react";
 import SipLogo from "../components/SipLogo";
 
 const EMOJI_FACES = ["😞", "😕", "😐", "🙂", "😍"];
@@ -14,14 +14,17 @@ export default function OrderConfirmed() {
     yourTotal = 0,
     splitMode = "full",
     splitCount = 2,
+    items = [],
   } = location.state || {};
 
   const steps = ["Order placed", "Being prepared", "Ready to serve", "Delivered"];
   const currentStep = 3;
 
+  const [showDetails, setShowDetails] = useState(false);
+
   // Review state
   const [showReview, setShowReview] = useState(false);
-  const [reviewStep, setReviewStep] = useState(0); // 0 = stars, 1 = detailed
+  const [reviewStep, setReviewStep] = useState(0);
   const [overallRating, setOverallRating] = useState(0);
   const [categoryRatings, setCategoryRatings] = useState({
     food: 0,
@@ -31,6 +34,14 @@ export default function OrderConfirmed() {
   });
   const [reviewText, setReviewText] = useState("");
   const [submitted, setSubmitted] = useState(false);
+
+  // Auto-show review after 3s
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!submitted) setShowReview(true);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [submitted]);
 
   const setCategoryRating = (category, value) => {
     setCategoryRatings((prev) => ({ ...prev, [category]: value }));
@@ -47,7 +58,7 @@ export default function OrderConfirmed() {
   };
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-screen bg-bg pb-24">
       <div className="max-w-lg mx-auto">
         {/* Top header with logo + Order more */}
         <motion.div
@@ -66,7 +77,6 @@ export default function OrderConfirmed() {
 
         {/* Main content card */}
         <div className="bg-white rounded-t-3xl min-h-[calc(100vh-100px)] px-5 pt-8 pb-8">
-          {/* Enjoy your meal */}
           <motion.h1
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -115,11 +125,10 @@ export default function OrderConfirmed() {
               <MessageSquare size={16} className="text-[#6B5CE7]" />
             </div>
             <p className="text-dark text-sm leading-relaxed">
-              Your order has been already delivered to your table. If you have any problem, do not hesitate to contact the staff.
+              Your order has been delivered to your table. If you have any problem, do not hesitate to contact the staff.
             </p>
           </motion.div>
 
-          {/* Divider */}
           <div className="border-t border-border my-5" />
 
           {/* Total */}
@@ -127,7 +136,7 @@ export default function OrderConfirmed() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7 }}
-            className="flex justify-between items-center mb-3"
+            className="flex justify-between items-center mb-1"
           >
             <span className="text-2xl text-dark price-font">Total</span>
             <span className="text-2xl text-dark price-font">
@@ -147,17 +156,51 @@ export default function OrderConfirmed() {
           )}
 
           {/* Order details expandable */}
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="flex items-center justify-between w-full py-3 cursor-pointer"
-          >
-            <span className="text-sm text-dark font-medium">Order details</span>
-            <ChevronRight size={16} className="text-muted" />
-          </motion.button>
+          {items.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              <button
+                onClick={() => setShowDetails(!showDetails)}
+                className="flex items-center justify-between w-full py-3 cursor-pointer"
+              >
+                <span className="text-sm text-dark font-medium">Order details</span>
+                {showDetails ? (
+                  <ChevronUp size={16} className="text-muted" />
+                ) : (
+                  <ChevronDown size={16} className="text-muted" />
+                )}
+              </button>
 
-          {/* Review CTA */}
+              <AnimatePresence>
+                {showDetails && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="space-y-3 pb-4">
+                      {items.map((item) => (
+                        <div key={item.id} className="flex justify-between text-sm">
+                          <span className="text-dark">
+                            {item.name} {item.quantity > 1 ? `x ${item.quantity}` : ""}
+                          </span>
+                          <span className="text-dark font-medium">
+                            Rs.{item.price * item.quantity}/-
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          )}
+
+          {/* Review CTA Card */}
           {!submitted && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -171,7 +214,6 @@ export default function OrderConfirmed() {
               >
                 <div className="flex items-center justify-between mb-4">
                   <SipLogo size={40} />
-                  <X size={18} className="text-white/50" />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-1 heading-font">
                   Share your experience at SiP
@@ -213,9 +255,7 @@ export default function OrderConfirmed() {
         className="fixed bottom-6 left-4 right-4 z-40"
       >
         <div className="max-w-lg mx-auto bg-white/90 backdrop-blur-lg rounded-2xl p-4 shadow-xl shadow-dark/10 flex items-start gap-3">
-          <div className="w-10 h-10 bg-[#F5F0E8] border border-[#E8E0D0] rounded-xl flex items-center justify-center shrink-0">
-            <span className="text-dark text-xs font-bold">SiP</span>
-          </div>
+          <SipLogo size={40} />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-dark">Your order is ready, enjoy your meal!</p>
             <p className="text-xs text-muted mt-0.5">
@@ -233,7 +273,7 @@ export default function OrderConfirmed() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-end justify-center"
+            className="fixed inset-0 z-50 flex items-end justify-center bg-black/30"
             onClick={() => setShowReview(false)}
           >
             <motion.div
@@ -300,7 +340,6 @@ export default function OrderConfirmed() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
                     >
-                      {/* Stars display */}
                       <div className="flex justify-center gap-1 mb-4">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <button
@@ -325,7 +364,6 @@ export default function OrderConfirmed() {
                         You've been served by our team.
                       </p>
 
-                      {/* Category ratings */}
                       <div className="space-y-5 mb-8">
                         {[
                           { key: "food", label: "Food & Drinks" },
@@ -354,7 +392,6 @@ export default function OrderConfirmed() {
                         ))}
                       </div>
 
-                      {/* Text feedback */}
                       <textarea
                         value={reviewText}
                         onChange={(e) => setReviewText(e.target.value)}
@@ -362,7 +399,6 @@ export default function OrderConfirmed() {
                         className="w-full bg-[#4A5C4A] text-white placeholder:text-white/30 rounded-2xl p-4 text-sm min-h-[100px] resize-none focus:outline-none focus:ring-2 focus:ring-white/20 border-none"
                       />
 
-                      {/* Submit */}
                       <motion.button
                         whileTap={{ scale: 0.98 }}
                         onClick={handleSubmitReview}
