@@ -18,6 +18,16 @@ export default function CategoryMenu() {
     (c) => c.category.toLowerCase() === name?.toLowerCase()
   );
 
+  // Scroll to the correct category on mount
+  useEffect(() => {
+    if (name && sectionRefs.current[name]) {
+      // Small delay so DOM is laid out
+      setTimeout(() => {
+        sectionRefs.current[name]?.scrollIntoView({ behavior: "instant", block: "start" });
+      }, 50);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (name) setActiveCategory(name);
   }, [name]);

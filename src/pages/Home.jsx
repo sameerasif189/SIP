@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search } from "lucide-react";
@@ -119,38 +119,55 @@ export default function Home() {
               Menu
             </h2>
             <div className="grid grid-cols-2 gap-3">
-              {menuData.map((cat) => {
+              {menuData.map((cat, catIdx) => {
                 const imgs = categoryImages[cat.category] || [];
                 return (
-                  <Link
-                    key={cat.category}
-                    to={`/category/${encodeURIComponent(cat.category)}`}
-                    className="text-left group"
-                  >
-                    <div className="grid grid-cols-2 gap-0.5 rounded-xl overflow-hidden">
-                      {imgs.length >= 2 ? (
-                        <>
+                  <React.Fragment key={cat.category}>
+                    {/* Event banner after first row of categories */}
+                    {catIdx === 2 && (
+                      <div className="col-span-2 rounded-2xl overflow-hidden relative my-2">
+                        <img
+                          src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=80"
+                          alt="Event"
+                          className="w-full h-40 object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                          <p className="text-white/70 text-xs font-semibold uppercase tracking-wider mb-0.5">This Weekend</p>
+                          <h3 className="text-white text-base font-bold heading-font leading-snug">Live Jazz Night at SiP</h3>
+                          <p className="text-white/60 text-xs mt-0.5">Friday 8 PM — Enjoy live music with your dinner</p>
+                        </div>
+                      </div>
+                    )}
+                    <Link
+                      to={`/category/${encodeURIComponent(cat.category)}`}
+                      className="text-left group"
+                    >
+                      <div className="grid grid-cols-2 gap-0.5 rounded-xl overflow-hidden">
+                        {imgs.length >= 2 ? (
+                          <>
+                            <img
+                              src={imgs[0]}
+                              alt=""
+                              className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                            <img
+                              src={imgs[1]}
+                              alt=""
+                              className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </>
+                        ) : (
                           <img
                             src={imgs[0]}
                             alt=""
-                            className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-300"
+                            className="w-full aspect-[2/1] object-cover col-span-2 group-hover:scale-105 transition-transform duration-300"
                           />
-                          <img
-                            src={imgs[1]}
-                            alt=""
-                            className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        </>
-                      ) : (
-                        <img
-                          src={imgs[0]}
-                          alt=""
-                          className="w-full aspect-[2/1] object-cover col-span-2 group-hover:scale-105 transition-transform duration-300"
-                        />
-                      )}
-                    </div>
-                    <p className="text-dark text-sm mt-2 item-name-font">{cat.category}</p>
-                  </Link>
+                        )}
+                      </div>
+                      <p className="text-dark text-sm mt-2 item-name-font">{cat.category}</p>
+                    </Link>
+                  </React.Fragment>
                 );
               })}
             </div>

@@ -44,13 +44,7 @@ export default function OrderConfirmed() {
   const [reviewText, setReviewText] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  // Auto-show review once order reaches "Being prepared" (step 1)
-  useEffect(() => {
-    if (currentStep >= 1 && !submitted && !showReview) {
-      const timer = setTimeout(() => setShowReview(true), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [currentStep, submitted, showReview]);
+  // No auto-show — feedback is triggered by the button below
 
   const setCategoryRating = (category, value) => {
     setCategoryRatings((prev) => ({ ...prev, [category]: value }));
@@ -209,41 +203,23 @@ export default function OrderConfirmed() {
             </motion.div>
           )}
 
-          {/* Review CTA Card */}
-          {!submitted && (
+          {/* Feedback button */}
+          {!submitted ? (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.0 }}
+              transition={{ delay: 0.9 }}
               className="mt-6"
             >
               <button
                 onClick={() => setShowReview(true)}
-                className="w-full bg-[#3D4F3D] text-white rounded-2xl p-6 cursor-pointer text-left"
+                className="w-full flex items-center justify-center gap-2 bg-dark text-white py-4 rounded-full font-semibold text-[15px] cursor-pointer"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <SipLogo size={40} />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-1 heading-font">
-                  Share your experience at SiP
-                </h3>
-                <p className="text-white/60 text-sm mb-4">Click on stars to leave a review.</p>
-                <div className="flex gap-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                      key={star}
-                      size={32}
-                      className="text-[#C5B97A]"
-                      fill="#C5B97A"
-                      strokeWidth={0}
-                    />
-                  ))}
-                </div>
+                <Star size={18} />
+                Leave feedback
               </button>
             </motion.div>
-          )}
-
-          {submitted && (
+          ) : (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -253,6 +229,26 @@ export default function OrderConfirmed() {
               <p className="text-white/60 text-sm">We appreciate your review.</p>
             </motion.div>
           )}
+
+          {/* Event banner */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0 }}
+            className="mt-6 rounded-2xl overflow-hidden relative"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=80"
+              alt="Event"
+              className="w-full h-44 object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-5">
+              <p className="text-white/70 text-xs font-semibold uppercase tracking-wider mb-1">This Weekend</p>
+              <h3 className="text-white text-lg font-bold heading-font leading-snug">Live Jazz Night at SiP</h3>
+              <p className="text-white/60 text-sm mt-1">Friday 8 PM — Enjoy live music with your dinner</p>
+            </div>
+          </motion.div>
         </div>
       </div>
 
