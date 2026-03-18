@@ -14,8 +14,16 @@ export default function CategoryMenu() {
   const navigate = useNavigate();
   const { totalItems, totalPrice } = useCart();
   const [activeCategory, setActiveCategory] = useState(name);
+  const [activeSubcategories, setActiveSubcategories] = useState({});
   const sectionRefs = useRef({});
   const isScrollingRef = useRef(false);
+
+  const toggleSubcategory = (category, sub) => {
+    setActiveSubcategories((prev) => ({
+      ...prev,
+      [category]: prev[category] === sub ? null : sub,
+    }));
+  };
 
   const currentIndex = menuData.findIndex(
     (c) => c.category.toLowerCase() === name?.toLowerCase()
@@ -86,11 +94,8 @@ export default function CategoryMenu() {
             <ChevronLeft size={20} className="text-dark" />
           </button>
           <div className="flex-1 text-center">
-            <h1 className="text-dark text-[17px] heading-font normal-case">
-              {activeCategory || menuData[currentIndex].category}
-            </h1>
-            <p className="text-[#00FF00] text-[11px] font-bold uppercase tracking-widest mt-0.5">
-              TABLE TAP!
+            <p className="text-[#5C8A4D] text-sm font-bold uppercase tracking-widest">
+              Table Tap!
             </p>
           </div>
           <SipLogo size={36} />
@@ -129,28 +134,43 @@ export default function CategoryMenu() {
                 {category.category}
               </h2>
 
+              {/* Subcategory filter pills */}
+              {category.subcategories && category.subcategories.length > 0 && (
+                <div className="flex gap-2 mt-2 mb-3 overflow-x-auto scrollbar-hide">
+                  <button
+                    onClick={() => setActiveSubcategories((prev) => ({ ...prev, [category.category]: null }))}
+                    className={`text-xs whitespace-nowrap px-3 py-1.5 rounded-full transition-all cursor-pointer font-medium border ${
+                      !activeSubcategories[category.category]
+                        ? "bg-dark text-white border-dark"
+                        : "text-muted border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    All
+                  </button>
+                  {category.subcategories.map((sub) => (
+                    <button
+                      key={sub}
+                      onClick={() => toggleSubcategory(category.category, sub)}
+                      className={`text-xs whitespace-nowrap px-3 py-1.5 rounded-full transition-all cursor-pointer font-medium border ${
+                        activeSubcategories[category.category] === sub
+                          ? "bg-dark text-white border-dark"
+                          : "text-muted border-gray-200 hover:border-gray-300"
+                      }`}
+                    >
+                      {sub}
+                    </button>
+                  ))}
+                </div>
+              )}
+
               <div>
-                {category.subcategories ? (
-                  category.subcategories.map((sub) => {
-                    const subItems = category.items.filter((item) => item.subcategory === sub);
-                    if (subItems.length === 0) return null;
-                    return (
-                      <div key={sub} className="mt-4 first:mt-0">
-                        <div className="mt-5 mb-3 first:mt-2">
-                          <p className="text-sm text-dark font-bold uppercase tracking-widest">{sub}</p>
-                          <div className="h-0.5 w-10 bg-dark rounded-full mt-1.5" />
-                        </div>
-                        {subItems.map((item, i) => (
-                          <MenuCard key={item.id} item={item} index={i} />
-                        ))}
-                      </div>
-                    );
-                  })
-                ) : (
-                  category.items.map((item, i) => (
+                {category.items
+                  .filter((item) =>
+                    !activeSubcategories[category.category] || item.subcategory === activeSubcategories[category.category]
+                  )
+                  .map((item, i) => (
                     <MenuCard key={item.id} item={item} index={i} />
-                  ))
-                )}
+                  ))}
               </div>
             </section>
 
