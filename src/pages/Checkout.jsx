@@ -381,8 +381,8 @@ function CircleProgress({ fraction }) {
 /* ─── Counter row (e.g. "Paying for  — 1 +  people") ─── */
 function CounterRow({ label, value, onChange, min = 1, max = 20, suffix }) {
   return (
-    <div className="flex items-center justify-center gap-3 text-sm text-dark">
-      <span className="text-muted">{label}</span>
+    <div className="flex items-center gap-3 text-sm text-dark">
+      <span className="text-muted w-20 text-right shrink-0">{label}</span>
       <button
         onClick={() => onChange(Math.max(min, value - 1))}
         className="w-8 h-8 rounded-full border border-border flex items-center justify-center cursor-pointer hover:bg-bg transition-colors"
@@ -583,7 +583,7 @@ function SplitBillModal({
                 </div>
 
                 {/* Counters */}
-                <div className="space-y-5 mb-8">
+                <div className="space-y-5 mb-8 flex flex-col items-center">
                   <CounterRow
                     label="Paying for"
                     value={payingFor}
