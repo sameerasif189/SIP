@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp, MessageSquare, Star, X } from "lucide-react";
 import { useOrder } from "../context/OrderContext";
 import SipLogo from "../components/SipLogo";
-import eidImg from "../assets/Eid.png";
 
 const EMOJI_FACES = ["😞", "😕", "😐", "🙂", "😍"];
 
@@ -61,11 +60,11 @@ export default function OrderConfirmed() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative flex items-center justify-center pt-8 pb-4"
+          className="flex items-center justify-between px-5 pt-8 pb-4"
         >
           <Link
             to="/menu"
-            className="absolute left-0 bg-dark text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-dark/90 transition-colors"
+            className="bg-dark text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-dark/90 transition-colors"
           >
             Order more
           </Link>
@@ -73,13 +72,13 @@ export default function OrderConfirmed() {
           {!submitted ? (
             <button
               onClick={() => setShowReview(true)}
-              className="absolute right-0 inline-flex items-center gap-1.5 bg-white border border-border text-dark px-4 py-2.5 rounded-full text-sm font-semibold hover:bg-bg transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 bg-white border border-border text-dark px-4 py-2.5 rounded-full text-sm font-semibold hover:bg-bg transition-colors cursor-pointer"
             >
               <Star size={14} />
               Review
             </button>
           ) : (
-            <div className="absolute right-0 w-[80px]" />
+            <div className="w-[88px]" />
           )}
         </motion.div>
 
@@ -214,33 +213,32 @@ export default function OrderConfirmed() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9 }}
-            className="mt-8 rounded-2xl overflow-hidden bg-[#1C3557]"
+            className="mt-8 rounded-2xl overflow-hidden bg-[#1C3557] relative"
           >
-            <div className="flex min-h-[340px]">
-              {/* Text left */}
-              <div className="flex-1 p-8 flex flex-col justify-center">
-                <p className="text-[#7EB8F7] text-[11px] font-semibold uppercase tracking-widest mb-2">
-                  Chand Raat Special
-                </p>
-                <h3 className="text-white text-[24px] font-bold heading-font leading-tight mb-2">
-                  Alaaya Chand Raat Is Coming To SiP
-                </h3>
-                <p className="text-white/55 text-[15px] leading-relaxed mb-6">
-                  Celebrate Eid with live music, mehndi & our special festive menu — tonight only
-                </p>
-                <button className="bg-white/15 hover:bg-white/25 transition-colors text-white text-sm font-semibold px-5 py-3 rounded-full cursor-pointer self-start">
-                  Learn more
-                </button>
-              </div>
-              {/* Image right */}
-              <div className="w-[50%] relative overflow-hidden">
-                <img
-                  src={eidImg}
-                  alt="Eid Mubarak"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#1C3557] via-[#1C3557]/40 to-transparent" />
-              </div>
+            {/* Decorative stars & moons */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <svg className="absolute top-5 right-6 opacity-25" width="24" height="24" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+              <svg className="absolute top-10 right-20 opacity-15" width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+              <svg className="absolute bottom-8 right-10 opacity-20" width="20" height="20" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+              <svg className="absolute bottom-12 right-28 opacity-10" width="14" height="14" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+              <svg className="absolute top-8 right-36 opacity-15" width="12" height="12" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+              {/* Crescent moons */}
+              <svg className="absolute top-14 right-14 opacity-20" width="28" height="28" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="white"/></svg>
+              <svg className="absolute bottom-5 right-32 opacity-15" width="18" height="18" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="white"/></svg>
+            </div>
+            <div className="p-8 relative z-10">
+              <p className="text-[#7EB8F7] text-[11px] font-semibold uppercase tracking-widest mb-2">
+                Chand Raat Special
+              </p>
+              <h3 className="text-white text-[24px] font-bold heading-font leading-tight mb-2 max-w-[70%]">
+                Alaaya Chand Raat Is Coming To SiP
+              </h3>
+              <p className="text-white/55 text-[15px] leading-relaxed mb-6 max-w-[75%]">
+                Celebrate Eid with live music, mehndi & our special festive menu — tonight only
+              </p>
+              <button className="bg-white/15 hover:bg-white/25 transition-colors text-white text-sm font-semibold px-5 py-3 rounded-full cursor-pointer">
+                Discover
+              </button>
             </div>
           </motion.div>
         </div>
