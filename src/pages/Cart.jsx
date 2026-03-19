@@ -20,6 +20,7 @@ import { useCart } from "../context/CartContext";
 import { useOrder } from "../context/OrderContext";
 import { getAllItems } from "../data/menu";
 import SipLogo from "../components/SipLogo";
+import banglesImg from "../assets/bangles.png";
 
 const STATUS_MESSAGES = [
   "Your order has been placed. We're getting it ready for you!",
@@ -62,19 +63,39 @@ export default function Cart() {
     return (
       <div className="min-h-screen bg-bg">
         <div className="max-w-lg mx-auto">
-          {/* Top bar with logo + Order more */}
+          {/* Top bar with Order more + logo + Review */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex items-center justify-between px-5 pt-8 pb-4"
           >
-            <SipLogo size={44} />
             <Link
               to="/menu"
               className="bg-dark text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-dark/90 transition-colors"
             >
               Order more
             </Link>
+            <SipLogo size={48} />
+            {step >= 3 ? (
+              <button
+                onClick={() => navigate("/order-confirmed", {
+                  state: {
+                    orderNumber: activeOrder.id,
+                    grandTotal: activeOrder.grandTotal,
+                    yourTotal: activeOrder.grandTotal,
+                    splitMode: "full",
+                    splitCount: 2,
+                    items: activeOrder.items,
+                  },
+                })}
+                className="inline-flex items-center gap-1.5 bg-white border border-border text-dark px-4 py-2.5 rounded-full text-sm font-semibold hover:bg-bg transition-colors cursor-pointer"
+              >
+                <Star size={14} />
+                Review
+              </button>
+            ) : (
+              <div className="w-[88px]" />
+            )}
           </motion.div>
 
           {/* White card */}
@@ -231,6 +252,34 @@ export default function Cart() {
                 </button>
               </motion.div>
             )}
+
+            {/* Bangle Stalls banner */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9 }}
+              className="mt-8 rounded-2xl overflow-hidden bg-[#4A5568]"
+            >
+              <div className="px-6 pt-6 pb-4">
+                <h3 className="text-white text-[18px] font-bold heading-font leading-snug mb-1.5">
+                  Bangle Stalls Are Coming To SiP
+                </h3>
+                <p className="text-white/60 text-[13px] leading-relaxed mb-3">
+                  Beautiful bangle stalls at SiP — this Thursday, 7 PM to 12 AM
+                </p>
+                <button className="bg-[#2D3748] hover:bg-[#1A202C] transition-colors text-white text-xs font-semibold px-5 py-2.5 rounded-full cursor-pointer">
+                  Learn more
+                </button>
+              </div>
+              <div className="relative h-[180px]">
+                <img
+                  src={banglesImg}
+                  alt="Bangle stalls"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#4A5568] via-transparent to-transparent h-[40px]" />
+              </div>
+            </motion.div>
           </div>
         </div>
 
