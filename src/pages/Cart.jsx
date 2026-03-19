@@ -20,7 +20,7 @@ import { useCart } from "../context/CartContext";
 import { useOrder } from "../context/OrderContext";
 import { getAllItems } from "../data/menu";
 import SipLogo from "../components/SipLogo";
-import banglesImg from "../assets/bangles.png";
+import eidImg from "../assets/Eid.png";
 
 const STATUS_MESSAGES = [
   "Your order has been placed. We're getting it ready for you!",
@@ -76,26 +76,22 @@ export default function Cart() {
               Order more
             </Link>
             <SipLogo size={48} />
-            {step >= 3 ? (
-              <button
-                onClick={() => navigate("/order-confirmed", {
-                  state: {
-                    orderNumber: activeOrder.id,
-                    grandTotal: activeOrder.grandTotal,
-                    yourTotal: activeOrder.grandTotal,
-                    splitMode: "full",
-                    splitCount: 2,
-                    items: activeOrder.items,
-                  },
-                })}
-                className="inline-flex items-center gap-1.5 bg-white border border-border text-dark px-4 py-2.5 rounded-full text-sm font-semibold hover:bg-bg transition-colors cursor-pointer"
-              >
-                <Star size={14} />
-                Review
-              </button>
-            ) : (
-              <div className="w-[88px]" />
-            )}
+            <button
+              onClick={() => navigate("/order-confirmed", {
+                state: {
+                  orderNumber: activeOrder.id,
+                  grandTotal: activeOrder.grandTotal,
+                  yourTotal: activeOrder.grandTotal,
+                  splitMode: "full",
+                  splitCount: 2,
+                  items: activeOrder.items,
+                },
+              })}
+              className="inline-flex items-center gap-1.5 bg-white border border-border text-dark px-4 py-2.5 rounded-full text-sm font-semibold hover:bg-bg transition-colors cursor-pointer"
+            >
+              <Star size={14} />
+              Review
+            </button>
           </motion.div>
 
           {/* White card */}
@@ -210,74 +206,43 @@ export default function Cart() {
               </AnimatePresence>
             </motion.div>
 
-            {/* Leave a review button */}
-            {step >= 3 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.0 }}
-                className="mt-6"
-              >
-                <button
-                  onClick={() => navigate("/order-confirmed", {
-                    state: {
-                      orderNumber: activeOrder.id,
-                      grandTotal: activeOrder.grandTotal,
-                      yourTotal: activeOrder.grandTotal,
-                      splitMode: "full",
-                      splitCount: 2,
-                      items: activeOrder.items,
-                    },
-                  })}
-                  className="w-full bg-[#3D4F3D] text-white rounded-2xl p-6 cursor-pointer text-left"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <SipLogo size={36} />
-                  </div>
-                  <h3 className="text-lg font-bold text-white mb-1 heading-font">
-                    Share your experience at SiP
-                  </h3>
-                  <p className="text-white/60 text-sm mb-3">Click on stars to leave a review.</p>
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        size={28}
-                        className="text-[#C5B97A]"
-                        fill="#C5B97A"
-                        strokeWidth={0}
-                      />
-                    ))}
-                  </div>
-                </button>
-              </motion.div>
-            )}
-
-            {/* Bangle Stalls banner */}
+            {/* Alaaya Chand Raat banner */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9 }}
-              className="mt-8 rounded-2xl overflow-hidden bg-[#4A5568]"
+              className="mt-8 rounded-2xl overflow-hidden bg-[#1C3557] relative"
             >
-              <div className="px-6 pt-6 pb-4">
-                <h3 className="text-white text-[18px] font-bold heading-font leading-snug mb-1.5">
-                  Bangle Stalls Are Coming To SiP
-                </h3>
-                <p className="text-white/60 text-[13px] leading-relaxed mb-3">
-                  Beautiful bangle stalls at SiP — this Thursday, 7 PM to 12 AM
+              {/* Decorative stars & moons */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <svg className="absolute top-4 right-5 opacity-25" width="22" height="22" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                <svg className="absolute top-10 right-16 opacity-15" width="14" height="14" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                <svg className="absolute bottom-5 right-8 opacity-20" width="18" height="18" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                <svg className="absolute bottom-8 right-24 opacity-10" width="12" height="12" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                <svg className="absolute top-6 right-28 opacity-20" width="24" height="24" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="white"/></svg>
+                <svg className="absolute bottom-3 right-20 opacity-12" width="16" height="16" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="white"/></svg>
+              </div>
+              <div className="p-6 relative z-10">
+                <p className="text-[#7EB8F7] text-[10px] font-semibold uppercase tracking-widest mb-2">
+                  Chand Raat Special
                 </p>
-                <button className="bg-[#2D3748] hover:bg-[#1A202C] transition-colors text-white text-xs font-semibold px-5 py-2.5 rounded-full cursor-pointer">
-                  Learn more
+                <h3 className="text-white text-[18px] font-bold heading-font leading-tight mb-1.5 max-w-[70%]">
+                  Alaaya Chand Raat Is Coming To SiP
+                </h3>
+                <p className="text-white/55 text-[13px] leading-relaxed mb-4 max-w-[75%]">
+                  Celebrate Eid with live music, mehndi & our special festive menu — tonight only
+                </p>
+                <button className="bg-white/15 hover:bg-white/25 transition-colors text-white text-xs font-semibold px-5 py-2.5 rounded-full cursor-pointer">
+                  Discover
                 </button>
               </div>
               <div className="relative h-[180px]">
                 <img
-                  src={banglesImg}
-                  alt="Bangle stalls"
+                  src={eidImg}
+                  alt="Eid celebration"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#4A5568] via-transparent to-transparent h-[40px]" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#1C3557] via-transparent to-transparent h-[40px]" />
               </div>
             </motion.div>
           </div>
