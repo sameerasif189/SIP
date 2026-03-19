@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp, MessageSquare, Star, X } from "lucide-react";
 import { useOrder } from "../context/OrderContext";
 import SipLogo from "../components/SipLogo";
-import eidImg from "../assets/Eid.png";
+import banglesImg from "../assets/bangles.png";
 
 const EMOJI_FACES = ["😞", "😕", "😐", "🙂", "😍"];
 
@@ -61,11 +61,11 @@ export default function OrderConfirmed() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative flex items-center justify-center pt-8 pb-4"
+          className="flex items-center justify-between px-5 pt-8 pb-4"
         >
           <Link
             to="/menu"
-            className="absolute left-0 bg-dark text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-dark/90 transition-colors"
+            className="bg-dark text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-dark/90 transition-colors"
           >
             Order more
           </Link>
@@ -73,13 +73,13 @@ export default function OrderConfirmed() {
           {!submitted ? (
             <button
               onClick={() => setShowReview(true)}
-              className="absolute right-0 inline-flex items-center gap-1.5 bg-white border border-border text-dark px-4 py-2.5 rounded-full text-sm font-semibold hover:bg-bg transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 bg-white border border-border text-dark px-4 py-2.5 rounded-full text-sm font-semibold hover:bg-bg transition-colors cursor-pointer"
             >
               <Star size={14} />
               Review
             </button>
           ) : (
-            <div className="absolute right-0 w-[80px]" />
+            <div className="w-[88px]" />
           )}
         </motion.div>
 
@@ -209,38 +209,31 @@ export default function OrderConfirmed() {
             </motion.div>
           )}
 
-          {/* Alaaya Chand Raat banner */}
+          {/* Bangle Stalls banner */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9 }}
-            className="mt-8 rounded-2xl overflow-hidden bg-[#1C3557]"
+            className="mt-8 rounded-2xl overflow-hidden bg-[#4A5568]"
           >
-            <div className="flex min-h-[340px]">
-              {/* Text left */}
-              <div className="flex-1 p-8 flex flex-col justify-center">
-                <p className="text-[#7EB8F7] text-[11px] font-semibold uppercase tracking-widest mb-2">
-                  Chand Raat Special
-                </p>
-                <h3 className="text-white text-[24px] font-bold heading-font leading-tight mb-2">
-                  Alaaya Chand Raat Is Coming To SiP
-                </h3>
-                <p className="text-white/55 text-[15px] leading-relaxed mb-6">
-                  Celebrate Eid with live music, mehndi & our special festive menu — tonight only
-                </p>
-                <button className="bg-white/15 hover:bg-white/25 transition-colors text-white text-sm font-semibold px-5 py-3 rounded-full cursor-pointer self-start">
-                  Learn more
-                </button>
-              </div>
-              {/* Image right */}
-              <div className="w-[50%] relative overflow-hidden">
-                <img
-                  src={eidImg}
-                  alt="Eid Mubarak"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#1C3557] via-[#1C3557]/40 to-transparent" />
-              </div>
+            <div className="px-6 pt-6 pb-4">
+              <h3 className="text-white text-[18px] font-bold heading-font leading-snug mb-1.5">
+                Bangle Stalls Are Coming To SiP
+              </h3>
+              <p className="text-white/60 text-[13px] leading-relaxed mb-3">
+                Beautiful bangle stalls at SiP — this Thursday, 7 PM to 12 AM
+              </p>
+              <button className="bg-[#2D3748] hover:bg-[#1A202C] transition-colors text-white text-xs font-semibold px-5 py-2.5 rounded-full cursor-pointer">
+                Learn more
+              </button>
+            </div>
+            <div className="relative h-[180px]">
+              <img
+                src={banglesImg}
+                alt="Bangle stalls"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#4A5568] via-transparent to-transparent h-[40px]" />
             </div>
           </motion.div>
         </div>

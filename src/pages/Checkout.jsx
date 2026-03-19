@@ -33,6 +33,11 @@ export default function Checkout() {
     gst = 0,
     grandTotal = totalPrice,
     orderNotes = "",
+    splitMode: incomingSplitMode = "full",
+    totalPeople: incomingTotalPeople = 2,
+    payingFor: incomingPayingFor = 1,
+    customAmount: incomingCustomAmount = "",
+    selectedItems: incomingSelectedItems = null,
   } = location.state || {};
 
   const [paymentMethod, setPaymentMethod] = useState("card");
@@ -41,12 +46,13 @@ export default function Checkout() {
   const [showSplitBill, setShowSplitBill] = useState(false);
 
   // Split bill state
-  const [splitMode, setSplitMode] = useState("full");
+  const [splitMode, setSplitMode] = useState(incomingSplitMode);
   const [splitCount, setSplitCount] = useState(2);
-  const [totalPeople, setTotalPeople] = useState(2);
-  const [payingFor, setPayingFor] = useState(1);
-  const [customAmount, setCustomAmount] = useState("");
+  const [totalPeople, setTotalPeople] = useState(incomingTotalPeople);
+  const [payingFor, setPayingFor] = useState(incomingPayingFor);
+  const [customAmount, setCustomAmount] = useState(incomingCustomAmount);
   const [selectedItems, setSelectedItems] = useState(() => {
+    if (incomingSelectedItems) return incomingSelectedItems;
     const all = {};
     items.forEach((item) => {
       all[item.id] = true;

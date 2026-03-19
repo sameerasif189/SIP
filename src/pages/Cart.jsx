@@ -10,12 +10,8 @@ import {
   MessageSquare,
   Star,
   Check,
-  CreditCard,
-  Smartphone,
-  Banknote,
-  Tag,
-  Info,
   X,
+  Banknote,
   ListOrdered,
   Clock,
   PenLine,
@@ -24,6 +20,7 @@ import { useCart } from "../context/CartContext";
 import { useOrder } from "../context/OrderContext";
 import { getAllItems } from "../data/menu";
 import SipLogo from "../components/SipLogo";
+import eidImg from "../assets/Eid.png";
 
 const STATUS_MESSAGES = [
   "Your order has been placed. We're getting it ready for you!",
@@ -66,19 +63,35 @@ export default function Cart() {
     return (
       <div className="min-h-screen bg-bg">
         <div className="max-w-lg mx-auto">
-          {/* Top bar with logo + Order more */}
+          {/* Top bar with Order more + logo + Review */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex items-center justify-between px-5 pt-8 pb-4"
           >
-            <SipLogo size={44} />
             <Link
               to="/menu"
               className="bg-dark text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-dark/90 transition-colors"
             >
               Order more
             </Link>
+            <SipLogo size={48} />
+            <button
+              onClick={() => navigate("/order-confirmed", {
+                state: {
+                  orderNumber: activeOrder.id,
+                  grandTotal: activeOrder.grandTotal,
+                  yourTotal: activeOrder.grandTotal,
+                  splitMode: "full",
+                  splitCount: 2,
+                  items: activeOrder.items,
+                },
+              })}
+              className="inline-flex items-center gap-1.5 bg-white border border-border text-dark px-4 py-2.5 rounded-full text-sm font-semibold hover:bg-bg transition-colors cursor-pointer"
+            >
+              <Star size={14} />
+              Review
+            </button>
           </motion.div>
 
           {/* White card */}
@@ -193,48 +206,45 @@ export default function Cart() {
               </AnimatePresence>
             </motion.div>
 
-            {/* Leave a review button */}
-            {step >= 3 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.0 }}
-                className="mt-6"
-              >
-                <button
-                  onClick={() => navigate("/order-confirmed", {
-                    state: {
-                      orderNumber: activeOrder.id,
-                      grandTotal: activeOrder.grandTotal,
-                      yourTotal: activeOrder.grandTotal,
-                      splitMode: "full",
-                      splitCount: 2,
-                      items: activeOrder.items,
-                    },
-                  })}
-                  className="w-full bg-[#3D4F3D] text-white rounded-2xl p-6 cursor-pointer text-left"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <SipLogo size={36} />
-                  </div>
-                  <h3 className="text-lg font-bold text-white mb-1 heading-font">
-                    Share your experience at SiP
-                  </h3>
-                  <p className="text-white/60 text-sm mb-3">Click on stars to leave a review.</p>
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        size={28}
-                        className="text-[#C5B97A]"
-                        fill="#C5B97A"
-                        strokeWidth={0}
-                      />
-                    ))}
-                  </div>
+            {/* Alaaya Chand Raat banner */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9 }}
+              className="mt-8 rounded-2xl overflow-hidden bg-[#1C3557] relative"
+            >
+              {/* Decorative stars & moons */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <svg className="absolute top-4 right-5 opacity-25" width="22" height="22" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                <svg className="absolute top-10 right-16 opacity-15" width="14" height="14" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                <svg className="absolute bottom-5 right-8 opacity-20" width="18" height="18" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                <svg className="absolute bottom-8 right-24 opacity-10" width="12" height="12" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                <svg className="absolute top-6 right-28 opacity-20" width="24" height="24" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="white"/></svg>
+                <svg className="absolute bottom-3 right-20 opacity-12" width="16" height="16" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="white"/></svg>
+              </div>
+              <div className="p-6 relative z-10">
+                <p className="text-[#7EB8F7] text-[10px] font-semibold uppercase tracking-widest mb-2">
+                  Chand Raat Special
+                </p>
+                <h3 className="text-white text-[18px] font-bold heading-font leading-tight mb-1.5 max-w-[70%]">
+                  Alaaya Chand Raat Is Coming To SiP
+                </h3>
+                <p className="text-white/55 text-[13px] leading-relaxed mb-4 max-w-[75%]">
+                  Celebrate Eid with live music, mehndi & our special festive menu — tonight only
+                </p>
+                <button className="bg-white/15 hover:bg-white/25 transition-colors text-white text-xs font-semibold px-5 py-2.5 rounded-full cursor-pointer">
+                  Discover
                 </button>
-              </motion.div>
-            )}
+              </div>
+              <div className="relative h-[180px]">
+                <img
+                  src={eidImg}
+                  alt="Eid celebration"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#1C3557] via-transparent to-transparent h-[40px]" />
+              </div>
+            </motion.div>
           </div>
         </div>
 
@@ -502,6 +512,7 @@ export default function Cart() {
             orderNotes={orderNotes}
             onClose={() => setShowCheckout(false)}
           />
+
         )}
       </AnimatePresence>
     </div>
@@ -545,17 +556,8 @@ function PopularCard({ item }) {
    Checkout Modal — payment, split bill, and pay — all inline
    ═══════════════════════════════════════════════════════════════ */
 
-function CheckoutModal({ items, totalPrice, tip, tipAmount, serviceFee, gst, grandTotal, onClose }) {
-  const { clearCart } = useCart();
-  const { placeOrder } = useOrder();
+function CheckoutModal({ items, totalPrice, tip, tipAmount, serviceFee, gst, grandTotal, orderNotes, onClose }) {
   const navigate = useNavigate();
-
-  // Two-step flow: "split" (step 1) → "payment" (step 2)
-  const [step, setStep] = useState("split");
-
-  const [paymentMethod, setPaymentMethod] = useState("card");
-  const [showNewCardForm, setShowNewCardForm] = useState(false);
-  const [processing, setProcessing] = useState(false);
 
   // Split bill state
   const [splitMode, setSplitMode] = useState("full");
@@ -577,63 +579,6 @@ function CheckoutModal({ items, totalPrice, tip, tipAmount, serviceFee, gst, gra
     return g;
   });
 
-  const getYourTotal = () => {
-    if (splitMode === "full") return grandTotal;
-    if (splitMode === "even") return Math.ceil((grandTotal * payingFor) / totalPeople);
-    if (splitMode === "custom") {
-      const parsed = parseFloat(customAmount);
-      return parsed > 0 ? Math.min(parsed, grandTotal) : 0;
-    }
-    const selectedSubtotal = items
-      .filter((item) => selectedItems[item.id])
-      .reduce((sum, item) => sum + item.price * item.quantity, 0);
-    if (totalPrice === 0) return 0;
-    return Math.ceil(grandTotal * (selectedSubtotal / totalPrice));
-  };
-
-  const yourTotal = getYourTotal();
-
-  const handlePay = () => {
-    if (!paymentMethod) return;
-    setProcessing(true);
-    setTimeout(() => {
-      const order = placeOrder({ items: [...items], grandTotal });
-      clearCart();
-      navigate("/order-confirmed", {
-        state: {
-          orderNumber: order.id,
-          grandTotal,
-          yourTotal: splitMode !== "full" ? yourTotal : grandTotal,
-          splitMode,
-          splitCount: totalPeople,
-          paymentMethod,
-          items: [...items],
-        },
-        replace: true,
-      });
-    }, 1500);
-  };
-
-  const paymentMethodLabel = () => {
-    switch (paymentMethod) {
-      case "saved": return "Saved Card";
-      case "card": return "Credit Card";
-      case "debit": return "Debit Card";
-      case "cash": return "Cash";
-      case "jazzcash": return "JazzCash";
-      case "easypaisa": return "Easypaisa";
-      default: return "Pay";
-    }
-  };
-
-  const splitModeLabel = () => {
-    if (splitMode === "full") return "Paying full bill";
-    if (splitMode === "even") return `Split ${totalPeople} ways (${payingFor} paying)`;
-    if (splitMode === "item") return "Paying for your items";
-    if (splitMode === "custom") return `Custom: Rs.${customAmount || 0}/-`;
-    return "Paying full bill";
-  };
-
   // Split bill helpers
   const toggleGuestItem = (guest, itemId) => {
     setGuestItems((prev) => ({ ...prev, [guest]: { ...prev[guest], [itemId]: !prev[guest][itemId] } }));
@@ -647,7 +592,17 @@ function CheckoutModal({ items, totalPrice, tip, tipAmount, serviceFee, gst, gra
   const confirmSplitAndProceed = (mode) => {
     setSplitMode(mode);
     if (mode === "item") setSelectedItems(guestItems[1] || {});
-    setStep("payment");
+    onClose();
+    navigate("/checkout", {
+      state: {
+        tip, tipAmount, serviceFee, gst, grandTotal, orderNotes,
+        splitMode: mode,
+        totalPeople,
+        payingFor,
+        customAmount,
+        selectedItems: mode === "item" ? (guestItems[1] || {}) : selectedItems,
+      },
+    });
   };
   const evenTotal = Math.ceil((grandTotal * payingFor) / totalPeople);
   const fraction = totalPeople > 0 ? payingFor / totalPeople : 0;
@@ -655,10 +610,7 @@ function CheckoutModal({ items, totalPrice, tip, tipAmount, serviceFee, gst, gra
   const guestGrandTotal = (gn) => { const sub = guestTotal(gn); return totalPrice === 0 ? 0 : Math.ceil(grandTotal * (sub / totalPrice)); };
 
   const handleBack = () => {
-    if (step === "payment") {
-      setStep("split");
-      setSplitView("main");
-    } else if (splitView !== "main") {
+    if (splitView !== "main") {
       setSplitView("main");
     } else {
       onClose();
@@ -666,7 +618,6 @@ function CheckoutModal({ items, totalPrice, tip, tipAmount, serviceFee, gst, gra
   };
 
   const headerTitle = () => {
-    if (step === "payment") return "Pay securely";
     if (splitView === "main") return "Split the bill";
     if (splitView === "even") return "Divide the bill equally";
     if (splitView === "item") return "Edit split";
@@ -701,17 +652,8 @@ function CheckoutModal({ items, totalPrice, tip, tipAmount, serviceFee, gst, gra
           </button>
         </div>
 
-        <AnimatePresence mode="wait">
-          {/* ═══ STEP 1: SPLIT BILL ═══ */}
-          {step === "split" && (
-            <motion.div
-              key="split-step"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="overflow-y-auto flex-1"
-            >
-              <AnimatePresence mode="wait">
+        <div className="overflow-y-auto flex-1">
+          <AnimatePresence mode="wait">
                 {/* Main split options */}
                 {splitView === "main" && (
                   <motion.div key="split-main" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="p-5 space-y-3 pb-8">
@@ -835,169 +777,9 @@ function CheckoutModal({ items, totalPrice, tip, tipAmount, serviceFee, gst, gra
                   </motion.div>
                 )}
               </AnimatePresence>
-            </motion.div>
-          )}
-
-          {/* ═══ STEP 2: PAYMENT ═══ */}
-          {step === "payment" && (
-            <motion.div
-              key="payment-step"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="flex flex-col flex-1 overflow-hidden"
-            >
-              {/* Split summary badge */}
-              <div className="px-5 pt-4">
-                <button onClick={() => { setStep("split"); setSplitView("main"); }} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-bg text-sm text-dark font-medium cursor-pointer hover:bg-border transition-colors mb-3">
-                  <ListOrdered size={14} className="text-muted" />
-                  {splitModeLabel()}
-                  <ChevronRight size={14} className="text-muted" />
-                </button>
-              </div>
-
-              {/* Scrollable content */}
-              <div className="overflow-y-auto flex-1 px-5 pt-2 pb-6">
-                <p className="text-muted text-sm mb-4">All transactions are private and encrypted.</p>
-
-                {/* Saved card */}
-                <p className="text-xs text-muted font-semibold uppercase tracking-wide mb-2">Saved card</p>
-                <PaymentOption
-                  selected={paymentMethod === "saved"}
-                  onClick={() => setPaymentMethod("saved")}
-                  label="Visa ending in 4242"
-                  icon={<span className="text-[10px] font-bold bg-blue-600 text-white px-1.5 py-0.5 rounded">VISA</span>}
-                />
-
-                {/* Other methods */}
-                <p className="text-xs text-muted font-semibold uppercase tracking-wide mt-4 mb-2">Other methods</p>
-                <div className="space-y-2.5 mb-4">
-                  <PaymentOption selected={paymentMethod === "card"} onClick={() => setPaymentMethod("card")} label="Credit Card"
-                    icon={<div className="flex gap-1"><span className="text-[10px] font-bold bg-blue-600 text-white px-1.5 py-0.5 rounded">VISA</span><span className="text-[10px] font-bold bg-dark text-white px-1.5 py-0.5 rounded">MC</span></div>} />
-                  <PaymentOption selected={paymentMethod === "debit"} onClick={() => setPaymentMethod("debit")} label="Debit Card" icon={<CreditCard size={18} className="text-muted" />} />
-                  <PaymentOption selected={paymentMethod === "cash"} onClick={() => setPaymentMethod("cash")} label="Cash" icon={<Banknote size={18} className="text-muted" />} />
-                  <PaymentOption selected={paymentMethod === "jazzcash"} onClick={() => setPaymentMethod("jazzcash")} label="JazzCash" icon={<Smartphone size={18} className="text-red-500" />} />
-                  <PaymentOption selected={paymentMethod === "easypaisa"} onClick={() => setPaymentMethod("easypaisa")} label="Easypaisa" icon={<Smartphone size={18} className="text-green-500" />} />
-                </div>
-
-                {/* Card Details */}
-                <AnimatePresence>
-                  {(paymentMethod === "card" || paymentMethod === "debit") && (
-                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="mb-4 space-y-3 overflow-hidden">
-                      <input type="text" placeholder="Cardholder name" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
-                      <input type="text" placeholder="1234 5678 9012 3456" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
-                      <div className="grid grid-cols-2 gap-3">
-                        <input type="text" placeholder="MM / YY" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
-                        <input type="text" placeholder="CVV" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Add new card */}
-                <button onClick={() => setShowNewCardForm(!showNewCardForm)} className="flex items-center gap-3 w-full py-3 cursor-pointer">
-                  <CreditCard size={18} className="text-muted" />
-                  <span className="text-sm font-medium text-dark">Add a new card</span>
-                  <ChevronRight size={16} className="text-muted ml-auto" />
-                </button>
-                <AnimatePresence>
-                  {showNewCardForm && (
-                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="space-y-3 overflow-hidden pt-2 mb-4">
-                      <input type="text" placeholder="Cardholder name" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
-                      <input type="text" placeholder="Card number" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
-                      <div className="grid grid-cols-2 gap-3">
-                        <input type="text" placeholder="MM / YY" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
-                        <input type="text" placeholder="CVV" className="w-full px-4 py-3.5 rounded-xl bg-bg border-none text-sm text-dark placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-dark/10" />
-                      </div>
-                      <button className="w-full py-3 rounded-full border border-dark text-dark text-sm font-semibold cursor-pointer hover:bg-bg transition-colors">Save card</button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Promo code */}
-                <div className="border-t border-border mt-2 pt-2 mb-4">
-                  <button className="flex items-center gap-3 w-full py-3 cursor-pointer">
-                    <Tag size={18} className="text-muted" />
-                    <span className="text-sm font-medium text-dark">Add a promo code</span>
-                    <ChevronRight size={16} className="text-muted ml-auto" />
-                  </button>
-                </div>
-
-                {/* Price breakdown */}
-                <div className="border-t border-border pt-4 space-y-2.5 text-sm">
-                  <div className="flex justify-between text-dark">
-                    <span>Subtotal</span>
-                    <span className="font-medium">Rs.{totalPrice}/-</span>
-                  </div>
-                  {tip > 0 && (
-                    <div className="flex justify-between text-dark">
-                      <span>Tips ({tip}%)</span>
-                      <span className="font-medium">Rs.{tipAmount}/-</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between text-dark">
-                    <span className="flex items-center gap-1">Service fee <Info size={14} className="text-muted" /></span>
-                    <span className="font-medium">Rs.{serviceFee}/-</span>
-                  </div>
-                  <div className="flex justify-between text-dark">
-                    <span>GST (5%)</span>
-                    <span className="font-medium">Rs.{gst}/-</span>
-                  </div>
-                  <div className="flex justify-between text-dark text-lg pt-3 border-t border-border price-font">
-                    <span>Total</span>
-                    <span>Rs.{splitMode === "full" ? grandTotal : yourTotal}/-</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Pay button */}
-              <div className="px-5 pb-5 pt-3 border-t border-border/60 shrink-0">
-                <motion.button
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handlePay}
-                  disabled={!paymentMethod || processing}
-                  className="w-full bg-dark text-white py-4 rounded-full font-semibold text-[15px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-                >
-                  {processing ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Processing...
-                    </span>
-                  ) : (
-                    `Pay with ${paymentMethodLabel()}`
-                  )}
-                </motion.button>
-                <p className="text-center text-[11px] text-muted mt-2 flex items-center justify-center gap-1">
-                  <span>🔒</span> secure payments with <span className="font-bold text-dark">SiP</span>
-                </p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </div>
       </motion.div>
     </motion.div>
-  );
-}
-
-function PaymentOption({ selected, onClick, label, icon }) {
-  return (
-    <motion.button
-      whileTap={{ scale: 0.98 }}
-      onClick={onClick}
-      className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 cursor-pointer transition-all ${
-        selected ? "border-dark bg-white" : "border-border bg-white hover:border-dark/20"
-      }`}
-    >
-      <span className="font-medium text-dark text-[15px]">{label}</span>
-      <div className="flex items-center gap-3">
-        {icon}
-        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-          selected ? "border-dark bg-dark" : "border-border"
-        }`}>
-          {selected && <Check size={14} className="text-white" />}
-        </div>
-      </div>
-    </motion.button>
   );
 }
 
@@ -1034,4 +816,3 @@ function CounterRow({ label, value, onChange, min = 1, max = 20, suffix }) {
     </div>
   );
 }
-
