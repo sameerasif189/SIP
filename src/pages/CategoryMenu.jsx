@@ -6,8 +6,6 @@ import { menuData } from "../data/menu";
 import { useCart } from "../context/CartContext";
 import MenuCard from "../components/MenuCard";
 import SipLogo from "../components/SipLogo";
-import eidImg from "../assets/Eid.png";
-import banglesImg from "../assets/bangles.png";
 
 export default function CategoryMenu() {
   const { name } = useParams();
@@ -176,52 +174,61 @@ export default function CategoryMenu() {
 
             {/* Bangle Stalls banner */}
             {catIdx === 4 && (
-              <div className="my-8 rounded-2xl overflow-hidden bg-[#4A5568]">
-                <div className="px-6 pt-6 pb-5">
-                  <h3 className="text-white text-[20px] font-bold heading-font leading-snug mb-2">
+              <div className="my-8 rounded-2xl overflow-hidden bg-[#1C3557] relative">
+                {/* Decorative stars & moons */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                  <svg className="absolute top-4 right-6 opacity-25" width="24" height="24" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                  <svg className="absolute top-8 right-20 opacity-15" width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                  <svg className="absolute bottom-6 right-10 opacity-20" width="20" height="20" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                  <svg className="absolute bottom-10 right-28 opacity-10" width="14" height="14" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                  <svg className="absolute top-6 right-36 opacity-15" width="12" height="12" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                  <svg className="absolute top-12 right-14 opacity-20" width="28" height="28" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="white"/></svg>
+                  <svg className="absolute bottom-4 right-32 opacity-15" width="18" height="18" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="white"/></svg>
+                </div>
+                <div className="p-7 relative z-10">
+                  <p className="text-[#7EB8F7] text-[10px] font-semibold uppercase tracking-widest mb-2">
+                    Upcoming Event
+                  </p>
+                  <h3 className="text-white text-[18px] font-bold heading-font leading-tight mb-2 max-w-[70%]">
                     Bangle Stalls Are Coming To SiP
                   </h3>
-                  <p className="text-white/60 text-[14px] leading-relaxed mb-4">
+                  <p className="text-white/55 text-[13px] leading-relaxed mb-5 max-w-[75%]">
                     Beautiful bangle stalls at SiP — this Thursday, 7 PM to 12 AM
                   </p>
-                  <button className="bg-[#2D3748] hover:bg-[#1A202C] transition-colors text-white text-sm font-semibold px-5 py-2.5 rounded-full cursor-pointer">
-                    Learn more
+                  <button className="bg-white/15 hover:bg-white/25 transition-colors text-white text-xs font-semibold px-5 py-2.5 rounded-full cursor-pointer">
+                    Discover
                   </button>
-                </div>
-                <div className="relative h-[180px]">
-                  <img
-                    src={banglesImg}
-                    alt="Bangle stalls"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-b from-[#4A5568] via-transparent to-transparent h-[40px]" />
                 </div>
               </div>
             )}
 
             {/* Alaaya Chand Raat banner */}
             {(catIdx === 2 || catIdx === 5) && catIdx < menuData.length - 1 && (
-              <div className="my-8 rounded-2xl overflow-hidden bg-[#4A5568]">
-                <div className="px-6 pt-6 pb-5">
-                  <h3 className="text-white text-[20px] font-bold heading-font leading-snug mb-2">
+              <div className="my-8 rounded-2xl overflow-hidden bg-[#1C3557] relative">
+                {/* Decorative stars & moons */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                  <svg className="absolute top-4 right-5 opacity-25" width="22" height="22" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                  <svg className="absolute top-10 right-16 opacity-15" width="14" height="14" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                  <svg className="absolute bottom-5 right-8 opacity-20" width="18" height="18" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                  <svg className="absolute bottom-8 right-24 opacity-10" width="12" height="12" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="white"/></svg>
+                  <svg className="absolute top-6 right-28 opacity-20" width="24" height="24" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="white"/></svg>
+                  <svg className="absolute bottom-3 right-20 opacity-12" width="16" height="16" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="white"/></svg>
+                </div>
+                <div className="p-6 relative z-10">
+                  <p className="text-[#7EB8F7] text-[10px] font-semibold uppercase tracking-widest mb-2">
+                    {catIdx === 2 ? "Chand Raat Special" : "Eid Celebration"}
+                  </p>
+                  <h3 className="text-white text-[18px] font-bold heading-font leading-tight mb-1.5 max-w-[70%]">
                     {catIdx === 2 ? "Alaaya Chand Raat Is Coming To SiP" : "Eid Brunch Is Coming To SiP"}
                   </h3>
-                  <p className="text-white/60 text-[14px] leading-relaxed mb-4">
+                  <p className="text-white/55 text-[13px] leading-relaxed mb-4 max-w-[75%]">
                     {catIdx === 2
                       ? "Celebrate Eid with live music, mehndi & our special festive menu — tonight only"
                       : "Join us for a festive brunch this Eid — 11 AM to 3 PM for Rs.2,500/-"}
                   </p>
-                  <button className="bg-[#2D3748] hover:bg-[#1A202C] transition-colors text-white text-sm font-semibold px-5 py-2.5 rounded-full cursor-pointer">
-                    Learn more
+                  <button className="bg-white/15 hover:bg-white/25 transition-colors text-white text-xs font-semibold px-5 py-2.5 rounded-full cursor-pointer">
+                    Discover
                   </button>
-                </div>
-                <div className="relative h-[180px]">
-                  <img
-                    src={eidImg}
-                    alt="Eid celebration"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-b from-[#4A5568] via-transparent to-transparent h-[40px]" />
                 </div>
               </div>
             )}
